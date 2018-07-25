@@ -5,3 +5,4 @@ file(GLOB SOURCE_FILES
         )
 
 add_executable(main ${SOURCE_FILES})
+target_link_libraries(main tempogram)
