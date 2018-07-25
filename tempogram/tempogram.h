@@ -6,8 +6,10 @@
 #define TEMPOGRAM_TEMPO_ESTIMATION_COMPUTE_FOURIER_COEFFICIENTS_H
 
 #include <armadillo>
+#include <sigpack.h>
 
 using namespace arma;
+using namespace sp;
 
 namespace tempogram {
 
