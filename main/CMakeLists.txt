@@ -1,9 +1,13 @@
+project(main C CXX)
+
 file(GLOB SOURCE_FILES
         "*.h"
         "*.cpp"
         "*.hpp"
         )
 
-add_executable(main ${SOURCE_FILES})
+include_directories(${tempogram_INCLUDE_DIRS})
 
-target_link_libraries(main tempogram)
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+
+target_link_libraries(${PROJECT_NAME} tempogram)

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../tempogram/tempogram.h"
+#include "tempogram.h"
 
 
 int main() {

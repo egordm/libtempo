@@ -3,5 +3,3 @@
 //
 
 #include "tempogram.h"
-
-using namespace tempogram;
