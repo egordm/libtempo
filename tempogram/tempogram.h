@@ -5,6 +5,10 @@
 #ifndef TEMPOGRAM_TEMPO_ESTIMATION_COMPUTE_FOURIER_COEFFICIENTS_H
 #define TEMPOGRAM_TEMPO_ESTIMATION_COMPUTE_FOURIER_COEFFICIENTS_H
 
+#include <armadillo>
+
+using namespace arma;
+
 namespace tempogram {
 
 

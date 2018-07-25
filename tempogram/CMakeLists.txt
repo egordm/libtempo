@@ -5,7 +5,7 @@ file(GLOB SOURCE_FILES
         )
 
 find_package(Armadillo REQUIRED)
-include_directories(${ARMADILLO_INCLUDE_DIRS})
+include_directories(${ARMADILLO_INCLUDE_DIR})
 
 include(PythonSetup)
 include_directories(${PYTHON_INCLUDE_DIR})

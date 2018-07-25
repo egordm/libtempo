@@ -360,10 +360,4 @@ if (ARMADILLO_FOUND)
   message(STATUS "Armadillo libraries: ${ARMADILLO_LIBRARIES}")
 endif ()
 
-
-# Hide internal variables
-mark_as_advanced(
-  ARMADILLO_INCLUDE_DIR
-  ARMADILLO_LIBRARY)
-
 #======================
