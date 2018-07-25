@@ -4,8 +4,14 @@ file(GLOB SOURCE_FILES
         "*.hpp"
         )
 
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(Armadillo REQUIRED)
+include_directories(${ARMADILLO_INCLUDE_DIRS})
+
+include(PythonSetup)
+include_directories(${PYTHON_INCLUDE_DIR})
+find_package(pybind11 REQUIRED)
+include_directories(${pybind11_INCLUDE_DIRS})
 
 add_library(tempogram ${SOURCE_FILES})
 
-target_link_libraries (tempogram Eigen3::Eigen)
+target_link_libraries(tempogram ${ARMADILLO_LIBRARIES})
