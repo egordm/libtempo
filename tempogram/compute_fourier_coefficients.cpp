@@ -3,6 +3,7 @@
 //
 
 #define _USE_MATH_DEFINES
+
 #include "compute_fourier_coefficients.h"
 #include "math_utils.hpp"
 #include <cmath>
@@ -10,31 +11,34 @@
 using namespace tempogram::utils;
 using namespace arma;
 
-mat  tempogram::compute_fourier_coefficients(const vec &s, const vec &window, int n_overlap, const vec &f, double sr) {
-    int win_length = (int)window.size();
+std::tuple<mat, vec, vec>
+tempogram::compute_fourier_coefficients(const vec &s, const vec &window, int n_overlap, const vec &f, double sr) {
+    int win_length = (int) window.size();
+    double win_length_half = win_length / 2.;
     int hop_length = win_length - n_overlap;
 
     vec T = linspace<vec>(0, win_length - 1, static_cast<const uword>(win_length)) / sr;
     int win_num = math::fix((s.size() - n_overlap) / (win_length - n_overlap));
     mat x(static_cast<const uword>(win_num), f.size());
+    vec t = linspace(win_length_half, win_length_half + (win_num - 1) * hop_length, (const uword)win_num) / sr;
 
     vec twoPiT = 2 * M_PI * T;
 
-    for(int f0 = 0; f0 < f.size(); ++f0) {
+    for (int f0 = 0; f0 < f.size(); ++f0) {
         vec twoPiFt = f[f0] * twoPiT;
         vec cosine = cos(twoPiFt);
         vec sine = sin(twoPiFt);
 
-        for(int w = 0; w < win_num; ++w) {
+        for (int w = 0; w < win_num; ++w) {
             int start = w * hop_length;
             int stop = start + win_length;
 
-            vec sig = s.subvec((const uword)start, (const uword)(stop - 1)) % window;
+            vec sig = s.subvec((const uword) start, (const uword) (stop - 1)) % window;
             auto co = sum(sig % cosine);
             auto si = sum(sig % sine);
-            x((const uword)w, (const uword)f0) = (co + 1 * si);
+            x((const uword) w, (const uword) f0) = (co + 1 * si);
         }
     }
 
-    return x;
+    return std::make_tuple(x, f, t);
 }

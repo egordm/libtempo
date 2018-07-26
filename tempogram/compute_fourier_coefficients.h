@@ -7,6 +7,8 @@
 
 #include <armadillo>
 
+using namespace arma;
+
 namespace tempogram {
     /**
      * @param s time domain signal
@@ -16,7 +18,7 @@ namespace tempogram {
      * @param sr sampling rate of signal s in Hz
      * @return
      */
-    arma::mat compute_fourier_coefficients(const arma::vec &s, const arma::vec &window, int n_overlap, const arma::vec &f, double sr);
+    std::tuple<mat, vec, vec> compute_fourier_coefficients(const arma::vec &s, const arma::vec &window, int n_overlap, const arma::vec &f, double sr);
 }
 
 

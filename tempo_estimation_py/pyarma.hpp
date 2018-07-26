@@ -37,6 +37,18 @@ inline py::array_t<double> mat_to_py(arma::mat &mat) {
     return py::array_t<double>(buffer);
 }
 
+inline py::array_t<double> vec_to_py(arma::vec &vec) {
+    py::buffer_info buffer(
+            vec.memptr(),
+            sizeof(double),
+            py::format_descriptor<double>::format(),
+            1,
+            {vec.n_elem},
+            {sizeof(double)}
+    );
+    return py::array_t<double>(buffer);
+}
+
 inline py::array_t<arma::sword> uvec_to_py(arma::uvec &vec) {
     py::buffer_info buffer(
             vec.memptr(),
@@ -48,6 +60,5 @@ inline py::array_t<arma::sword> uvec_to_py(arma::uvec &vec) {
     );
     return py::array_t<arma::sword>(buffer);
 }
-
 
 #endif //TEMPOGRAM_TEMPO_ESTIMATION_PYARMA_HPP
