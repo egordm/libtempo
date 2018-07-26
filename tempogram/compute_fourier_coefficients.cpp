@@ -27,7 +27,7 @@ tempogram::compute_fourier_coefficients(const arma::vec &s, const arma::vec &win
         auto sine = sin(twoPiFt);
 
         for(int w = 0; w < win_num; ++w) {
-            int start = (w - 1) * hop_length;
+            int start = w * hop_length;
             int stop = start + win_length;
 
             auto sig = s.subvec((const arma::uword)start, (const arma::uword)(stop - 1)) * window;
