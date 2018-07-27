@@ -30,6 +30,7 @@ namespace tempogram {
 
         auto ret = compute_fourier_coefficients(novelty_curve, window, win_length - hop_length, bpm / 60.,
                                                 feature_rate);
+
         std::get<0>(ret) = std::get<0>(ret) / sqrt((double) win_length) / sum(window) * win_length;
         std::get<1>(ret) = std::get<1>(ret) * 60;
         std::get<2>(ret) = std::get<2>(ret) - std::get<2>(ret)(0);

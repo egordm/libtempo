@@ -8,7 +8,7 @@
 #include "math_utils.hpp"
 #include <cmath>
 
-using namespace tempogram::utils;
+using namespace tempogram;
 using namespace arma;
 
 std::tuple<mat, vec, vec>
@@ -18,7 +18,7 @@ tempogram::compute_fourier_coefficients(const vec &s, const vec &window, int n_o
     int hop_length = win_length - n_overlap;
 
     vec T = linspace<vec>(0, win_length - 1, static_cast<const uword>(win_length)) / sr;
-    int win_num = math::fix((s.size() - n_overlap) / (win_length - n_overlap));
+    int win_num = utils::math::fix((s.size() - n_overlap) / (win_length - n_overlap));
     mat x(static_cast<const uword>(win_num), f.size());
     vec t = linspace(win_length_half, win_length_half + (win_num - 1) * hop_length, (const uword)win_num) / sr;
 
