@@ -14,7 +14,7 @@ using namespace arma;
 using namespace sp;
 
 namespace tempogram {
-    inline std::tuple<mat, vec, vec> novelty_curve_to_tempogram_dft(vec &novelty_curve, vec &bpm, double feature_rate,
+    inline std::tuple<cx_mat, vec, vec> novelty_curve_to_tempogram_dft(vec &novelty_curve, vec &bpm, double feature_rate,
                                                                     int tempo_window, int hop_length) {
         auto win_length = static_cast<int>(round(tempo_window * feature_rate));
         win_length = win_length + (win_length % 2) - 1;

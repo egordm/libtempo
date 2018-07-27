@@ -11,7 +11,7 @@
 using namespace tempogram;
 using namespace arma;
 
-std::tuple<mat, vec, vec>
+std::tuple<cx_mat, vec, vec>
 tempogram::compute_fourier_coefficients(const vec &s, const vec &window, int n_overlap, const vec &f, double sr) {
     int win_length = (int) window.size();
     double win_length_half = win_length / 2.;
@@ -19,10 +19,13 @@ tempogram::compute_fourier_coefficients(const vec &s, const vec &window, int n_o
 
     vec T = linspace<vec>(0, win_length - 1, static_cast<const uword>(win_length)) / sr;
     int win_num = utils::math::fix((s.size() - n_overlap) / (win_length - n_overlap));
-    mat x(static_cast<const uword>(win_num), f.size());
+    cx_mat x(static_cast<const uword>(win_num), f.size());
+    x.zeros();
     vec t = linspace(win_length_half, win_length_half + (win_num - 1) * hop_length, (const uword)win_num) / sr;
 
     vec twoPiT = 2 * M_PI * T;
+
+    int test = 0;
 
     for (int f0 = 0; f0 < f.size(); ++f0) {
         vec twoPiFt = f[f0] * twoPiT;
@@ -36,9 +39,10 @@ tempogram::compute_fourier_coefficients(const vec &s, const vec &window, int n_o
             vec sig = s.subvec((const uword) start, (const uword) (stop - 1)) % window;
             auto co = sum(sig % cosine);
             auto si = sum(sig % sine);
-            x((const uword) w, (const uword) f0) = (co + 1 * si);
+
+            x((const uword) w, (const uword) f0) = cx_double(co, si);
         }
     }
 
-    return std::make_tuple(x, f, t);
+    return std::make_tuple(x.st(), f, t);
 }

@@ -37,6 +37,18 @@ inline py::array_t<double> mat_to_py(arma::mat &mat) {
     return py::array_t<double>(buffer);
 }
 
+inline py::array_t<arma::cx_double> cx_mat_to_py(arma::cx_mat &mat) {
+    py::buffer_info buffer(
+            mat.memptr(),
+            sizeof(arma::cx_double),
+            py::format_descriptor<arma::cx_double>::format(),
+            2,
+            {mat.n_rows, mat.n_cols},
+            {sizeof(arma::cx_double), sizeof(arma::cx_double) * mat.n_rows}
+    );
+    return py::array_t<arma::cx_double>(buffer);
+}
+
 inline py::array_t<double> vec_to_py(arma::vec &vec) {
     py::buffer_info buffer(
             vec.memptr(),

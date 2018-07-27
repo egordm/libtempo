@@ -18,7 +18,7 @@ namespace tempogram {
      * @param sr sampling rate of signal s in Hz
      * @return
      */
-    std::tuple<mat, vec, vec> compute_fourier_coefficients(const arma::vec &s, const arma::vec &window, int n_overlap, const arma::vec &f, double sr);
+    std::tuple<cx_mat, vec, vec> compute_fourier_coefficients(const arma::vec &s, const arma::vec &window, int n_overlap, const arma::vec &f, double sr);
 }
 
 

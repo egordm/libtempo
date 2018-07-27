@@ -16,7 +16,7 @@ namespace tempogram_wrapper {
         arma::vec bpm = py_to_vec(bpm_np);
         auto ret = tempogram::novelty_curve_to_tempogram_dft(novelty_curve, bpm, feature_rate, tempo_window,
                                                              hop_length);
-        auto x = mat_to_py(std::get<0>(ret));
+        auto x = cx_mat_to_py(std::get<0>(ret));
         auto f = vec_to_py(std::get<1>(ret));
         auto t = vec_to_py(std::get<2>(ret));
         return std::make_tuple(x, f, t);
