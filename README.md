@@ -16,3 +16,7 @@
 -DPYTHON_LIBRARY=D:\msys64\mingw64\lib\libpython3.6m.dll.a
 -DPYTHON_INCLUDE_DIRS=D:\msys64\mingw64\include\python3.6m
 -DLAPACK_LIBRARY="D:/msys64/mingw64/lib/libopenblas.dll.a"
+
+
+Delete
+sp::sp_version from base.h
