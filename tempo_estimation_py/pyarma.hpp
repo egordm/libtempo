@@ -14,70 +14,56 @@ namespace py=pybind11;
 typedef py::array_t<double, py::array::f_style | py::array::forcecast> pyarr_d;
 typedef py::array_t<arma::cx_double, py::array::f_style | py::array::forcecast> pyarr_cd;
 
-inline arma::mat py_to_mat(pyarr_d &pmat) {
-    py::buffer_info info = pmat.request();
-    arma::mat amat = arma::mat(reinterpret_cast<arma::mat::elem_type *>(info.ptr), info.shape[0], info.shape[1]);
+/**
+ * Converts a python array/matrix type to armadillo type
+ * @tparam A Armadollio return type
+ * @tparam T Element type
+ * @param pyarr
+ * @return
+ */
+template<typename A, typename T>
+inline A py_to_arma(py::array_t<T, py::array::f_style | py::array::forcecast> &pyarr) {
+    py::buffer_info info = pyarr.request(); // TODO: Can we move return type to arguments for deduction?
+    A amat(reinterpret_cast<A::elem_type *>(info.ptr), info.shape[0], info.shape[1]);
     return amat;
 }
 
-inline arma::cx_mat py_to_cx_mat(pyarr_cd &pmat) {
-    py::buffer_info info = pmat.request();
-    arma::cx_mat amat = arma::cx_mat(reinterpret_cast<arma::cx_mat::elem_type *>(info.ptr), info.shape[0], info.shape[1]);
-    return amat;
-}
-
-inline arma::vec py_to_vec(pyarr_d &pmat) {
-    py::buffer_info info = pmat.request();
-    arma::vec avec = arma::vec(reinterpret_cast<arma::mat::elem_type *>(info.ptr), info.shape[0]);
-    return avec;
-}
-
-inline py::array_t<double> mat_to_py(arma::mat &mat) {
+/**
+ * Converts an armadillo type to python matrix type
+ * @tparam T Element type
+ * @param mat
+ * @return
+ */
+template<typename T>
+inline py::array_t<T> arma_to_py(arma::Mat<T> &mat) {
     py::buffer_info buffer(
             mat.memptr(),
-            sizeof(double),
-            py::format_descriptor<double>::format(),
+            sizeof(T),
+            py::format_descriptor<T>::format(),
             2,
             {mat.n_rows, mat.n_cols},
-            {sizeof(double), sizeof(double) * mat.n_rows}
+            {sizeof(T), sizeof(T) * mat.n_rows}
     );
-    return py::array_t<double>(buffer);
+    return py::array_t<T>(buffer);
 }
 
-inline py::array_t<arma::cx_double> cx_mat_to_py(arma::cx_mat &mat) {
-    py::buffer_info buffer(
-            mat.memptr(),
-            sizeof(arma::cx_double),
-            py::format_descriptor<arma::cx_double>::format(),
-            2,
-            {mat.n_rows, mat.n_cols},
-            {sizeof(arma::cx_double), sizeof(arma::cx_double) * mat.n_rows}
-    );
-    return py::array_t<arma::cx_double>(buffer);
-}
-
-inline py::array_t<double> vec_to_py(arma::vec &vec) {
+/**
+ * Converts an armadillo type to python array type
+ * @tparam T Element type
+ * @param mat
+ * @return
+ */
+template<typename T>
+inline py::array_t<T> arma_to_py(arma::Col<T> &vec) {
     py::buffer_info buffer(
             vec.memptr(),
-            sizeof(double),
-            py::format_descriptor<double>::format(),
+            sizeof(T),
+            py::format_descriptor<T>::format(),
             1,
             {vec.n_elem},
-            {sizeof(double)}
+            {sizeof(T)}
     );
-    return py::array_t<double>(buffer);
-}
-
-inline py::array_t<arma::sword> uvec_to_py(arma::uvec &vec) {
-    py::buffer_info buffer(
-            vec.memptr(),
-            sizeof(arma::sword),
-            py::format_descriptor<arma::sword>::format(),
-            1,
-            {vec.n_elem},
-            {sizeof(arma::sword)}
-    );
-    return py::array_t<arma::sword>(buffer);
+    return py::array_t<T>(buffer);
 }
 
 #endif //TEMPOGRAM_TEMPO_ESTIMATION_PYARMA_HPP

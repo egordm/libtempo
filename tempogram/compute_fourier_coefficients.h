@@ -20,6 +20,15 @@ namespace tempogram {
      */
     std::tuple<cx_mat, vec, vec> compute_fourier_coefficients(const arma::vec &s, const arma::vec &window, int n_overlap, const arma::vec &f, double sr);
 
+    /**
+     * Normalizes a feature sequence according to the l^p norm
+     * If the norm falls below threshold for a feature vector, then the normalized feature vector is set to be the
+     * unit vector.
+     * @param feature
+     * @param p
+     * @param threshold
+     * @return
+     */
     cx_mat normalize_feature(const cx_mat &feature, unsigned int p, double threshold);
 }
 
