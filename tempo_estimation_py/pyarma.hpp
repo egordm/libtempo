@@ -12,10 +12,17 @@
 namespace py=pybind11;
 
 typedef py::array_t<double, py::array::f_style | py::array::forcecast> pyarr_d;
+typedef py::array_t<arma::cx_double, py::array::f_style | py::array::forcecast> pyarr_cd;
 
 inline arma::mat py_to_mat(pyarr_d &pmat) {
     py::buffer_info info = pmat.request();
     arma::mat amat = arma::mat(reinterpret_cast<arma::mat::elem_type *>(info.ptr), info.shape[0], info.shape[1]);
+    return amat;
+}
+
+inline arma::cx_mat py_to_cx_mat(pyarr_cd &pmat) {
+    py::buffer_info info = pmat.request();
+    arma::cx_mat amat = arma::cx_mat(reinterpret_cast<arma::cx_mat::elem_type *>(info.ptr), info.shape[0], info.shape[1]);
     return amat;
 }
 

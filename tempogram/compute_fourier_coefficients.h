@@ -19,6 +19,8 @@ namespace tempogram {
      * @return
      */
     std::tuple<cx_mat, vec, vec> compute_fourier_coefficients(const arma::vec &s, const arma::vec &window, int n_overlap, const arma::vec &f, double sr);
+
+    cx_mat normalize_feature(const cx_mat &feature, unsigned int p, double threshold);
 }
 
 

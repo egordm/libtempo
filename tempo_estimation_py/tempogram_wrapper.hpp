@@ -21,6 +21,12 @@ namespace tempogram_wrapper {
         auto t = vec_to_py(std::get<2>(ret));
         return std::make_tuple(x, f, t);
     }
+
+    inline py::array normalize_feature(pyarr_cd &feature_np, unsigned int p, double threshold) {
+        cx_mat feature = py_to_cx_mat(feature_np);
+        auto ret = tempogram::normalize_feature(feature, p, threshold);
+        return cx_mat_to_py(ret);
+    }
 }
 
 #endif //TEMPOGRAM_TEMPO_ESTIMATION_TEMPOGRAM_WRAPPER_H

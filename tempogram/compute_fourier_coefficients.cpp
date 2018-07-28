@@ -19,8 +19,7 @@ tempogram::compute_fourier_coefficients(const vec &s, const vec &window, int n_o
 
     vec T = linspace<vec>(0, win_length - 1, static_cast<const uword>(win_length)) / sr;
     int win_num = utils::math::fix((s.size() - n_overlap) / (win_length - n_overlap));
-    cx_mat x(static_cast<const uword>(win_num), f.size());
-    x.zeros();
+    cx_mat x(static_cast<const uword>(win_num), f.size(), fill::zeros);
     vec t = linspace(win_length_half, win_length_half + (win_num - 1) * hop_length, (const uword)win_num) / sr;
 
     vec twoPiT = 2 * M_PI * T;
@@ -45,4 +44,22 @@ tempogram::compute_fourier_coefficients(const vec &s, const vec &window, int n_o
     }
 
     return std::make_tuple(x.st(), f, t);
+}
+
+cx_mat tempogram::normalize_feature(const cx_mat &feature, unsigned int p, double threshold) {
+    cx_mat ret(feature.n_rows, feature.n_cols, fill::zeros);
+
+    // normalise the vectors according to the l^p norm
+    cx_mat unit_vec(feature.n_rows, 1);
+    unit_vec.ones();
+    unit_vec = unit_vec / norm(unit_vec, p);
+
+    for(int k = 0; k < feature.n_cols; ++k) {
+        double n = norm(feature(span::all, (const uword)k), p);
+
+        if(n < threshold) ret(span::all, (const uword)k) = unit_vec;
+        else ret(span::all, (const uword)k) = feature(span::all, (const uword)k) / n;
+    }
+
+    return ret;
 }
