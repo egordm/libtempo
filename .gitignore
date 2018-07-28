@@ -57,3 +57,6 @@ target_wrapper.*
 
 # QtCtreator CMake
 CMakeLists.txt.user*
+
+
+valley_of.wav
