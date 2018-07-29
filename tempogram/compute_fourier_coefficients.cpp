@@ -72,7 +72,7 @@ tuple<mat, float, vec, vec> tempogram::stft(const vec &s, int sr, const vec &win
 }
 
 tuple<mat, float, vec, vec>
-tempogram::stft(const vec &s, int sr, const vec &window, std::tuple<int, int> coefficient_range, int n_fft,
+tempogram::stft(const vec &signal, int sr, const vec &window, std::tuple<int, int> coefficient_range, int n_fft,
                 int hop_length) {
     auto window_length = static_cast<int>(window.size());
     if (hop_length <= 0) hop_length = static_cast<int>(round(window_length / 2.));
@@ -80,7 +80,7 @@ tempogram::stft(const vec &s, int sr, const vec &window, std::tuple<int, int> co
 
     // Precalculate
     float feature_rate = (float) sr / hop_length;
-    auto signal_size = static_cast<int>(s.size());
+    auto signal_size = static_cast<int>(signal.size());
 
     auto first_window = (int) floor(window_length / 2.);
     auto num_frames = (int) ceil((double) signal_size / hop_length);
@@ -88,54 +88,59 @@ tempogram::stft(const vec &s, int sr, const vec &window, std::tuple<int, int> co
     int n_zero_pad = max(0, n_fft - window_length);
 
     // Spectrogram calculation
-    mat spec((const uword) num_coeffs, (const uword) num_frames, fill::zeros);
+    mat s((const uword) num_coeffs, (const uword) num_frames, fill::zeros);
 
     // first window's center is at 0 seconds
     ivec frame = linspace<ivec>(0, window_length - 1, (const uword) window_length) - first_window;
+
+    sp::FFTW fftw(static_cast<unsigned int>(frame.size()));
     for (int i = 0; i < num_frames; ++i) {
         int n_zeros = static_cast<int>(sum(frame <= 0));
         int n_vals = static_cast<int>(frame.size() - n_zeros);
 
         vec x(frame.size());
         if (n_zeros > 0)
-            x = join_cols(vec((const uword) n_zeros, fill::zeros), s(span(0, (const uword) n_vals)));
+            x = join_cols(vec((const uword) n_zeros, fill::zeros), signal(span(0, (const uword) n_vals - 1)));
         else if (frame(frame.size() - 1) >= signal_size)
-            x = join_cols(s(span((const uword) frame(0), s.size())),
-                          vec(window_length - (s.size() - frame(0)), fill::zeros));
-        else x = s(span((const uword) frame(0), (const uword) frame(frame.size() - 1)));
+            x = join_cols(signal(span((const uword) frame(0), signal.size() - 1)),
+                          vec(window_length - (signal.size() - frame(0)), fill::zeros));
+        else x = signal(span((const uword) frame(0), (const uword) frame(frame.size() - 1)));
 
         x %= window;
 
         if (n_zero_pad > 0) x = join_cols(x, vec((const uword) n_zero_pad, fill::zeros));
 
-        cx_vec Xs = fft(x);
-        Xs = Xs(span((const uword) std::get<0>(coefficient_range), (const uword) std::get<1>(coefficient_range)));
-        spec(span::all, (const uword) i) = abs(Xs); // Convert to magnitude. Not complex anymore
+        cx_vec Xs = fftw.fft(x);
+        // Convert to magnitude. Not complex anymore
+        s(span::all, (const uword) i) = abs(Xs(span((const uword) std::get<0>(coefficient_range),
+                                                    (const uword) std::get<1>(coefficient_range) - 1)));
 
         frame += hop_length;
     }
 
-    vec t = linspace<vec>(0, spec.n_cols - 1, spec.n_cols) * hop_length / (double) sr;
+    vec t = linspace<vec>(0, s.n_cols - 1, s.n_cols) * hop_length / (double) sr;
     auto zet = (int) floor(max(n_fft, window_length) / 2.);
     vec f = linspace<vec>(0, zet - 1, (const uword) zet) / (double) zet * (sr / 2.);
-    f = f(span((const uword) std::get<0>(coefficient_range), (const uword) std::get<1>(coefficient_range)));
+    f = f(span((const uword) std::get<0>(coefficient_range), (const uword) std::get<1>(coefficient_range) - 2));
 
-    return make_tuple(spec, feature_rate, t, f);
+    return make_tuple(s, feature_rate, t, f);
 }
 
-vec tempogram::audio_to_novelty_curve(const vec &s, int sr, int window_length, int hop_length, double compression_c,
-                                      bool log_compression, int resample_feature_rate) {
+vec
+tempogram::audio_to_novelty_curve(const vec &signal, int sr, int window_length, int hop_length, double compression_c,
+                                  bool log_compression, int resample_feature_rate) {
     if (window_length <= 0) window_length = static_cast<int>(1024 * sr / 22050.);
     if (hop_length <= 0) hop_length = static_cast<int>(512 * sr / 22050.);
 
     vec window = sp::hanning(static_cast<const uword>(window_length));
-    auto stft_ret = stft(s, sr, window, window_length, hop_length);
+    auto stft_ret = stft(signal, sr, window, window_length, hop_length);
 
     // normalize and convert to dB
-    mat spe = std::get<0>(stft_ret) / max(std::get<0>(stft_ret));
+    mat spe = std::get<0>(stft_ret) / std::get<0>(stft_ret).max();
     double thresh = -74;
     thresh = pow(10, thresh / 20);
     spe = clamp(spe, thresh, spe.max());
+    std::cout << spe(0, span(88, 101)) << std::endl;
 
     // bandwise processing
     mat bands = {{0,      500},

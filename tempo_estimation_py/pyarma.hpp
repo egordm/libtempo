@@ -24,7 +24,7 @@ typedef py::array_t<arma::cx_double, py::array::f_style | py::array::forcecast> 
 template<typename A, typename T>
 inline A py_to_arma(py::array_t<T, py::array::f_style | py::array::forcecast> &pyarr) {
     py::buffer_info info = pyarr.request(); // TODO: Can we move return type to arguments for deduction?
-    A amat(reinterpret_cast<A::elem_type *>(info.ptr), info.shape[0], info.shape[1]);
+    A amat(reinterpret_cast<typename A::elem_type *>(info.ptr), info.shape[0], info.shape[1]);
     return amat;
 }
 

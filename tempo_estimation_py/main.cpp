@@ -1,5 +1,5 @@
 #include <pybind11/pybind11.h>
-#include "tempogram_wrapper.h"
+#include "tempogram_wrapper.hpp"
 
 namespace py = pybind11;
 

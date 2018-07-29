@@ -5,6 +5,7 @@
 -DARMADILLO_INCLUDE_DIR="D:/Developent/CPP/libs/armadillo-8.600.0/include"
 -DARMADILLO_LIBRARY:FILEPATH="D:/Developent/CPP/libs/armadillo-8.600.0/build/Debug/armadillo.lib"
 -DSIGPACK_INCLUDE_DIR="D:\Developent\CPP\libs\sigpack-1.2.4\sigpack"
+-DFFTW_ROOT="D:\Developent\CPP\libs\libfftw"
 
 # Debug mingw
 -DGMOCK_ROOT=D:\Developent\CPP\libs\googletest-release-1.8.0\googlemock
