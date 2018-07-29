@@ -13,6 +13,26 @@ namespace tempogram { namespace utils { namespace math {
         return static_cast<int>(x >= 0 ? floor(x) : ceil(x));
     }
 
+    inline arma::vec my_hanning( const arma::uword N ) {
+        arma::vec h(N);
+        for(arma::uword i=0; i<N; i++) {
+            h[i] = 0.5-0.5*std::cos(sp::PI_2*(i)/(N-1));
+        }
+        return h;
+    }
+
+    inline mat pad_mat(const mat &data, int pad_size) {
+        mat band_krn(data.n_rows, data.n_cols + pad_size * 2);
+        for(int k = 0; k < pad_size; ++k) {
+            band_krn(span::all, (const uword)k) = data(span::all, 0);
+        }
+        band_krn(span::all, span((const uword)pad_size, band_krn.n_cols - 1 - pad_size)) = data;
+        for(int k = 0; k < pad_size; ++k) {
+            band_krn(span::all, band_krn.n_cols - 1 - k) = data(span::all, data.n_cols - 1);
+        }
+
+        return band_krn;
+    }
 }}}
 
 #endif //PROJECT_MATH_UTILS_HPP
