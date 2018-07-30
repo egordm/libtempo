@@ -21,3 +21,8 @@
 
 Delete
 sp::sp_version from base.h
+
+# TODO
+take this library
+https://github.com/terrygta/SignalResampler/tree/master/src
+remove boost. add armadillo

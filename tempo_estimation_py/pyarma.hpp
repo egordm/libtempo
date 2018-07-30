@@ -21,10 +21,18 @@ typedef py::array_t<arma::cx_double, py::array::f_style | py::array::forcecast> 
  * @param pyarr
  * @return
  */
-template<typename A, typename T>
-inline A py_to_arma(py::array_t<T, py::array::f_style | py::array::forcecast> &pyarr) {
+template<typename T>
+inline Mat<T> py_to_arma_mat(py::array_t<T, py::array::f_style | py::array::forcecast> &pyarr) {
     py::buffer_info info = pyarr.request(); // TODO: Can we move return type to arguments for deduction?
-    A amat(reinterpret_cast<typename A::elem_type *>(info.ptr), info.shape[0], info.shape[1]);
+    Mat<T> amat(reinterpret_cast<typename Mat<T>::elem_type *>(info.ptr), info.shape[0], info.shape[1]);
+    return amat;
+}
+
+
+template<typename T>
+inline Col<T> py_to_arma_vec(py::array_t<T, py::array::f_style | py::array::forcecast> &pyarr) {
+    py::buffer_info info = pyarr.request(); // TODO: Can we move return type to arguments for deduction?
+    Col<T> amat(reinterpret_cast<typename Col<T>::elem_type *>(info.ptr), info.shape[0]);
     return amat;
 }
 
