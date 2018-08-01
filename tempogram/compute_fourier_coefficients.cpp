@@ -7,6 +7,7 @@
 #include <sigpack.h>
 #include "compute_fourier_coefficients.h"
 #include "math_utils.hpp"
+#include "resample.h"
 
 using namespace tempogram;
 using namespace arma;
@@ -126,7 +127,7 @@ tempogram::stft(const vec &signal, int sr, const vec &window, std::tuple<int, in
     return make_tuple(s, feature_rate, t, f);
 }
 
-vec
+std::tuple<vec, int>
 tempogram::audio_to_novelty_curve(const vec &signal, int sr, int window_length, int hop_length, double compression_c,
                                   bool log_compression, int resample_feature_rate) {
     if (window_length <= 0) window_length = static_cast<int>(1024 * sr / 22050.);
@@ -203,16 +204,27 @@ tempogram::audio_to_novelty_curve(const vec &signal, int sr, int window_length, 
 
     // resample curve
     if(resample_feature_rate > 0 && resample_feature_rate != feature_rate) {
-        const uword p = (const uword)round(1000 * resample_feature_rate / feature_rate);
-        const uword q = 1000;
+        const int p = (const int)round(1000 * resample_feature_rate / feature_rate);
+        const int q = 1000;
 
-        // TODO: a good resample
-
+        novelty_curve = tempogram::resample(novelty_curve, p, q);
         feature_rate = resample_feature_rate;
     }
 
-    std::cout << novelty_curve(span(344, 355)) << std::endl;
-    std::cout << "test" << std::endl;
+    novelty_curve = novelty_smoothed_subtraction(novelty_curve, sr, hop_length);
 
-    return arma::vec();
+    return std::make_tuple(novelty_curve, (int)feature_rate);
+}
+
+vec tempogram::novelty_smoothed_subtraction(const vec &novelty_curve, int sr, int hop_length) {
+    double smooth_len = 1.5;
+    smooth_len = max(ceil(smooth_len * sr / (double)hop_length), 3.);
+    rowvec smooth_filter = (utils::math::my_hanning((const uword) smooth_len)).t();
+    rowvec novelty_curve_t = novelty_curve.t();
+    mat local_average = conv2(novelty_curve_t, flipud(fliplr(smooth_filter / sum(smooth_filter))), "same");
+
+    rowvec novelty_sub = (novelty_curve_t - local_average);
+    novelty_sub = novelty_sub % (novelty_sub > 0);
+
+    return novelty_sub.t();
 }
