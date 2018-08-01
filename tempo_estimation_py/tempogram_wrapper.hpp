@@ -5,8 +5,9 @@
 #ifndef PROJECT_TEMPOGRAM_WRAPPER_H
 #define PROJECT_TEMPOGRAM_WRAPPER_H
 
-#include <tempogram.h>
 #include "pyarma.hpp"
+#include <tempo_estimation.h>
+#include <helper_functions.h>
 
 namespace tempogram_wrapper {
     inline std::tuple<py::array, py::array, py::array>

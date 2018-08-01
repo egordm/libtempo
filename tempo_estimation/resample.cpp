@@ -3,19 +3,18 @@
 //
 
 #include "resample.h"
-#include "upfirdn.h"
 #include "defines.h"
 #include "math_utils.hpp"
 
 
 using namespace sp;
-using namespace tempogram::utils;
+using namespace tempogram;
 
 vec tempogram::resample(const vec &signal, int upfactor, int downfactor) {
     const int n = 10;
     if (upfactor <= 0 || downfactor <= 0) throw std::runtime_error("factors must be positive integer");
 
-    int gcd = math::calc_gcd(upfactor, downfactor);
+    int gcd = utils::math::calc_gcd(upfactor, downfactor);
     upfactor /= gcd;
     downfactor /= gcd;
 
@@ -31,7 +30,7 @@ vec tempogram::resample(const vec &signal, int upfactor, int downfactor) {
     coefficients %= upfactor * window;
 
     int length_half = (length - 1) / 2;
-    int output_size = math::quotient_ceil((int)signal.size() * upfactor, downfactor);
+    int output_size = utils::math::quotient_ceil((int)signal.size() * upfactor, downfactor);
     int nz = downfactor - length_half % downfactor;
     vec h = join_cols(vec((const uword)nz, fill::zeros), coefficients);
     length_half += nz;
@@ -70,8 +69,8 @@ vec tempogram::firls(int length, vec freq, const vec &amplitude) {
         }
 
         b += slope / (M_2PI * M_2PI) * (cos(M_2PI * k * freq.at(i + 1)) - cos(M_2PI * k * freq.at(i))) / (k % k);
-        b += (freq.at(ii) * (slope * freq.at(ii) + b1) * math::sinc_fac(2 * k * freq.at(ii)))
-             - (freq.at(i) * (slope * freq.at(i) + b1) * math::sinc_fac(2 * k * freq.at(i)));
+        b += (freq.at(ii) * (slope * freq.at(ii) + b1) * utils::math::sinc_fac(2 * k * freq.at(ii)))
+             - (freq.at(i) * (slope * freq.at(i) + b1) * utils::math::sinc_fac(2 * k * freq.at(i)));
         b *= w_half_q;
     }
 
@@ -139,7 +138,7 @@ vec tempogram::Resampler::apply(vec &in) {
         double acc = 0.;
         double *h = _transposed_coefs + _t * _coefs_per_phase;
         double *x_ptr = x - _coefs_per_phase + 1;
-        long offset = start - x_ptr;
+        long offset = (long)(start - x_ptr);
 
         if (offset > 0) {
             // need to draw from the _state buffer

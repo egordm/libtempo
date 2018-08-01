@@ -5,7 +5,7 @@
 #ifndef PROJECT_MATH_UTILS_HPP
 #define PROJECT_MATH_UTILS_HPP
 
-#include <cmath>
+#include "defines.h"
 #include <sigpack.h>
 
 using namespace sp;
@@ -47,7 +47,7 @@ namespace tempogram { namespace utils { namespace math {
         return band_krn;
     }
 
-    int calc_gcd(int n1, int n2) {
+    inline int calc_gcd(int n1, int n2) {
         int tmp = 0;
         while (n1 > 0) {
             tmp = n1;
@@ -57,7 +57,7 @@ namespace tempogram { namespace utils { namespace math {
         return n2;
     }
 
-    int quotient_ceil(int n1, int n2) {
+    inline int quotient_ceil(int n1, int n2) {
         if (n1 % n2 != 0) return n1 / n2 + 1;
         return n1 / n2;
     }

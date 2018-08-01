@@ -5,6 +5,7 @@
 #include <sigpack.h>
 #include "tempo_estimation.h"
 #include "math_utils.hpp"
+#include "resample.h"
 
 using namespace sp;
 
@@ -120,7 +121,7 @@ tempogram::audio_to_novelty_curve(const vec &signal, int sr, int window_length, 
         const int q = 1000;
 
         novelty_curve = tempogram::resample(novelty_curve, p, q);
-        feature_rate = resample_feature_rate;
+        feature_rate = (float)resample_feature_rate;
     }
 
     novelty_curve = novelty_smoothed_subtraction(novelty_curve, sr, hop_length);
