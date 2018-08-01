@@ -6,11 +6,24 @@
 #define PROJECT_MATH_UTILS_HPP
 
 #include <cmath>
+#include <sigpack.h>
+
+using namespace sp;
 
 namespace tempogram { namespace utils { namespace math {
 
     inline int fix(double x) {
         return static_cast<int>(x >= 0 ? floor(x) : ceil(x));
+    }
+
+    inline vec sinc_fac(const vec &x) {
+        vec ret(x.size());
+        for(uword i = 0; i < x.size(); ++i) {
+            if (fabs(x.at(i) - 0.0) < 0.000001) ret.at(i) = 1;
+            else ret.at(i) = sin(M_PI * x.at(i)) / (M_PI * x.at(i));
+        }
+
+        return ret;
     }
 
     inline arma::vec my_hanning( const arma::uword N ) {
