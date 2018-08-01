@@ -7,7 +7,7 @@
 
 #include <sigpack.h>
 #include "tempo_estimation.h"
-#include "compute_fourier_coefficients.h"
+#include "helper_functions.h"
 #include "audio_processing.h"
 
 #endif //PROJECT_TEMPOGRAM_H

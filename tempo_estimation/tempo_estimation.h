@@ -6,11 +6,28 @@
 #define PROJECT_TEMPO_ESTIMATION_H
 
 #include <armadillo>
-#include "compute_fourier_coefficients.h"
+#include "helper_functions.h"
 
 using namespace arma;
 
 namespace tempogram {
+    /**
+     * Computes a novelty curve (onset detection function) for the input audio signal. This implementation is a
+     * variant of the widely used spectral flux method with additional bandwise processing and a logarithmic intensity
+     * compression. This particularly addresses music with weak onset information (e.g., exhibiting string instruments.)
+     * @param signal: wavefrom of audio signal
+     * @param sr: sampling rate of the audio (Hz)
+     * @param window_length: window length for STFT (in samples)
+     * @param hop_length: stepsize for the STFT
+     * @param compression_c: constant for log compression
+     * @param log_compression: enable/disable log compression
+     * @param resample_feature_rate: feature rate of the resulting novelty curve (resampled, independent of stepsize)
+     * @return
+     */
+    std::tuple<vec, int> audio_to_novelty_curve(const vec &signal, int sr, int window_length = -1, int hop_length = -1,
+                                                double compression_c = 1000, bool log_compression = true,
+                                                int resample_feature_rate = 200);
+
     /**
      * Computes a complex valued fourier tempogram for a given novelty curve
      * indicating note onset candidates in the form of peaks.

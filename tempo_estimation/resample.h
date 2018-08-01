@@ -1,9 +1,9 @@
 //
-// Created by egordm on 1-8-2018.
+// Created by egordm on 30-7-2018.
 //
 
-#ifndef PROJECT_UPFIRDN_H
-#define PROJECT_UPFIRDN_H
+#ifndef PROJECT_RESAMPLE_H
+#define PROJECT_RESAMPLE_H
 
 #include <armadillo>
 
@@ -53,7 +53,26 @@ namespace tempogram {
      * @return
      */
     vec upfirdn(const vec &signal, int up_rate, int down_rate, const vec &filter);
-};
+
+    /**
+     * firls designs a linear-phase FIR filter that minimizes the weighted, integrated squared error between an ideal
+     * piecewise linear function and the magnitude response of the filter over a set of desired frequency bands.
+     * @param length
+     * @param freq
+     * @param amplitude
+     * @return
+     */
+    vec firls(int length, vec freq, const vec &amplitude);
+
+    /**
+     * resamples the input sequence, x, at p/q times the original sample rate.
+     * @param signal
+     * @param upfactor
+     * @param downfactor
+     * @return
+     */
+    vec resample(const vec &signal, int upfactor, int downfactor);
+}
 
 
-#endif //PROJECT_UPFIRDN_H
+#endif //PROJECT_RESAMPLE_H

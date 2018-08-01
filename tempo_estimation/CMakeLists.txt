@@ -1,4 +1,4 @@
-project(tempogram C CXX)
+project(tempo_estimation C CXX)
 
 file(GLOB SOURCE_FILES
         "*.h"

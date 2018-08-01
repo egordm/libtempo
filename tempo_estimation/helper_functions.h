@@ -35,16 +35,14 @@ namespace tempogram {
     cx_mat normalize_feature(const cx_mat &feature, unsigned int p, double threshold);
 
     std::tuple<mat, float, vec, vec>
-    stft(const vec &signal, int sr, const vec &window, std::tuple<int, int> coefficient_range, int n_fft = -1, int hop_length = -1);
+    stft(const vec &signal, int sr, const vec &window, std::tuple<int, int> coefficient_range, int n_fft = -1,
+         int hop_length = -1);
 
-    std::tuple<mat, float, vec, vec>
-    stft(const vec &s, int sr, const vec &window, int n_fft = -1, int hop_length = -1);
+    std::tuple<mat, float, vec, vec> stft(const vec &s, int sr, const vec &window, int n_fft = -1, int hop_length = -1);
 
     vec novelty_smoothed_subtraction(const vec &novelty_curve, int sr, int hop_length);
 
-    std::tuple<vec, int> audio_to_novelty_curve(const vec &signal, int sr, int window_length = -1, int hop_length = -1,
-                                      double compression_c = 1000, bool log_compression = true,
-                                         int resample_feature_rate = 200);
+
 }
 
 

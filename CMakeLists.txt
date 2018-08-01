@@ -10,7 +10,7 @@ endif ()
 
 #enable_testing()
 
-add_subdirectory(tempogram)
+add_subdirectory(tempo_estimation)
 add_subdirectory(tempo_estimation_py)
 add_subdirectory(main)
 #add_subdirectory(test)
