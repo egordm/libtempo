@@ -1,6 +1,6 @@
 #include <iostream>
 #include <audio_processing.h>
-#include <tempogram.h>
+#include <tempo_estimation.h>
 
 
 int main() {

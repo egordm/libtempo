@@ -9,15 +9,11 @@
 
 using namespace sp;
 
-std::tuple<cx_mat, vec, vec> tempogram::novelty_curve_to_tempogram_dft(vec &novelty_curve, vec &bpm, double feature_rate,
-                                                                       int tempo_window)  {
-    return novelty_curve_to_tempogram_dft(novelty_curve, bpm, feature_rate, tempo_window,
-                                          (int) ceil(feature_rate / 5.));
-}
-
 std::tuple<cx_mat, vec, vec>
 tempogram::novelty_curve_to_tempogram_dft(vec &novelty_curve, vec &bpm, double feature_rate, int tempo_window,
                                           int hop_length)  {
+    if(hop_length <= 0) hop_length = (int) ceil(feature_rate / 5.);
+
     auto win_length = static_cast<int>(round(tempo_window * feature_rate));
     win_length = win_length + (win_length % 2) - 1;
 

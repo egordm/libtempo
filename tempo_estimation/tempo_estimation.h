@@ -43,10 +43,7 @@ namespace tempogram {
      * @return tempogram, time vector, bpm
      */
     std::tuple <cx_mat, vec, vec> novelty_curve_to_tempogram_dft(vec &novelty_curve, vec &bpm, double feature_rate,
-                                   int tempo_window, int hop_length);
-
-    std::tuple<cx_mat, vec, vec> novelty_curve_to_tempogram_dft(vec &novelty_curve, vec &bpm, double feature_rate,
-                                                                int tempo_window);
+                                   int tempo_window, int hop_length = -1);
 };
 
 
