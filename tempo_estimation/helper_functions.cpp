@@ -27,8 +27,7 @@ tempogram::compute_fourier_coefficients(const vec &s, const vec &window, int n_o
 
     vec twoPiT = 2 * M_PI * T;
 
-    int test = 0;
-
+#pragma omp parallel for shared(twoPiT, x, win_num, hop_length, win_length, s, window)
     for (int f0 = 0; f0 < f.size(); ++f0) {
         vec twoPiFt = f[f0] * twoPiT;
         vec cosine = cos(twoPiFt);
@@ -57,6 +56,7 @@ cx_mat tempogram::normalize_feature(const cx_mat &feature, unsigned int p, doubl
     unit_vec.ones();
     unit_vec = unit_vec / norm(unit_vec, p);
 
+#pragma omp parallel for shared(feature, unit_vec, ret, p, threshold)
     for (int k = 0; k < feature.n_cols; ++k) {
         double n = norm(feature(span::all, (const uword) k), p);
 

@@ -134,7 +134,7 @@ vec tempogram::Resampler::apply(vec &in) {
     double *end = start + in.size();
     double *y = ret.memptr();
 
-    while (x < end) {
+    while (x < end) {// TODO: with some smarter coding this can be parallellized?
         double acc = 0.;
         double *h = _transposed_coefs + _t * _coefs_per_phase;
         double *x_ptr = x - _coefs_per_phase + 1;
