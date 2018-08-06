@@ -62,7 +62,7 @@ tempogram::audio_to_novelty_curve(const vec &signal, int sr, int window_length, 
     mat band_novelty_curves(bands.n_rows, spe.n_cols, fill::zeros);
 
 #pragma omp parallel for shared(spe, bands, band_novelty_curves, sr, compression_c, log_compression, hop_length, window_length)
-    for (uword i = 0; i < bands.n_rows; ++i) {
+    for (int i = 0; i < bands.n_rows; ++i) {
         rowvec bins = round(bands(i, span::all) / (sr / (double) window_length));
         bins = clamp(bins, 0, window_length / 2.);
 

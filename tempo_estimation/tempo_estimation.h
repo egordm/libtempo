@@ -22,7 +22,7 @@ namespace tempogram {
      * @param compression_c: constant for log compression
      * @param log_compression: enable/disable log compression
      * @param resample_feature_rate: feature rate of the resulting novelty curve (resampled, independent of stepsize)
-     * @return
+     * @return novelty_curve, feature_rate
      */
     std::tuple<vec, int> audio_to_novelty_curve(const vec &signal, int sr, int window_length = -1, int hop_length = -1,
                                                 double compression_c = 1000, bool log_compression = true,
