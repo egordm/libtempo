@@ -125,3 +125,41 @@ tempogram::audio_to_novelty_curve(const vec &signal, int sr, int window_length, 
 
     return std::make_tuple(novelty_curve, (int) feature_rate);
 }
+
+std::tuple<mat, vec>
+tempogram::tempogram_to_cyclic_tempogram(const cx_mat &tempogram, vec &bpm, int octave_divider, int ref_tempo) {
+    double ref_octave = ref_tempo / min(bpm);
+    int min_octave = static_cast<int>(round(log2(min(bpm) / ref_tempo)));
+    int max_octave = static_cast<int>(round(log2(max(bpm) / ref_tempo)) + 1);
+    int n_octaves = max_octave - min_octave;
+
+    // to real vals
+    mat ref_tempogram = abs(tempogram);
+
+    // rescale to log tempo axis tempogram. Each octave is represented by octave_divider tempi
+    vec log_bpm = ref_tempo * exp2(regspace<vec>(min_octave, 1. / octave_divider, (max_octave - 1. / octave_divider)));
+
+    // cyclic projection of log axis tempogram to the reference octave
+    double min_bpm = min(bpm);
+    double max_bpm = max(bpm);
+    double diff_bpm = max_bpm - min_bpm;
+
+    mat cyclic_tempogram((const uword)octave_divider, ref_tempogram.n_cols, fill::zeros);
+
+    for(int i = 0; i < octave_divider; ++i) {
+        int c = 0;
+        for(int j = 0; j < n_octaves; ++j) {
+            double freq_offset = log_bpm.at((const uword)(i + j * octave_divider)) - min_bpm;
+            if(freq_offset < 0 || freq_offset > max_bpm) continue;
+            auto offset = (const uword)round(freq_offset / diff_bpm * bpm.n_rows);
+            if(offset >= ref_tempogram.n_rows) continue;
+
+            cyclic_tempogram(i, span::all) += ref_tempogram(offset, span::all);
+            c++;
+        }
+        cyclic_tempogram(i, span::all) /= c;
+    }
+
+    vec cyclic_axis = ref_octave * log_bpm(span(0, (const uword)octave_divider - 1)) / ref_tempo;
+    return std::make_tuple(cyclic_tempogram, cyclic_axis);
+}

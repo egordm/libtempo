@@ -40,10 +40,26 @@ namespace tempogram {
      * @param feature_rate: feature rate of the novelty curve (Hz). This needs to be set to allow for setting other parameters in seconds!
      * @param tempo_window: Analysis window length in seconds
      * @param hop_length: window hop length in frames (of novelty curve)
-     * @return tempogram, time vector, bpm
+     * @return tempogram, bpm, time vector
      */
-    std::tuple <cx_mat, vec, vec> novelty_curve_to_tempogram_dft(vec &novelty_curve, vec &bpm, double feature_rate,
-                                   int tempo_window, int hop_length = -1);
+    std::tuple<cx_mat, vec, vec> novelty_curve_to_tempogram_dft(vec &novelty_curve, vec &bpm, double feature_rate,
+                                                                int tempo_window, int hop_length = -1);
+
+
+    /**
+     * Computes a cyclic tempogram representation of a tempogram by identifying octave equivalences, simnilar as for
+     * chroma features.
+     * @param tempogram: a tempogram representation
+     * @param bpm: tempo axis of the tempogram (in bpm)
+     * @param octave_divider: number of tempo classes used for representing a tempo octave. This parameter controls the
+     * dimensionality of cyclic tempogram
+     * @param ref_tempo: reference tempo defining the partition of BPM into tempo octaves
+     * @return cyclic_tempogram, cyclic_axis
+     */
+    std::tuple<mat, vec> tempogram_to_cyclic_tempogram(const cx_mat &tempogram, vec &bpm, int octave_divider = 30,
+                                                       int ref_tempo = 60);
+
+
 };
 
 
