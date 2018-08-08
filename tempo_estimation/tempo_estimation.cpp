@@ -146,10 +146,10 @@ tempogram::tempogram_to_cyclic_tempogram(const cx_mat &tempogram, vec &bpm, int 
 
     mat cyclic_tempogram((const uword)octave_divider, ref_tempogram.n_cols, fill::zeros);
 
-    for(int i = 0; i < octave_divider; ++i) {
+    for(uword i = 0; i < octave_divider; ++i) {
         int c = 0;
         for(int j = 0; j < n_octaves; ++j) {
-            double freq_offset = log_bpm.at((const uword)(i + j * octave_divider)) - min_bpm;
+            double freq_offset = log_bpm.at(i + j * octave_divider) - min_bpm;
             if(freq_offset < 0 || freq_offset > max_bpm) continue;
             auto offset = (const uword)round(freq_offset / diff_bpm * bpm.n_rows);
             if(offset >= ref_tempogram.n_rows) continue;

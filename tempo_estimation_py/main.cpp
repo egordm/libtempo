@@ -39,4 +39,12 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
           py::arg("tempo_window"),
           py::arg("hop_length") = -1
     );
+
+    m.def("tempogram_to_cyclic_tempogram", &tempogram_wrapper::tempogram_to_cyclic_tempogram,
+          "Computes a cyclic tempogram representation of a tempogram by identifying octave equivalences, simnilar as for chroma features..",
+          py::arg("tempogram"),
+          py::arg("bpm"),
+          py::arg("octave_divider") = 30,
+          py::arg("ref_tempo") = 60
+    );
 };

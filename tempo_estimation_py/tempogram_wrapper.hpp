@@ -47,7 +47,8 @@ namespace tempogram_wrapper {
         arma::vec bpm = py_to_arma_vec<double>(bpm_np);
 
         auto nov_cv = tempogram::audio_to_novelty_curve(signal, sr);
-        auto ret = tempogram::novelty_curve_to_tempogram_dft(std::get<0>(nov_cv), bpm, std::get<1>(nov_cv), tempo_window,
+        auto ret = tempogram::novelty_curve_to_tempogram_dft(std::get<0>(nov_cv), bpm, std::get<1>(nov_cv),
+                                                             tempo_window,
                                                              hop_length);
         auto normalized_tempogram = tempogram::normalize_feature(std::get<0>(ret), 2, 0.0001);
 
@@ -58,6 +59,16 @@ namespace tempogram_wrapper {
                 arma_to_py(std::get<1>(ret)), // tempogram frequencies
                 arma_to_py(std::get<2>(ret))); // tempogram times
     };
+
+    inline std::tuple<py::array, py::array>
+    tempogram_to_cyclic_tempogram(pyarr_cd tempogram_np, pyarr_d bpm_np, int octave_divider = 30, int ref_tempo = 60) {
+        arma::cx_mat tempogram = py_to_arma_mat<cx_double>(tempogram_np);
+        arma::vec bpm = py_to_arma_vec<double>(bpm_np);
+
+        auto ret = tempogram::tempogram_to_cyclic_tempogram(tempogram, bpm, octave_divider, ref_tempo);
+
+        return std::make_tuple(arma_to_py(std::get<0>(ret)), arma_to_py(std::get<1>(ret)));
+    }
 }
 
 
