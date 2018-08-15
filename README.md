@@ -9,7 +9,6 @@ Libraries needed to compile the project.
 * [Armadillo 8.600.0](http://arma.sourceforge.net/)
 * [FFTW 3.3.8](http://www.fftw.org/)
 * [SIGPACK 1.2.4](http://sigpack.sourceforge.net/)
-* [SIGPACK 1.2.4](http://sigpack.sourceforge.net/)
 * [pybind11 2.2.3](https://github.com/pybind/pybind11)
 * [GTEST 1.8.0](https://github.com/google/googletest)
 
