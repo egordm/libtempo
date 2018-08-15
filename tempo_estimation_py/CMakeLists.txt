@@ -6,7 +6,7 @@ file(GLOB SOURCE_FILES
         "*.hpp"
         )
 
-add_subdirectory(../../libs/pybind11 "${CMAKE_CURRENT_BINARY_DIR}/pybind11")
+add_subdirectory(../libs/pybind11 "${CMAKE_CURRENT_BINARY_DIR}/pybind11")
 
 include_directories(${tempo_estimation_INCLUDE_DIRS})
 
