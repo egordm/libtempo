@@ -44,7 +44,7 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
           "Computes a cyclic tempogram representation of a tempogram by identifying octave equivalences, simnilar as for chroma features..",
           py::arg("tempogram"),
           py::arg("bpm"),
-          py::arg("octave_divider") = 30,
+          py::arg("octave_divider") = 120,
           py::arg("ref_tempo") = 60
     );
 };
