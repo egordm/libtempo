@@ -21,8 +21,26 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
     m.def("novelty_curve_to_tempogram_dft", &tempogram_wrapper::novelty_curve_to_tempogram_dft,
           R"pbdoc(
           Computes a complex valued fourier tempogram for a given novelty curve
+
+          Parameters
+          ----------
+          novelty_curve
+              a novelty curve indicating note onset positions
+          bpm
+              vector containing BPM values to compute.
+          feature_rate
+              feature rate of the novelty curve (Hz). This needs to be set to allow for setting other parameters in seconds!
+          tempo_window
+              Analysis window length in seconds
+          hop_length
+              window hop length in frames (of novelty curve)
+
+          Returns
+          -------
+          Tuple[array, array, array]
+              tempogram, bpm, time vector
           )pbdoc",
-          py::arg("novelty_curve_np"),
+          py::arg("novelty_curve"),
           py::arg("bpm"),
           py::arg("feature_rate"),
           py::arg("tempo_window"),
@@ -32,6 +50,19 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
     m.def("normalize_feature", &tempogram_wrapper::normalize_feature,
           R"pbdoc(
           Normalizes a feature sequence according to the l^p norm
+          If the norm falls below threshold for a feature vector, then the normalized feature vector is set to be the
+          unit vector.
+
+          Parameters
+          ----------
+          feature
+          p
+          threshold
+
+          Returns
+          -------
+          array
+              normalized feature
           )pbdoc",
           py::arg("feature"),
           py::arg("p"),
@@ -41,6 +72,28 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
     m.def("audio_to_novelty_curve", &tempogram_wrapper::audio_to_novelty_curve,
           R"pbdoc(
           Computes a complex valued fourier tempogram for a given novelty curve
+
+          Parameters
+          ----------
+          signal
+              wavefrom of audio signal
+          sr
+              sampling rate of the audio (Hz)
+          window_length
+              window length for STFT (in samples)
+          hop_length
+              stepsize for the STFT
+          compression_c
+              constant for log compression
+          log_compression
+              enable/disable log compression
+          resample_feature_rate
+              feature rate of the resulting novelty curve (resampled, independent of stepsize)
+
+          Returns
+          -------
+          Tuple[array, int]
+              novelty_curve, feature_rate
           )pbdoc",
           py::arg("signal"),
           py::arg("sr"),
@@ -54,6 +107,24 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
     m.def("audio_to_novelty_curve_tempogram", &tempogram_wrapper::audio_to_novelty_curve_tempogram,
           R"pbdoc(
           Computes a novelty curve and a complex valued fourier tempogram for a given audio signal.
+
+          Parameters
+          ----------
+          signal
+              wavefrom of audio signal
+          sr
+              sampling rate of the audio (Hz)
+          bpm
+              vector containing BPM values to compute.
+          tempo_window
+              Analysis window length in seconds
+          hop_length
+              window hop length in frames (of novelty curve)
+
+          Returns
+          -------
+          Tuple[array, int, array, array, array]
+              novelty_curve, novelty curve feature rate, tempogram, tempogram frequencies, tempogram times
           )pbdoc",
           py::arg("signal"),
           py::arg("sr"),
@@ -65,6 +136,22 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
     m.def("tempogram_to_cyclic_tempogram", &tempogram_wrapper::tempogram_to_cyclic_tempogram,
           R"pbdoc(
           Computes a cyclic tempogram representation of a tempogram by identifying octave equivalences, simnilar as for chroma features.
+
+          Parameters
+          ----------
+          tempogram
+              a tempogram representation
+          bpm
+              tempo axis of the tempogram (in bpm)
+          octave_divider
+              number of tempo classes used for representing a tempo octave. This parameter controls the dimensionality of cyclic tempogram
+          ref_tempo
+              reference tempo defining the partition of BPM into tempo octaves
+
+          Returns
+          -------
+          Tuple[array, array]
+              cyclic_tempogram, cyclic_axis
           )pbdoc",
           py::arg("tempogram"),
           py::arg("bpm"),
