@@ -4,8 +4,24 @@
 namespace py = pybind11;
 
 PYBIND11_MODULE(tempo_estimation_py, m) {
+    m.doc() = R"pbdoc(
+        tempo_estimation_py
+        -----------------------
+        .. currentmodule:: tempo_estimation_py
+        .. autosummary::
+           :toctree: _generate
+
+           novelty_curve_to_tempogram_dft
+           normalize_feature
+           audio_to_novelty_curve
+           audio_to_novelty_curve_tempogram
+           tempogram_to_cyclic_tempogram
+    )pbdoc";
+
     m.def("novelty_curve_to_tempogram_dft", &tempogram_wrapper::novelty_curve_to_tempogram_dft,
-          "Computes a complex valued fourier tempogram for a given novelty curve",
+          R"pbdoc(
+          Computes a complex valued fourier tempogram for a given novelty curve
+          )pbdoc",
           py::arg("novelty_curve_np"),
           py::arg("bpm"),
           py::arg("feature_rate"),
@@ -14,14 +30,18 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
     );
 
     m.def("normalize_feature", &tempogram_wrapper::normalize_feature,
-          "Normalizes a feature sequence according to the l^p norm",
+          R"pbdoc(
+          Normalizes a feature sequence according to the l^p norm
+          )pbdoc",
           py::arg("feature"),
           py::arg("p"),
           py::arg("threshold")
     );
 
     m.def("audio_to_novelty_curve", &tempogram_wrapper::audio_to_novelty_curve,
-          "Computes a complex valued fourier tempogram for a given novelty curve",
+          R"pbdoc(
+          Computes a complex valued fourier tempogram for a given novelty curve
+          )pbdoc",
           py::arg("signal"),
           py::arg("sr"),
           py::arg("window_length") = -1,
@@ -32,7 +52,9 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
     );
 
     m.def("audio_to_novelty_curve_tempogram", &tempogram_wrapper::audio_to_novelty_curve_tempogram,
-          "Computes a novelty curve and a complex valued fourier tempogram for a given audio signal.",
+          R"pbdoc(
+          Computes a novelty curve and a complex valued fourier tempogram for a given audio signal.
+          )pbdoc",
           py::arg("signal"),
           py::arg("sr"),
           py::arg("bpm"),
@@ -41,7 +63,9 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
     );
 
     m.def("tempogram_to_cyclic_tempogram", &tempogram_wrapper::tempogram_to_cyclic_tempogram,
-          "Computes a cyclic tempogram representation of a tempogram by identifying octave equivalences, simnilar as for chroma features..",
+          R"pbdoc(
+          Computes a cyclic tempogram representation of a tempogram by identifying octave equivalences, simnilar as for chroma features.
+          )pbdoc",
           py::arg("tempogram"),
           py::arg("bpm"),
           py::arg("octave_divider") = 120,
