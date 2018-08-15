@@ -1,0 +1,6 @@
+include README.md LICENSE
+global-include CMakeLists.txt *.cmake
+recursive-include tempo_estimation *
+recursive-include tempo_estimation_py *
+recursive-include libs/pybind11/include *.h
+prune cmake-build*

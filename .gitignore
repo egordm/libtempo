@@ -60,3 +60,14 @@ CMakeLists.txt.user*
 
 
 valley_of.wav
+
+# Python package
+cmake-build*
+docs/_build
+docs/_generate
+
+dist/
+
+build/
+*.egg-info/
+.env
