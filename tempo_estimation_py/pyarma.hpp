@@ -46,13 +46,15 @@ inline Col<T> py_to_arma_vec(py::array_t<T, py::array::f_style | py::array::forc
  */
 template<typename T>
 inline py::array_t<T> arma_to_py(arma::Mat<T> &mat) {
+    std::vector<size_t> shape = {mat.n_rows, mat.n_cols};
+    std::vector<size_t> strides = {sizeof(T), sizeof(T) * mat.n_rows};
     py::buffer_info buffer(
             mat.memptr(),
             sizeof(T),
             py::format_descriptor<T>::format(),
             2,
-            {mat.n_rows, mat.n_cols},
-            {sizeof(T), sizeof(T) * mat.n_rows}
+            shape,
+            strides
     );
     return py::array_t<T>(buffer);
 }

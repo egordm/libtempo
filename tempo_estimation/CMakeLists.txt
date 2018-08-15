@@ -6,6 +6,8 @@ file(GLOB SOURCE_FILES
         "*.hpp"
         )
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 find_package(LibSndFile REQUIRED)
 include_directories(${LIBSNDFILE_INCLUDE_DIRS})
 

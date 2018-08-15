@@ -51,8 +51,6 @@ namespace tempogram {
     std::tuple<mat, float, vec, vec> stft(const vec &s, int sr, const vec &window, int n_fft = -1, int hop_length = -1);
 
     vec novelty_smoothed_subtraction(const vec &novelty_curve, int sr, int hop_length);
-
-
 }
 
 
