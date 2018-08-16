@@ -7,7 +7,7 @@ Still WIP.
 ![Novely Curve](https://raw.githubusercontent.com/EgorDm/tempo_estimation/master/docs/assets/valley_novelty.png)
 ### Tempogram
 ![Tempogram](https://raw.githubusercontent.com/EgorDm/tempo_estimation/master/docs/assets/valley_tempogram.png)
-### Cyclic Tempogram
+### Cyclic Tempogram: Ref Tempo = 60 bpm
 ![Cyclic Tempogram](https://raw.githubusercontent.com/EgorDm/tempo_estimation/master/docs/assets/valley_cyclic_tempogram.png)
 
 ## Dependencies
