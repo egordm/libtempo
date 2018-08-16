@@ -2,6 +2,14 @@
 C++ / Python library with signal processing and tempo estimation utilities.  
 Still WIP.
 
+# Demo: Dragonforce - Valley of the Damned
+### Novelty Curve
+![Novely Curve](https://raw.githubusercontent.com/EgorDm/tempo_estimation/master/docs/assets/valley_novelty.png)
+### Tempogram
+![Tempogram](https://raw.githubusercontent.com/EgorDm/tempo_estimation/master/docs/assets/valley_tempogram.png)
+### Cyclic Tempogram
+![Cyclic Tempogram](https://raw.githubusercontent.com/EgorDm/tempo_estimation/master/docs/assets/valley_cyclic_tempogram.png)
+
 ## Dependencies
 Libraries needed to compile the project.
 * [libsndfile 1.0.28](http://www.mega-nerd.com/libsndfile/)
