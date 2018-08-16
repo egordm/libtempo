@@ -20,9 +20,10 @@ if os.path.exists('.env'):
     with open('.env', 'r') as f:
         lines = f.readlines()
     for line in lines:
+        line = line.replace('\n', '').replace('"', '')
         tokens = line.split('=')
         if len(tokens) < 2 or len(tokens[1]) == 0: continue
-        cmake_extra_args.append('-D' + line.replace('\n', '').replace('"', ''))
+        cmake_extra_args.append('-D' + line)
 
 print('CMake Properties:\n' + '\n'.join(cmake_extra_args))
 
