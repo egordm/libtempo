@@ -10,7 +10,7 @@
 using namespace sp;
 
 std::tuple<cx_mat, vec, vec>
-tempogram::novelty_curve_to_tempogram_dft(vec &novelty_curve, vec &bpm, double feature_rate, int tempo_window,
+tempogram::novelty_curve_to_tempogram_dft(const vec &novelty_curve, const vec &bpm, double feature_rate, int tempo_window,
                                           int hop_length) {
     if (hop_length <= 0) hop_length = (int) ceil(feature_rate / 5.);
 
@@ -22,10 +22,10 @@ tempogram::novelty_curve_to_tempogram_dft(vec &novelty_curve, vec &bpm, double f
 
     vec pad(static_cast<const uword>(half_window), fill::zeros);
 
-    novelty_curve = join_cols(pad, novelty_curve);
-    novelty_curve = join_cols(novelty_curve, pad);
+    vec nc = join_cols(pad, novelty_curve);
+    nc = join_cols(novelty_curve, pad);
 
-    auto ret = tempogram::compute_fourier_coefficients(novelty_curve, window, win_length - hop_length, bpm / 60.,
+    auto ret = tempogram::compute_fourier_coefficients(nc, window, win_length - hop_length, bpm / 60.,
                                                        feature_rate);
 
     std::get<0>(ret) = std::get<0>(ret) / sqrt((double) win_length) / sum(window) * win_length;

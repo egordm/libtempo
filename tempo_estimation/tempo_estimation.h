@@ -42,7 +42,7 @@ namespace tempogram {
      * @param hop_length: window hop length in frames (of novelty curve)
      * @return tempogram, bpm, time vector
      */
-    std::tuple<cx_mat, vec, vec> novelty_curve_to_tempogram_dft(vec &novelty_curve, vec &bpm, double feature_rate,
+    std::tuple<cx_mat, vec, vec> novelty_curve_to_tempogram_dft(const vec &novelty_curve, const vec &bpm, double feature_rate,
                                                                 int tempo_window, int hop_length = -1);
 
 
