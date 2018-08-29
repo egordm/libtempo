@@ -20,6 +20,8 @@ namespace tempogram { namespace tempogram_utils {
 
     vec extract_confidence(const mat &tempogram, const bool &rollover = true);
 
+    mat accumulate_temporal(const mat &tempogram, int temporal_size);
+
 }}
 
 
