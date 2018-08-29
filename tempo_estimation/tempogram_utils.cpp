@@ -8,14 +8,14 @@
 using namespace tempogram::generic_algorithms;
 
 mat tempogram::tempogram_utils::subtract_mean(const mat &tempogram) {
-    auto ret = tempogram - mean(tempogram, 0);
-    return ret * (ret > 0);
+    auto ret = tempogram.each_row() - mean(tempogram, 0);
+    return ret % (ret > 0);
 }
 
 mat tempogram::tempogram_utils::normalize_tempogram(const mat &tempogram) {
-    vec sums = sum(tempogram, 0);
+    rowvec sums = sum(tempogram, 0);
     sums = sums + (sums == 0);
-    return tempogram / sums;
+    return tempogram.each_row() / sums;
 }
 
 uvec tempogram::tempogram_utils::argmax(const mat &tempogram) {

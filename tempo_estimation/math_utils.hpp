@@ -7,8 +7,10 @@
 
 #include "defines.h"
 #include <sigpack.h>
+#include <armadillo>
 
 using namespace sp;
+using namespace arma;
 
 namespace tempogram { namespace utils { namespace math {
 

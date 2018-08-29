@@ -51,8 +51,8 @@ vec tempogram::curve_utils::correct_curve_by_length(const vec &measurements, int
     // Delete the small segments by replaing their value to neareast outside their boundaries
     vec ret(measurements);
     for (const auto &segment : small_segments) {
-        double before = segment[0] - 1 > 0 ? measurements[segment[0] - 1] : DBL_MAX;
-        double after = measurements[segment[segment.n_rows - 1] + 1] > measurements.n_rows
+        double before = segment[0] > 0 ? measurements[segment[0] - 1] : DBL_MAX;
+        double after = segment[segment.n_rows - 1] + 1 < measurements.n_rows
                        ? measurements[segment[segment.n_rows - 1] + 1] : DBL_MAX;
         double target = fabs(ret[segment[0]] - before) > fabs(ret[segment[0]] - after) ? after : before;
         if (target == DBL_MAX) continue;

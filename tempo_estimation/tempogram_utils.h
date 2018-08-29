@@ -83,7 +83,7 @@ namespace tempogram { namespace tempogram_utils {
      * @return
      */
     mat smoothen_tempogram(const mat &tempogram, const vec &axis_lut, int temporal_unit_size = 100,
-                           float triplet_weight = 0.f);
+                           float triplet_weight = 0.8f);
 
     /**
      * Creates curve with values of the bins with max intensities from the tempogram.
