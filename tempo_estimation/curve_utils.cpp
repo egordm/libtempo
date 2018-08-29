@@ -5,41 +5,9 @@
 #include "curve_utils.h"
 #include <float.h>
 
-std::vector<uvec> tempogram::curve_utils::split_curve(const vec &curve) {
-    std::vector<uvec> ret;
-    std::vector<uword> current_section = {0};
-    double current_section_value = curve[current_section[0]];
+using namespace tempogram;
 
-    for (uword i = 1; i < curve.n_rows; ++i) {
-        if (current_section_value == curve[i]) current_section.push_back(i);
-        else {
-            ret.emplace_back(current_section);
-            current_section = {i};
-            current_section_value = curve[i];
-        }
-    }
-
-    if (!current_section.empty()) ret.emplace_back(current_section);
-
-    return ret;
-}
-
-std::vector<uvec> tempogram::curve_utils::join_adjacent_segments(const std::vector<uvec> &segments) {
-    std::vector<uvec> ret;
-
-    for (const auto &segment : segments) {
-        uword lst_idx = ret.size() - 1;
-        if (!ret.empty() && ret[lst_idx][ret[lst_idx].n_rows - 1] == segment[0] - 1) {
-            ret[lst_idx] = join_cols(ret[lst_idx], segment);
-        } else {
-            ret.push_back(segment);
-        }
-    }
-
-    return ret;
-}
-
-vec tempogram::curve_utils::correct_curve_by_length(const vec &measurements, int min_length) {
+vec curve_utils::correct_curve_by_length(const vec &measurements, int min_length) {
     // Split measurements in segments with same value
     auto segments = split_curve(measurements);
 
@@ -63,18 +31,70 @@ vec tempogram::curve_utils::correct_curve_by_length(const vec &measurements, int
     return ret;
 }
 
-vec tempogram::curve_utils::correct_curve_by_confidence(const vec &measurements, const vec &confidence,
-                                                        float threshold) {
+vec curve_utils::correct_curve_by_confidence(const vec &measurements, const vec &confidence,
+                                             float threshold) {
     vec ret(measurements);
 
-    for(uword i = 0; i < measurements.n_rows; ++i) {
+    for (uword i = 0; i < measurements.n_rows; ++i) {
         // Pick confidence by averaging the two subsequent data points if possible.
         double conf = i + 1 < measurements.n_rows ? (confidence[i] + confidence[i + 1]) / 2 : confidence[i];
-        if(conf < threshold) ret[i] = i == 0 ? -1 : ret[i - 1];
+        if (conf < threshold) ret[i] = i == 0 ? -1 : ret[i - 1];
     }
 
-    for(uword i = measurements.n_rows - 1; i >= 0; ++i) {
-        if(ret[i] == -1) ret[i] = ret[i + 1];
+    for (uword i = measurements.n_rows - 1; i >= 0; ++i) {
+        if (ret[i] == -1) ret[i] = ret[i + 1];
+    }
+
+    return ret;
+}
+
+std::vector<uvec> curve_utils::split_curve(const vec &curve) {
+    std::vector<uvec> ret;
+    std::vector<uword> current_section = {0};
+    double current_section_value = curve[current_section[0]];
+
+    for (uword i = 1; i < curve.n_rows; ++i) {
+        if (current_section_value == curve[i]) current_section.push_back(i);
+        else {
+            ret.emplace_back(current_section);
+            current_section = {i};
+            current_section_value = curve[i];
+        }
+    }
+
+    if (!current_section.empty()) ret.emplace_back(current_section);
+
+    return ret;
+}
+
+std::vector<uvec> curve_utils::join_adjacent_segments(const std::vector<uvec> &segments) {
+    std::vector<uvec> ret;
+
+    for (const auto &segment : segments) {
+        uword lst_idx = ret.size() - 1;
+        if (!ret.empty() && ret[lst_idx][ret[lst_idx].n_rows - 1] == segment[0] - 1) {
+            ret[lst_idx] = join_cols(ret[lst_idx], segment);
+        } else {
+            ret.push_back(segment);
+        }
+    }
+
+    return ret;
+}
+
+std::ostream &curve_utils::operator<<(std::ostream &os, const curve_utils::Section &section) {
+    os << "Section: start: " << section.start << " end: " << section.end << " bpm: " << section.bpm
+       << " offset: " << section.offset << " offset relative: " << (section.offset - section.start);
+    return os;
+}
+
+std::vector<curve_utils::Section>
+curve_utils::tempo_segments_to_sections(const std::vector<uvec> &segments, const vec &curve, const vec &t,
+                                        double bpm_reference) {
+    std::vector<curve_utils::Section> ret;
+
+    for (const auto &segment : segments) {
+        ret.emplace_back(t[segment[0]], t[segment[segment.n_rows - 1] + 1], curve[segment[0]] * bpm_reference);
     }
 
     return ret;

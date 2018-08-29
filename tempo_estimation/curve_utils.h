@@ -6,6 +6,8 @@
 #define PROJECT_CURVE_UTILS_H
 
 #include <armadillo>
+#include <ostream>
+#include "defines.h"
 
 using namespace arma;
 
@@ -46,6 +48,18 @@ namespace tempogram { namespace curve_utils {
      * @return
      */
     vec correct_curve_by_confidence(const vec &measurements, const vec &confidence, float threshold = 0.85);
+
+    struct Section {
+        double start, end, bpm, offset;
+
+        Section(double start, double end, double bpm, double offset = 0)
+                : start(start), end(end), bpm(bpm), offset(offset) {}
+
+        friend std::ostream &operator<<(std::ostream &os, const Section &section);
+    };
+
+    std::vector<Section> tempo_segments_to_sections(const std::vector<uvec> &segments, const vec &curve, const vec &t,
+            double bpm_reference = DEFAULT_REF_TEMPO);
 
 }}
 

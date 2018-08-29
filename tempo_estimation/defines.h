@@ -15,4 +15,6 @@
 #define M_PI_P2 (M_PI * M_PI)
 #define M_2PI (M_PI * 2)
 
+#define DEFAULT_REF_TEMPO 60
+
 #endif //PROJECT_DEFINES_H

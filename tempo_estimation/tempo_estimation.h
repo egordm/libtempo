@@ -6,6 +6,7 @@
 #define PROJECT_TEMPO_ESTIMATION_H
 
 #include <armadillo>
+#include "defines.h"
 #include "helper_functions.h"
 
 using namespace arma;
@@ -56,8 +57,8 @@ namespace tempogram {
      * @param ref_tempo: reference tempo defining the partition of BPM into tempo octaves
      * @return cyclic_tempogram, cyclic_axis
      */
-    std::tuple<mat, vec> tempogram_to_cyclic_tempogram(const cx_mat &tempogram, vec &bpm, int octave_divider = 30,
-                                                       int ref_tempo = 60);
+    std::tuple<mat, vec> tempogram_to_cyclic_tempogram(const cx_mat &tempogram, vec &bpm, int octave_divider = 120,
+                                                       int ref_tempo = DEFAULT_REF_TEMPO);
 
 
 };
