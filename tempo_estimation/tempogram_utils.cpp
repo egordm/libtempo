@@ -3,13 +3,16 @@
 //
 
 #include "tempogram_utils.h"
+#include "generic_algothms.h"
+
+using namespace tempogram::generic_algorithms;
 
 mat tempogram::tempogram_utils::subtract_mean(const mat &tempogram) {
     auto ret = tempogram - mean(tempogram, 0);
     return ret * (ret > 0);
 }
 
-mat tempogram::tempogram_utils::normalize(const mat &tempogram) {
+mat tempogram::tempogram_utils::normalize_tempogram(const mat &tempogram) {
     vec sums = sum(tempogram, 0);
     sums = sums + (sums == 0);
     return tempogram / sums;
@@ -73,4 +76,32 @@ mat tempogram::tempogram_utils::accumulate_temporal(const mat &tempogram, int te
     }
 
     return ret(span::all, span((const uword)temporal_size, ret.n_cols - temporal_size - 1));
+}
+
+mat tempogram::tempogram_utils::tempogram_include_triplets(const mat &tempogram, const vec &axis_lut, float weight) {
+    double triplet_fraction = 3 / 2.;
+    mat ret(size(tempogram));
+
+    for (uword k = 0; k < axis_lut.n_rows; ++k) {
+        // Calculate triplet height on the tempogram. TODO: assuming cyclic tempogram with 1 - 2 axis
+        double val = std::fmod((triplet_fraction * axis_lut[k]) - 1, 2.) + 1;
+        uword i = find_nearest(axis_lut, val);
+
+        // TODO instead of add. multiply by base intensity first. so 0 -> 0 and not 0 -> 1. So no ghost triplets appear
+        ret(k, span::all) = tempogram(k, span::all) + tempogram(i, span::all) * weight;
+    }
+
+    return ret;
+}
+
+mat tempogram::tempogram_utils::smoothen_tempogram(const mat &tempogram, const vec &axis_lut, int temporal_unit_size,
+                                                   float triplet_weight) {
+    mat ret = tempogram_include_triplets(tempogram, axis_lut, triplet_weight);
+    ret = accumulate_temporal(ret, temporal_unit_size);
+    ret = normalize_tempogram(subtract_mean(ret));
+    return ret;
+}
+
+vec tempogram::tempogram_utils::extract_tempo_curve(const mat &tempogram, const vec &axis_lut) {
+    return max_bucket(tempogram, axis_lut);
 }
