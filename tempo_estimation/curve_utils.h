@@ -69,8 +69,24 @@ namespace tempogram { namespace curve_utils {
     std::vector<Section> tempo_segments_to_sections(const std::vector<uvec> &segments, const vec &curve, const vec &t,
                                                     double bpm_reference = DEFAULT_REF_TEMPO);
 
+    /**
+     * Split sections into 2 smaller sections if their length surpasses the maximum. Sectionms will be appended
+     * to given list
+     * @param section
+     * @param sections
+     * @param max_section_len
+     */
     void split_section(const Section &section, std::vector<Section> &sections, double max_section_len = 60);
 
+    /**
+     * Finds the optimal offset for given section. Also tunes the bpm to a more fitting value
+     * @param novelty_curve
+     * @param section
+     * @param tempo_multiples
+     * @param feature_rate
+     * @param bpm_doubt_window
+     * @param bpm_doubt_step
+     */
     void extract_offset(const vec &novelty_curve, Section &section, const std::vector<int> &tempo_multiples,
                         int feature_rate, float bpm_doubt_window = 2, double bpm_doubt_step = 0.1);
 
