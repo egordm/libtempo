@@ -27,7 +27,9 @@ int main() {
     tempo_curve = curve_utils::correct_curve_by_length(tempo_curve, 40);
 
     auto tempo_segments = curve_utils::split_curve(tempo_curve);
-    auto tempo_sections = curve_utils::tempo_segments_to_sections(tempo_segments, tempo_curve, std::get<2>(tempogram_tpl),DEFAULT_REF_TEMPO );
+    auto tempo_sections_tmp = curve_utils::tempo_segments_to_sections(tempo_segments, tempo_curve, std::get<2>(tempogram_tpl),DEFAULT_REF_TEMPO );
+    std::vector<curve_utils::Section> tempo_sections;
+    for(const auto &section : tempo_sections_tmp) curve_utils::split_section(section, tempo_sections, 40);
 
 
     return 0;

@@ -58,8 +58,18 @@ namespace tempogram { namespace curve_utils {
         friend std::ostream &operator<<(std::ostream &os, const Section &section);
     };
 
+    /**
+     * Converts secgents with indices of a curve to section which holds all the data
+     * @param segments
+     * @param curve
+     * @param t
+     * @param bpm_reference
+     * @return
+     */
     std::vector<Section> tempo_segments_to_sections(const std::vector<uvec> &segments, const vec &curve, const vec &t,
             double bpm_reference = DEFAULT_REF_TEMPO);
+
+    void split_section(const Section &section, std::vector<Section> &sections, double max_section_len = 60);
 
 }}
 

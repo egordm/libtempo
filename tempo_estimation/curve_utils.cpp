@@ -99,3 +99,20 @@ curve_utils::tempo_segments_to_sections(const std::vector<uvec> &segments, const
 
     return ret;
 }
+
+void curve_utils::split_section(const curve_utils::Section &section, std::vector<curve_utils::Section> &sections,
+                                double max_section_len) {
+    double length = section.end - section.start;
+    if(length < max_section_len) {
+        sections.push_back(section);
+        return;
+    }
+
+    Section part1 = section;
+    part1.end = section.start + length/2;
+    split_section(part1, sections, max_section_len);
+
+    Section part2 = section;
+    part2.start = section.start + length/2;
+    split_section(part2, sections, max_section_len);
+}
