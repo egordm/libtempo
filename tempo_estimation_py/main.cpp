@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
 #include "tempogram_wrapper.hpp"
+#include <curve_utils.h>
 
 namespace py = pybind11;
 
@@ -158,4 +159,13 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
           py::arg("octave_divider") = 120,
           py::arg("ref_tempo") = 60
     );
+
+    py::class_<tempogram::curve_utils::Section>(m, "Section")
+            .def(py::init<double, double, double, double>())
+            .def_readwrite("start", &tempogram::curve_utils::Section::start)
+            .def_readwrite("end", &tempogram::curve_utils::Section::end)
+            .def_readwrite("bpm", &tempogram::curve_utils::Section::bpm)
+            .def_readwrite("offset", &tempogram::curve_utils::Section::offset);
+
+    //m.def("cyclic_tempogram_to_tempo_curve", )
 };
