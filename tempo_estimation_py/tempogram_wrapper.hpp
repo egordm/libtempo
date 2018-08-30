@@ -8,6 +8,10 @@
 #include "pyarma.hpp"
 #include <tempo_estimation.h>
 #include <helper_functions.h>
+#include <tempogram_utils.h>
+#include <curve_utils.h>
+
+using namespace tempogram;
 
 namespace tempogram_wrapper {
     inline std::tuple<py::array, py::array, py::array>
@@ -69,6 +73,56 @@ namespace tempogram_wrapper {
 
         return std::make_tuple(arma_to_py(std::get<0>(ret)), arma_to_py(std::get<1>(ret)));
     }
+
+    inline py::array
+    smoothen_tempogram(pyarr_d tempogram_np, pyarr_d axis_lut_np, int temporal_unit_size = 100,
+                       float triplet_weight = 0.8f) {
+        arma::mat tempogram = py_to_arma_mat<double>(tempogram_np);
+        arma::vec axis_lut = py_to_arma_vec<double>(axis_lut_np);
+
+        auto smooth_tempogram = tempogram::tempogram_utils::smoothen_tempogram(tempogram, axis_lut, temporal_unit_size,
+                                                                               triplet_weight);
+        return arma_to_py(smooth_tempogram);
+    }
+
+    inline py::array
+    tempogram_to_tempo_curve_corrected(pyarr_d tempogram_np, pyarr_d axis_lut_np, int min_length = 40) {
+        arma::mat tempogram = py_to_arma_mat<double>(tempogram_np);
+        arma::vec axis_lut = py_to_arma_vec<double>(axis_lut_np);
+
+        auto tempo_curve = tempogram_utils::extract_tempo_curve(tempogram, axis_lut);
+        tempo_curve = curve_utils::correct_curve_by_length(tempo_curve, min_length);
+
+        return arma_to_py(tempo_curve);
+    }
+
+    inline std::vector<curve_utils::Section>
+    curve_to_sections(pyarr_d curve_np, pyarr_d t_np, double bpm_reference = DEFAULT_REF_TEMPO,
+                      double max_section_size = 60) {
+        arma::vec curve = py_to_arma_vec<double>(curve_np);
+        arma::vec t = py_to_arma_vec<double>(t_np);
+
+        auto segments = curve_utils::split_curve(curve);
+        auto sections_tmp = curve_utils::tempo_segments_to_sections(segments, curve, t, bpm_reference);
+        std::vector<curve_utils::Section> sections;
+        for (const auto &section : sections_tmp) curve_utils::split_section(section, sections, max_section_size);
+
+        return sections;
+    }
+
+    inline std::vector<curve_utils::Section>
+    sections_extract_offset(pyarr_d novelty_curve_np, std::vector<curve_utils::Section> sections,
+                            const std::vector<int> &tempo_multiples, int feature_rate, float bpm_doubt_window = 2,
+                            double bpm_doubt_step = 0.1) {
+        arma::vec novelty_curve = py_to_arma_vec<double>(novelty_curve_np);
+
+        for(auto &section : sections) {
+            curve_utils::extract_offset(novelty_curve, section,tempo_multiples, feature_rate, bpm_doubt_window, bpm_doubt_step);
+        }
+
+        return sections;
+    }
+
 }
 
 
