@@ -65,6 +65,7 @@ CMakeLists.txt.user*
 cmake-build*
 docs/_build
 docs/_generate
+!docs/Makefile
 
 dist/
 
