@@ -3,9 +3,11 @@
 //
 
 #include "curve_utils.h"
+#include "signal_utils.h"
 #include <float.h>
 
 using namespace tempogram;
+using namespace tempogram::signal_utils;
 
 vec curve_utils::correct_curve_by_length(const vec &measurements, int min_length) {
     // Split measurements in segments with same value
@@ -103,16 +105,62 @@ curve_utils::tempo_segments_to_sections(const std::vector<uvec> &segments, const
 void curve_utils::split_section(const curve_utils::Section &section, std::vector<curve_utils::Section> &sections,
                                 double max_section_len) {
     double length = section.end - section.start;
-    if(length < max_section_len) {
+    if (length < max_section_len) {
         sections.push_back(section);
         return;
     }
 
     Section part1 = section;
-    part1.end = section.start + length/2;
+    part1.end = section.start + length / 2;
     split_section(part1, sections, max_section_len);
 
     Section part2 = section;
-    part2.start = section.start + length/2;
+    part2.start = section.start + length / 2;
     split_section(part2, sections, max_section_len);
+}
+
+void curve_utils::extract_offset(const vec &novelty_curve, curve_utils::Section &section,
+                                 const std::vector<int> &tempo_multiples, int feature_rate, float bpm_doubt_window,
+                                 double bpm_doubt_step) {
+    int start = static_cast<int>(section.start * feature_rate);
+    int end = static_cast<int>(section.end * feature_rate);
+    int window_length = end - start;
+
+    double ret_offset = 0;
+    double ret_bpm = 0;
+    double ret_offset_magnitude = -DBL_MAX;
+
+    // TODO: use multithread. gotta make a list to fill before comparing
+    double max_bpm = section.bpm + bpm_doubt_window / 2;
+    for (double bpm = section.bpm - bpm_doubt_window / 2;
+         bpm < max_bpm; bpm += bpm_doubt_step) { // NOLINT(cert-flp30-c)
+        // Bar has 4 qtr notes which are the definition of bpm
+        int samples_per_bar = (int) ceil(60. / bpm * feature_rate) * 4;
+
+        std::vector<std::tuple<vec, vec>> pulses; // Create a list fo pulses for given bpm multiples
+        pulses.reserve(tempo_multiples.size());
+        for (const int &multiple : tempo_multiples) {
+            pulses.push_back(generate_pulse(bpm * multiple, window_length + samples_per_bar, feature_rate));
+        }
+
+        vec roi = novelty_curve(span((uword)start, (uword)end - 1));
+        for(int i = 0; i < samples_per_bar; ++i) {
+            double magnitude = 0;
+
+            for(const auto &pulse : pulses) {
+                vec co = roi % std::get<0>(pulse)(span((uword)i, (uword)i + window_length - 1));
+                magnitude += sum(co % (co > 0));
+            }
+
+            if(magnitude > ret_offset_magnitude) {
+                ret_offset_magnitude = magnitude;
+                ret_offset = i;
+                ret_bpm = bpm;
+            }
+        }
+    }
+
+    section.offset = ret_offset / feature_rate + section.start;
+    section.bpm = ret_bpm;
+
 }

@@ -67,9 +67,12 @@ namespace tempogram { namespace curve_utils {
      * @return
      */
     std::vector<Section> tempo_segments_to_sections(const std::vector<uvec> &segments, const vec &curve, const vec &t,
-            double bpm_reference = DEFAULT_REF_TEMPO);
+                                                    double bpm_reference = DEFAULT_REF_TEMPO);
 
     void split_section(const Section &section, std::vector<Section> &sections, double max_section_len = 60);
+
+    void extract_offset(const vec &novelty_curve, Section &section, const std::vector<int> &tempo_multiples,
+                        int feature_rate, float bpm_doubt_window = 2, double bpm_doubt_step = 0.1);
 
 }}
 
