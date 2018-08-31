@@ -5,6 +5,7 @@
 #include <curve_utils.h>
 #include <generic_algothms.h>
 #include <defines.h>
+#include <signal_utils.h>
 
 using namespace std::chrono;
 using namespace tempogram;
@@ -12,7 +13,14 @@ using namespace tempogram;
 int main() {
     auto audio = tempogram::audio::open_audio("../../roze.wav");
 
-    mat reduced_sig = mean(audio.data, 0);
+    auto click = signal_utils::generate_click_track({1,2,3,4,5,6,7,8,9,9.5},10 * audio.sr,audio.sr);
+    mat audio_dat(1, click.n_rows);
+    audio_dat(0, span::all) = click.t();
+
+    audio.data = audio_dat;
+    audio.save("../../click.wav");
+
+    /*mat reduced_sig = mean(audio.data, 0);
     vec signal = reduced_sig.row(0).t();
 
     auto nov_cv = tempogram_processing::audio_to_novelty_curve(signal, audio.sr);
@@ -38,7 +46,7 @@ int main() {
 
     for(auto &section : tempo_sections) {
         std::cout << section << std::endl;
-    }
+    }*/
 
     return 0;
 }

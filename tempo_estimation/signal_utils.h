@@ -19,6 +19,10 @@ namespace tempogram { namespace signal_utils {
      * @return
      */
     std::tuple<vec, vec> generate_pulse(double bpm, int window_length, int feature_rate); // TODO: implement in compute_fourier_coefficients
+
+    vec generate_click(int sr = 22050, double duration = 0.1, double freq = 1000.0);
+
+    vec generate_click_track(const std::vector<float> &positions, int length, int sr = 22050);
 }}
 
 
