@@ -179,3 +179,14 @@ void curve_utils::extract_offset(const vec &novelty_curve, curve_utils::Section 
     section.bpm = std::get<2>(candidate);
 
 }
+
+void curve_utils::correct_offset(curve_utils::Section &section, int smallest_faction_shift) {
+    double offset = section.offset - section.start;
+    double bar_len = 60. / section.bpm * 4;
+    double fraction_note_len = bar_len / smallest_faction_shift;
+
+    if(offset < 0) offset += ceil(fabs(offset) / bar_len) * bar_len;
+    offset = std::fmod(offset, fraction_note_len);
+
+    section.offset = section.start + offset;
+}

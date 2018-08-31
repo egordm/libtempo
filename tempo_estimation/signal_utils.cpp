@@ -35,3 +35,19 @@ vec tempogram::signal_utils::generate_click_track(const std::vector<float> &posi
 
     return ret;
 }
+
+vec tempogram::signal_utils::generate_click_track(double bpm, double offset, int note_fraction, int length, int sr) {
+    std::vector<float> positions;
+    float end = length / (float)sr;
+    auto position = (float)offset;
+
+    double bar_len = 60. / bpm * 4;
+    double fraction_note_len = bar_len / note_fraction;
+
+    while(position < end) {
+        positions.push_back(position);
+        position += fraction_note_len;
+    }
+
+    return generate_click_track(positions, length, sr);
+}

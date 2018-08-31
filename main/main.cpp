@@ -13,14 +13,14 @@ using namespace tempogram;
 int main() {
     auto audio = tempogram::audio::open_audio("../../roze.wav");
 
-    auto click = signal_utils::generate_click_track({1,2,3,4,5,6,7,8,9,9.5},10 * audio.sr,audio.sr);
+    /*auto click = signal_utils::generate_click_track({1,2,3,4,5,6,7,8,9,9.5},10 * audio.sr,audio.sr);
     mat audio_dat(1, click.n_rows);
     audio_dat(0, span::all) = click.t();
 
     audio.data = audio_dat;
-    audio.save("../../click.wav");
+    audio.save("../../click.wav");*/
 
-    /*mat reduced_sig = mean(audio.data, 0);
+    mat reduced_sig = mean(audio.data, 0);
     vec signal = reduced_sig.row(0).t();
 
     auto nov_cv = tempogram_processing::audio_to_novelty_curve(signal, audio.sr);
@@ -42,11 +42,14 @@ int main() {
 
     for(auto &section : tempo_sections) {
         curve_utils::extract_offset(std::get<0>(nov_cv), section, {1, 2, 4}, std::get<1>(nov_cv));
+        curve_utils::correct_offset(section, 4);
     }
 
     for(auto &section : tempo_sections) {
         std::cout << section << std::endl;
-    }*/
+    }
+
+
 
     return 0;
 }
