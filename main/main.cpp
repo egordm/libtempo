@@ -1,6 +1,6 @@
 #include <iostream>
 #include <audio_processing.h>
-#include <tempo_estimation.h>
+#include <tempogram_processing.h>
 #include <tempogram_utils.h>
 #include <curve_utils.h>
 #include <generic_algothms.h>

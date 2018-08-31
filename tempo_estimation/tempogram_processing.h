@@ -11,7 +11,7 @@
 
 using namespace arma;
 
-namespace tempogram {
+namespace tempogram { namespace tempogram_processing {
     /**
      * Computes a novelty curve (onset detection function) for the input audio signal. This implementation is a
      * variant of the widely used spectral flux method with additional bandwise processing and a logarithmic intensity
@@ -61,7 +61,7 @@ namespace tempogram {
                                                        int ref_tempo = DEFAULT_REF_TEMPO);
 
 
-};
+}};
 
 
 #endif //PROJECT_TEMPO_ESTIMATION_H

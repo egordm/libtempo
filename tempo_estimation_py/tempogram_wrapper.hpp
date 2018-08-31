@@ -6,7 +6,7 @@
 #define PROJECT_TEMPOGRAM_WRAPPER_H
 
 #include "pyarma.hpp"
-#include <tempo_estimation.h>
+#include <tempogram_processing.h>
 #include <helper_functions.h>
 #include <tempogram_utils.h>
 #include <curve_utils.h>
@@ -19,8 +19,8 @@ namespace tempogram_wrapper {
                                    int hop_length) {
         arma::vec novelty_curve = py_to_arma_vec<double>(novelty_curve_np);
         arma::vec bpm = py_to_arma_vec<double>(bpm_np);
-        auto ret = tempogram::novelty_curve_to_tempogram_dft(novelty_curve, bpm, feature_rate, tempo_window,
-                                                             hop_length);
+        auto ret = tempogram_processing::novelty_curve_to_tempogram_dft(novelty_curve, bpm, feature_rate, tempo_window,
+                                                                        hop_length);
 
         return std::make_tuple(arma_to_py(std::get<0>(ret)),
                                arma_to_py(std::get<1>(ret)),
@@ -38,9 +38,9 @@ namespace tempogram_wrapper {
                            double compression_c = 1000, bool log_compression = true,
                            int resample_feature_rate = 200) {
         arma::vec signal = py_to_arma_vec<double>(signal_np);
-        auto ret = tempogram::audio_to_novelty_curve(signal, sr, window_length, hop_length, compression_c,
-                                                     log_compression,
-                                                     resample_feature_rate);
+        auto ret = tempogram_processing::audio_to_novelty_curve(signal, sr, window_length, hop_length, compression_c,
+                                                                log_compression,
+                                                                resample_feature_rate);
 
         return std::make_tuple(arma_to_py(std::get<0>(ret)), std::get<1>(ret));
     };
@@ -50,10 +50,10 @@ namespace tempogram_wrapper {
         arma::vec signal = py_to_arma_vec<double>(signal_np);
         arma::vec bpm = py_to_arma_vec<double>(bpm_np);
 
-        auto nov_cv = tempogram::audio_to_novelty_curve(signal, sr);
-        auto ret = tempogram::novelty_curve_to_tempogram_dft(std::get<0>(nov_cv), bpm, std::get<1>(nov_cv),
-                                                             tempo_window,
-                                                             hop_length);
+        auto nov_cv = tempogram_processing::audio_to_novelty_curve(signal, sr);
+        auto ret = tempogram_processing::novelty_curve_to_tempogram_dft(std::get<0>(nov_cv), bpm, std::get<1>(nov_cv),
+                                                                        tempo_window,
+                                                                        hop_length);
         auto normalized_tempogram = tempogram::normalize_feature(std::get<0>(ret), 2, 0.0001);
 
         return std::make_tuple(
@@ -69,7 +69,7 @@ namespace tempogram_wrapper {
         arma::cx_mat tempogram = py_to_arma_mat<cx_double>(tempogram_np);
         arma::vec bpm = py_to_arma_vec<double>(bpm_np);
 
-        auto ret = tempogram::tempogram_to_cyclic_tempogram(tempogram, bpm, octave_divider, ref_tempo);
+        auto ret = tempogram_processing::tempogram_to_cyclic_tempogram(tempogram, bpm, octave_divider, ref_tempo);
 
         return std::make_tuple(arma_to_py(std::get<0>(ret)), arma_to_py(std::get<1>(ret)));
     }
@@ -116,8 +116,9 @@ namespace tempogram_wrapper {
                             double bpm_doubt_step = 0.1) {
         arma::vec novelty_curve = py_to_arma_vec<double>(novelty_curve_np);
 
-        for(auto &section : sections) {
-            curve_utils::extract_offset(novelty_curve, section,tempo_multiples, feature_rate, bpm_doubt_window, bpm_doubt_step);
+        for (auto &section : sections) {
+            curve_utils::extract_offset(novelty_curve, section, tempo_multiples, feature_rate, bpm_doubt_window,
+                                        bpm_doubt_step);
         }
 
         return sections;
