@@ -129,14 +129,18 @@ void curve_utils::extract_offset(const vec &novelty_curve, curve_utils::Section 
     int end = static_cast<int>(section.end * feature_rate);
     int window_length = end - start;
 
-    double ret_offset = 0;
-    double ret_bpm = 0;
-    double ret_offset_magnitude = -DBL_MAX;
+    double min_bpm = section.bpm + bpm_doubt_window / 2;
+    int doubt_bpm_step_count = static_cast<int>(bpm_doubt_window / bpm_doubt_step);
+    std::vector<std::tuple<double, double, double>> candidates;
+    candidates.resize(static_cast<unsigned long long int>(doubt_bpm_step_count));
 
-    // TODO: use multithread. gotta make a list to fill before comparing
-    double max_bpm = section.bpm + bpm_doubt_window / 2;
-    for (double bpm = section.bpm - bpm_doubt_window / 2;
-         bpm < max_bpm; bpm += bpm_doubt_step) { // NOLINT(cert-flp30-c)
+#pragma omp parallel for
+    for (int b = 0; b < doubt_bpm_step_count; ++b) {
+        double bpm = min_bpm + b * bpm_doubt_step;
+        double b_offset = 0;
+        double b_bpm = 0;
+        double b_offset_magnitude = -DBL_MAX;
+
         // Bar has 4 qtr notes which are the definition of bpm
         int samples_per_bar = (int) ceil(60. / bpm * feature_rate) * 4;
 
@@ -155,15 +159,23 @@ void curve_utils::extract_offset(const vec &novelty_curve, curve_utils::Section 
                 magnitude += sum(co % (co > 0));
             }
 
-            if (magnitude > ret_offset_magnitude) {
-                ret_offset_magnitude = magnitude;
-                ret_offset = i;
-                ret_bpm = bpm;
+            if (magnitude > b_offset_magnitude) {
+                b_offset_magnitude = magnitude;
+                b_offset = i;
+                b_bpm = bpm;
             }
         }
+
+        candidates[b] = std::make_tuple(b_offset_magnitude, b_offset, b_bpm);
     }
 
-    section.offset = ret_offset / feature_rate + section.start;
-    section.bpm = ret_bpm;
+    const auto &candidate = *std::max_element(candidates.begin(), candidates.end(),
+                                              [](const std::tuple<double, double, double> &l,
+                                                 const std::tuple<double, double, double> &r) {
+                                                  return std::get<0>(l) < std::get<0>(r);
+                                              });
+
+    section.offset = std::get<1>(candidate) / feature_rate + section.start;
+    section.bpm = std::get<2>(candidate);
 
 }
