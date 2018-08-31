@@ -95,8 +95,11 @@ curve_utils::tempo_segments_to_sections(const std::vector<uvec> &segments, const
                                         double bpm_reference) {
     std::vector<curve_utils::Section> ret;
 
+    ret.reserve(segments.size());
     for (const auto &segment : segments) {
-        ret.emplace_back(t[segment[0]], t[segment[segment.n_rows - 1] + 1], curve[segment[0]] * bpm_reference);
+        double end = (segment[segment.n_rows - 1] + 1 < t.n_rows)
+                     ? t[segment[segment.n_rows - 1] + 1] : t[segment[segment.n_rows - 1]];
+        ret.emplace_back(t[segment[0]], end, curve[segment[0]] * bpm_reference);
     }
 
     return ret;
@@ -143,16 +146,16 @@ void curve_utils::extract_offset(const vec &novelty_curve, curve_utils::Section 
             pulses.push_back(generate_pulse(bpm * multiple, window_length + samples_per_bar, feature_rate));
         }
 
-        vec roi = novelty_curve(span((uword)start, (uword)end - 1));
-        for(int i = 0; i < samples_per_bar; ++i) {
+        vec roi = novelty_curve(span((uword) start, (uword) end - 1));
+        for (int i = 0; i < samples_per_bar; ++i) {
             double magnitude = 0;
 
-            for(const auto &pulse : pulses) {
-                vec co = roi % std::get<0>(pulse)(span((uword)i, (uword)i + window_length - 1));
+            for (const auto &pulse : pulses) {
+                vec co = roi % std::get<0>(pulse)(span((uword) i, (uword) i + window_length - 1));
                 magnitude += sum(co % (co > 0));
             }
 
-            if(magnitude > ret_offset_magnitude) {
+            if (magnitude > ret_offset_magnitude) {
                 ret_offset_magnitude = magnitude;
                 ret_offset = i;
                 ret_bpm = bpm;

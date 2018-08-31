@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "tempogram_wrapper.hpp"
 #include <curve_utils.h>
 
@@ -167,5 +168,44 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
             .def_readwrite("bpm", &tempogram::curve_utils::Section::bpm)
             .def_readwrite("offset", &tempogram::curve_utils::Section::offset);
 
-    //m.def("cyclic_tempogram_to_tempo_curve", )
+    m.def("smoothen_tempogram", &tempogram_wrapper::smoothen_tempogram,
+          R"pbdoc(
+
+          )pbdoc",
+          py::arg("tempogram"),
+          py::arg("axis_lut"),
+          py::arg("temporal_unit_size") = 100,
+          py::arg("triplet_weight") = 0.8f
+    );
+
+    m.def("tempogram_to_tempo_curve_corrected", &tempogram_wrapper::tempogram_to_tempo_curve_corrected,
+          R"pbdoc(
+
+          )pbdoc",
+          py::arg("tempogram"),
+          py::arg("axis_lut"),
+          py::arg("min_length") = 40
+    );
+
+    m.def("curve_to_sections", &tempogram_wrapper::curve_to_sections,
+          R"pbdoc(
+
+          )pbdoc",
+          py::arg("curve"),
+          py::arg("t"),
+          py::arg("bpm_reference") = DEFAULT_REF_TEMPO,
+          py::arg("max_section_size") = 60
+    );
+
+    m.def("sections_extract_offset", &tempogram_wrapper::sections_extract_offset,
+          R"pbdoc(
+
+          )pbdoc",
+          py::arg("novelty_curve"),
+          py::arg("sections"),
+          py::arg("tempo_multiples"),
+          py::arg("feature_rate"),
+          py::arg("bpm_doubt_window") = 2,
+          py::arg("bpm_doubt_step") = 0.1
+    );
 };
