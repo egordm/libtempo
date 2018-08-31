@@ -2,7 +2,6 @@
 // Created by egordm on 28-7-2018.
 //
 
-#include <sndfile.h>
 #include "audio_processing.h"
 
 tempogram::audio::AudioFile tempogram::audio::open_audio(const char *path) {
@@ -22,4 +21,23 @@ tempogram::audio::AudioFile tempogram::audio::open_audio(const char *path) {
 
     sf_close(sndfile);
     return ret;
+}
+
+void tempogram::audio::AudioFile::save(const char *path, int format) {
+    SF_INFO sfinfo;
+    sfinfo.channels = (int) data.n_rows;
+    sfinfo.samplerate = sr;
+    sfinfo.format = format;
+
+    SNDFILE *sndfile = sf_open(path, SFM_WRITE, &sfinfo);
+
+    if (sndfile == nullptr) {
+        std::stringstream ss;
+        ss << "Cant open audio file: " << path << endl;
+        throw std::runtime_error(ss.str());
+    }
+
+    sf_count_t count = sf_write_double(sndfile, data.memptr(), data.size());
+    sf_write_sync(sndfile);
+    sf_close(sndfile);
 }

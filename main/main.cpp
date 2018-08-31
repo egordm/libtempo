@@ -11,6 +11,7 @@ using namespace tempogram;
 
 int main() {
     auto audio = tempogram::audio::open_audio("../../roze.wav");
+
     mat reduced_sig = mean(audio.data, 0);
     vec signal = reduced_sig.row(0).t();
 
