@@ -129,7 +129,7 @@ void curve_utils::extract_offset(const vec &novelty_curve, curve_utils::Section 
     int end = static_cast<int>(section.end * feature_rate);
     int window_length = end - start;
 
-    double min_bpm = section.bpm + bpm_doubt_window / 2;
+    double min_bpm = section.bpm - bpm_doubt_window / 2;
     int doubt_bpm_step_count = static_cast<int>(bpm_doubt_window / bpm_doubt_step);
     std::vector<std::tuple<double, double, double>> candidates;
     candidates.resize(static_cast<unsigned long long int>(doubt_bpm_step_count));
