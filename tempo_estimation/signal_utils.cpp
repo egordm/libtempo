@@ -20,7 +20,7 @@ vec tempogram::signal_utils::generate_click(int sr, double duration, double freq
     return click;
 }
 
-vec tempogram::signal_utils::generate_click_track(const std::vector<float> &positions, int length, int sr) {
+vec tempogram::signal_utils::generate_click_track(const std::vector<float> &positions, unsigned long length, int sr) {
     vec ret(static_cast<const uword>(length));
     vec click = generate_click(sr);
 
@@ -36,7 +36,7 @@ vec tempogram::signal_utils::generate_click_track(const std::vector<float> &posi
     return ret;
 }
 
-vec tempogram::signal_utils::generate_click_track(double bpm, double offset, int note_fraction, int length, int sr) {
+vec tempogram::signal_utils::generate_click_track(double bpm, double offset, int note_fraction, unsigned long length, int sr) {
     std::vector<float> positions;
     float end = length / (float)sr;
     auto position = (float)offset;

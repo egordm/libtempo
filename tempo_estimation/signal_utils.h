@@ -22,9 +22,9 @@ namespace tempogram { namespace signal_utils {
 
     vec generate_click(int sr = 22050, double duration = 0.1, double freq = 1000.0);
 
-    vec generate_click_track(const std::vector<float> &positions, int length, int sr = 22050);
+    vec generate_click_track(const std::vector<float> &positions, unsigned long length, int sr = 22050);
 
-    vec generate_click_track(double bpm, double offset, int note_fraction, int length, int sr = 22050);
+    vec generate_click_track(double bpm, double offset, int note_fraction, unsigned long length, int sr = 22050);
 }}
 
 

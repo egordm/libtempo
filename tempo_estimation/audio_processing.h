@@ -14,10 +14,12 @@ namespace tempogram { namespace audio {
     struct AudioFile {
         mat data;
         int sr;
+        int format;
 
-        AudioFile(const mat &data, int sr) : data(data), sr(sr) {}
+        AudioFile(const mat &data, int sr, int format = SF_FORMAT_WAV | SF_FORMAT_PCM_24)
+                : data(data), sr(sr), format(format) {}
 
-        void save(const char *path, int format = SF_FORMAT_WAV | SF_FORMAT_PCM_24);
+        void save(const char *path);
     };
 
     AudioFile open_audio(const char *path);

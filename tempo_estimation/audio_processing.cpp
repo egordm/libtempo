@@ -17,13 +17,13 @@ tempogram::audio::AudioFile tempogram::audio::open_audio(const char *path) {
     mat data((const uword)sfinfo.channels, (const uword)sfinfo.frames);
     sf_read_double(sndfile, data.memptr(), sfinfo.channels * sfinfo.frames);
 
-    tempogram::audio::AudioFile ret(data, sfinfo.samplerate);
+    tempogram::audio::AudioFile ret(data, sfinfo.samplerate, sfinfo.format);
 
     sf_close(sndfile);
     return ret;
 }
 
-void tempogram::audio::AudioFile::save(const char *path, int format) {
+void tempogram::audio::AudioFile::save(const char *path) {
     SF_INFO sfinfo;
     sfinfo.channels = (int) data.n_rows;
     sfinfo.samplerate = sr;
