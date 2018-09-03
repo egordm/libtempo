@@ -62,6 +62,8 @@ CMakeLists.txt.user*
 *.wav
 *.flac
 *.npd
+data/*
+!*/.gitignore
 
 # Python package
 cmake-build*

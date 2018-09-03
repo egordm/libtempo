@@ -9,6 +9,17 @@
 #include "constants.h"
 #include "present_utils.h"
 
+#if __cplusplus < 201703L
+
+#include <experimental/filesystem>
+
+namespace fs = std::experimental::filesystem;
+
+#else
+#include <filesystem>
+namespace fs = std::filesystem;
+#endif
+
 using namespace std::chrono;
 using namespace tempogram;
 using namespace args;
@@ -82,17 +93,19 @@ int main(int argc, char **argv) {
             (ct_y_axis, normalized_tempogram, bpm, get(octave_divider_arg), get(ref_tempo_arg));
 
     std::cout << " - Preprocessing and cleaning tempogram" << std::endl;
-    t = t(span((uword) get(smooth_length_arg), t.n_rows - 1));
+    vec t_smooth = t(span((uword) get(smooth_length_arg), t.n_rows - 1));
+    int smooth_length = get(smooth_length_arg);
     auto smooth_tempogram = tempogram_utils::smoothen_tempogram
-            (cyclic_tempgram, ct_y_axis, get(smooth_length_arg), get(triplet_weigh_arg));
+            (cyclic_tempgram, ct_y_axis, smooth_length, get(triplet_weigh_arg));
 
     std::cout << " - Tempo peaks extraction" << std::endl;
     auto tempo_curve = tempogram_utils::extract_tempo_curve(smooth_tempogram, ct_y_axis);
-    tempo_curve = curve_utils::correct_curve_by_length(tempo_curve, get(min_section_length_arg));
+    int min_section_length = get(min_section_length_arg);
+    tempo_curve = curve_utils::correct_curve_by_length(tempo_curve, min_section_length);
 
     auto tempo_segments = curve_utils::split_curve(tempo_curve);
     auto tempo_sections_tmp = curve_utils::tempo_segments_to_sections
-            (tempo_segments, tempo_curve, t, get(ref_tempo_arg));
+            (tempo_segments, tempo_curve, t_smooth, get(ref_tempo_arg));
 
     std::vector<curve_utils::Section> tempo_sections;
     for (const auto &section : tempo_sections_tmp)
@@ -123,11 +136,21 @@ int main(int argc, char **argv) {
         std::cout << std::endl << "Writing results to a file" << std::endl;
         std::string base_file = audio.path;
         split_ext(base_file);
+        base_file += "/";
+        fs::create_directories(base_file.c_str());
 
-        write_matrix_data(base_file + "_novelty_curve.npd", novelty_curve, (char) (TYPE_DOUBLE));
-        write_matrix_data(base_file + "_tempogram.npd", tempogram, (char) (TYPE_DOUBLE | TYPE_COMPLEX));
-        write_matrix_data(base_file + "_t.npd", t, (char) (TYPE_DOUBLE));
-        write_matrix_data(base_file + "_bpm.npd", bpm, (char) (TYPE_DOUBLE));
+        write_matrix_data(base_file + "novelty_curve.npd", novelty_curve, (char) (TYPE_DOUBLE), (char *) &feature_rate,
+                          sizeof(feature_rate));
+        write_matrix_data(base_file + "tempogram.npd", tempogram, (char) (TYPE_DOUBLE | TYPE_COMPLEX));
+        write_matrix_data(base_file + "t.npd", t, (char) (TYPE_DOUBLE));
+        write_matrix_data(base_file + "bpm.npd", bpm, (char) (TYPE_DOUBLE));
+        write_matrix_data(base_file + "tempogram_cyclic.npd", cyclic_tempgram, (char) (TYPE_DOUBLE));
+        write_matrix_data(base_file + "ct_y_axis.npd", ct_y_axis, (char) (TYPE_DOUBLE));
+        write_matrix_data(base_file + "smooth_tempogram.npd", smooth_tempogram, (char) (TYPE_DOUBLE),
+                          (char *) &smooth_length, sizeof(smooth_length));
+        write_matrix_data(base_file + "t_smooth.npd", t_smooth, (char) (TYPE_DOUBLE));
+        write_matrix_data(base_file + "tempo_curve.npd", tempo_curve, (char) (TYPE_DOUBLE),
+                          (char *) &min_section_length, sizeof(min_section_length));
     }
 
     if (osu_arg) {
