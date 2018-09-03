@@ -61,6 +61,7 @@ CMakeLists.txt.user*
 
 *.wav
 *.flac
+*.npd
 
 # Python package
 cmake-build*

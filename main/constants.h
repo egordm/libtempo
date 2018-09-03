@@ -19,6 +19,10 @@
 #define GENERATE_CLICK_TRACK_DESC "Wether or not a click track should be generated"
 #define CLICK_TRACK_SUBDIVISION_DESC "Click subdivision for the click track"
 #define OSU_DESC "Wether or not to generate tempo data in osu format."
+#define VIZ_DESC "Saves all the generated structures to a binary fromat for manual visualization."
 #define AUDIO_DESC "Audio file to extract tempo of."
+
+#define TYPE_DOUBLE 0x1
+#define TYPE_COMPLEX 0x16
 
 #endif //MAIN_DEFINES_H

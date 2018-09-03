@@ -12,6 +12,7 @@
 using namespace std::chrono;
 using namespace tempogram;
 using namespace args;
+using namespace present_utils;
 
 int main(int argc, char **argv) {
     ArgumentParser parser(
@@ -36,6 +37,7 @@ int main(int argc, char **argv) {
     ValueFlag<int> click_track_subdivision_arg(parser, "click_track_subdivision", CLICK_TRACK_SUBDIVISION_DESC,
                                                {"click_track_subdivision"}, 4);
     Flag osu_arg(parser, "osu", OSU_DESC, {"osu"});
+    Flag viz_arg(parser, "viz", VIZ_DESC, {"viz", 'v'});
     Positional<std::string> audio_arg(parser, "audio", AUDIO_DESC);
 
     try {
@@ -111,37 +113,22 @@ int main(int argc, char **argv) {
 
     // Save audio click track
     if (get(generate_click_track_arg)) {
-        std::string output_path = get(audio_arg);
-        std::string ext;
-        size_t ext_pos = output_path.find_last_of('.');
-        if (ext_pos != std::string::npos) {
-            ext = output_path.substr(ext_pos, output_path.size() - ext_pos);
-            output_path = output_path.substr(0, ext_pos);
-        }
-
-        output_path += "_processed" + ext;
-
-        std::cout << "Writing click track: " << output_path << std::endl;
-
-        vec click_track(audio.data.n_cols);
-        for (auto &section : tempo_sections) {
-            auto len = (unsigned long) ((section.end - section.start) * audio.sr);
-            vec clicks = signal_utils::generate_click_track(section.bpm, section.offset - section.start,
-                                                            get(click_track_subdivision_arg), len, audio.sr);
-
-            auto start = (unsigned long) (section.start * audio.sr);
-            click_track(span(start, start + clicks.n_rows - 1)) = clicks;
-        }
-
-        for (int c = 0; c < audio.data.n_rows; ++c) {
-            audio.data(c, span::all) = clamp(audio.data(c, span::all) + click_track.t(), -1, 1);
-        }
-
-        audio.save(output_path.c_str());
+        save_click_track(audio, tempo_sections, get(click_track_subdivision_arg));
     }
 
-    if(osu_arg) {
+    if (viz_arg) {
+        std::cout << std::endl << "Writing results to a file" << std::endl;
+        std::string base_file = audio.path;
+        split_ext(base_file);
+
+        write_matrix_data(base_file + "_novelty_curve.npd", std::get<0>(nov_cv),(char) (TYPE_DOUBLE));
+        write_matrix_data(base_file + "_tempogram.npd", std::get<0>(tempogram_tpl),(char) (TYPE_DOUBLE | TYPE_COMPLEX));
+        write_matrix_data(base_file + "_t.npd", std::get<2>(tempogram_tpl),(char) (TYPE_DOUBLE));
+        write_matrix_data(base_file + "_bpm.npd", std::get<1>(tempogram_tpl),(char) (TYPE_DOUBLE));
+    }
+
+    if (osu_arg) {
         std::cout << std::endl << "Osu timing points" << std::endl;
-        for(const auto &section : tempo_sections) std::cout << present_utils::section_to_osu(section) << std::endl;
+        for (const auto &section : tempo_sections) std::cout << section_to_osu(section) << std::endl;
     }
 }
