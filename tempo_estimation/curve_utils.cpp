@@ -156,7 +156,7 @@ void curve_utils::extract_offset(const vec &novelty_curve, curve_utils::Section 
 
             for (const auto &pulse : pulses) {
                 vec co = roi % std::get<0>(pulse)(span((uword) i, (uword) i + window_length - 1));
-                magnitude += sum(co % (co > 0));
+                magnitude += sum(co /*% (co > 0)*/);
             }
 
             if (magnitude > b_offset_magnitude) {
@@ -180,10 +180,10 @@ void curve_utils::extract_offset(const vec &novelty_curve, curve_utils::Section 
 
 }
 
-void curve_utils::correct_offset(curve_utils::Section &section, int smallest_faction_shift) {
+void curve_utils::correct_offset(curve_utils::Section &section, int smallest_fraction_shift) {
     double offset = section.offset - section.start;
     double bar_len = 60. / section.bpm * 4;
-    double fraction_note_len = bar_len / smallest_faction_shift;
+    double fraction_note_len = bar_len / smallest_fraction_shift;
 
     if(offset < 0) offset += ceil(fabs(offset) / bar_len) * bar_len;
     offset = std::fmod(offset, fraction_note_len);
