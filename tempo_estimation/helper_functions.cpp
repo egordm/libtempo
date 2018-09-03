@@ -14,8 +14,7 @@ using namespace arma;
 using namespace sp;
 
 
-std::tuple<cx_mat, vec, vec>
-tempogram::compute_fourier_coefficients(const vec &s, const vec &window, int n_overlap, const vec &f, double sr) {
+cx_mat tempogram::compute_fourier_coefficients(vec &t, const vec &s, const vec &window, int n_overlap, const vec &f, double sr) {
     int win_length = (int) window.size();
     double win_length_half = win_length / 2.;
     int hop_length = win_length - n_overlap;
@@ -23,7 +22,7 @@ tempogram::compute_fourier_coefficients(const vec &s, const vec &window, int n_o
     vec T = linspace<vec>(0, win_length - 1, static_cast<const uword>(win_length)) / sr;
     int win_num = utils::math::fix((s.size() - n_overlap) / (win_length - n_overlap));
     cx_mat x(static_cast<const uword>(win_num), f.size(), fill::zeros);
-    vec t = linspace(win_length_half, win_length_half + (win_num - 1) * hop_length, (const uword) win_num) / sr;
+    t = linspace(win_length_half, win_length_half + (win_num - 1) * hop_length, (const uword) win_num) / sr;
 
     vec twoPiT = 2 * M_PI * T;
 
@@ -45,7 +44,7 @@ tempogram::compute_fourier_coefficients(const vec &s, const vec &window, int n_o
         }
     }
 
-    return std::make_tuple(x.st(), f, t);
+    return x.st();
 }
 
 cx_mat tempogram::normalize_feature(const cx_mat &feature, unsigned int p, double threshold) {
@@ -130,7 +129,7 @@ tempogram::stft(const vec &signal, int sr, const vec &window, std::tuple<int, in
 
 vec tempogram::novelty_smoothed_subtraction(const vec &novelty_curve, int sr, int hop_length) {
     double smooth_len = 1.5;
-    smooth_len = max(ceil(smooth_len * sr / (double)hop_length), 3.);
+    smooth_len = max(ceil(smooth_len * sr / (double) hop_length), 3.);
     rowvec smooth_filter = (utils::math::my_hanning((const uword) smooth_len)).t();
     rowvec novelty_curve_t = novelty_curve.t();
     mat local_average = conv2(novelty_curve_t, flipud(fliplr(smooth_filter / sum(smooth_filter))), "same");

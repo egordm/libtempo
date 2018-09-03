@@ -55,6 +55,10 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    auto bpm_window = get(bpm_window_arg);
+    if (bpm_window.size() < 2) bpm_window = {30, 600};
+
+    // Do program logic
     std::cout << "Processing " << get(audio_arg) << std::endl;
     auto audio = tempogram::audio::open_audio(get(audio_arg).c_str());
 
@@ -62,29 +66,28 @@ int main(int argc, char **argv) {
     vec signal = reduced_sig.row(0).t();
 
     std::cout << " - Calculating novelty curve" << std::endl;
-    auto nov_cv = tempogram_processing::audio_to_novelty_curve(signal, audio.sr);
+    int feature_rate;
+    auto novelty_curve = tempogram_processing::audio_to_novelty_curve(feature_rate, signal, audio.sr);
 
     std::cout << " - Calculating tempogram" << std::endl;
-    auto bpm_window = get(bpm_window_arg);
-    if (bpm_window.size() < 2) bpm_window = {30, 600};
     vec bpm = regspace(bpm_window[0], bpm_window[1]);
-    auto tempogram_tpl = tempogram_processing::novelty_curve_to_tempogram_dft
-            (std::get<0>(nov_cv), bpm, std::get<1>(nov_cv), get(tempo_window_arg));
+    vec t;
+    auto tempogram = tempogram_processing::novelty_curve_to_tempogram_dft
+            (t, novelty_curve, bpm, feature_rate, get(tempo_window_arg));
 
     std::cout << " - Calculating cyclic tempogram" << std::endl;
-    auto normalized_tempogram = tempogram::normalize_feature(std::get<0>(tempogram_tpl), 2, 0.0001);
+    auto normalized_tempogram = tempogram::normalize_feature(tempogram, 2, 0.0001);
+    vec ct_y_axis;
     auto cyclic_tempgram = tempogram_processing::tempogram_to_cyclic_tempogram
-            (normalized_tempogram, std::get<1>(tempogram_tpl), get(octave_divider_arg), get(ref_tempo_arg));
+            (ct_y_axis, normalized_tempogram, bpm, get(octave_divider_arg), get(ref_tempo_arg));
 
     std::cout << " - Preprocessing and cleaning tempogram" << std::endl;
-    auto t = std::get<2>(tempogram_tpl);
     t = t(span((uword) get(smooth_length_arg), t.n_rows - 1));
     auto smooth_tempogram = tempogram_utils::smoothen_tempogram
-            (std::get<0>(cyclic_tempgram), std::get<1>(cyclic_tempgram), get(smooth_length_arg),
-             get(triplet_weigh_arg));
+            (cyclic_tempgram, ct_y_axis, get(smooth_length_arg), get(triplet_weigh_arg));
 
     std::cout << " - Tempo peaks extraction" << std::endl;
-    auto tempo_curve = tempogram_utils::extract_tempo_curve(smooth_tempogram, std::get<1>(cyclic_tempgram));
+    auto tempo_curve = tempogram_utils::extract_tempo_curve(smooth_tempogram, ct_y_axis);
     tempo_curve = curve_utils::correct_curve_by_length(tempo_curve, get(min_section_length_arg));
 
     auto tempo_segments = curve_utils::split_curve(tempo_curve);
@@ -100,8 +103,8 @@ int main(int argc, char **argv) {
     if (tempo_multiples.empty()) tempo_multiples = {1, 2, 4};
     for (auto &section : tempo_sections) {
         section.bpm *= 2;
-        curve_utils::extract_offset(std::get<0>(nov_cv), section, tempo_multiples, std::get<1>(nov_cv),
-                                    get(bpm_doubt_window_arg), get(bpm_doubt_step_arg));
+        curve_utils::extract_offset(novelty_curve, section, tempo_multiples, feature_rate, get(bpm_doubt_window_arg),
+                                    get(bpm_doubt_step_arg));
         curve_utils::correct_offset(section, 4);
     }
     std::cout << "Done!" << std::endl;
@@ -121,10 +124,10 @@ int main(int argc, char **argv) {
         std::string base_file = audio.path;
         split_ext(base_file);
 
-        write_matrix_data(base_file + "_novelty_curve.npd", std::get<0>(nov_cv),(char) (TYPE_DOUBLE));
-        write_matrix_data(base_file + "_tempogram.npd", std::get<0>(tempogram_tpl),(char) (TYPE_DOUBLE | TYPE_COMPLEX));
-        write_matrix_data(base_file + "_t.npd", std::get<2>(tempogram_tpl),(char) (TYPE_DOUBLE));
-        write_matrix_data(base_file + "_bpm.npd", std::get<1>(tempogram_tpl),(char) (TYPE_DOUBLE));
+        write_matrix_data(base_file + "_novelty_curve.npd", novelty_curve, (char) (TYPE_DOUBLE));
+        write_matrix_data(base_file + "_tempogram.npd", tempogram, (char) (TYPE_DOUBLE | TYPE_COMPLEX));
+        write_matrix_data(base_file + "_t.npd", t, (char) (TYPE_DOUBLE));
+        write_matrix_data(base_file + "_bpm.npd", bpm, (char) (TYPE_DOUBLE));
     }
 
     if (osu_arg) {

@@ -16,6 +16,7 @@ namespace tempogram { namespace tempogram_processing {
      * Computes a novelty curve (onset detection function) for the input audio signal. This implementation is a
      * variant of the widely used spectral flux method with additional bandwise processing and a logarithmic intensity
      * compression. This particularly addresses music with weak onset information (e.g., exhibiting string instruments.)
+     * @param feature_rate_ret
      * @param signal: wavefrom of audio signal
      * @param sr: sampling rate of the audio (Hz)
      * @param window_length: window length for STFT (in samples)
@@ -23,9 +24,9 @@ namespace tempogram { namespace tempogram_processing {
      * @param compression_c: constant for log compression
      * @param log_compression: enable/disable log compression
      * @param resample_feature_rate: feature rate of the resulting novelty curve (resampled, independent of stepsize)
-     * @return novelty_curve, feature_rate
+     * @return novelty_curve
      */
-    std::tuple<vec, int> audio_to_novelty_curve(const vec &signal, int sr, int window_length = -1, int hop_length = -1,
+    vec audio_to_novelty_curve(int &feature_rate_ret, const vec &signal, int sr, int window_length = -1, int hop_length = -1,
                                                 double compression_c = 1000, bool log_compression = true,
                                                 int resample_feature_rate = 200);
 
@@ -36,20 +37,22 @@ namespace tempogram { namespace tempogram_processing {
      * coefficients in a frequency range corresponding to musically meaningful
      * tempo values in bpm.
      *
+     * @param t
      * @param novelty_curve: a novelty curve indicating note onset positions
-     * @param bpm: vector containing BPM values to compute
+     * @param bpms: vector containing BPM values to compute
      * @param feature_rate: feature rate of the novelty curve (Hz). This needs to be set to allow for setting other parameters in seconds!
      * @param tempo_window: Analysis window length in seconds
      * @param hop_length: window hop length in frames (of novelty curve)
-     * @return tempogram, bpm, time vector
+     * @return tempogram
      */
-    std::tuple<cx_mat, vec, vec> novelty_curve_to_tempogram_dft(const vec &novelty_curve, const vec &bpm, double feature_rate,
+    cx_mat novelty_curve_to_tempogram_dft(vec &t, const vec &novelty_curve, const vec &bpms, double feature_rate,
                                                                 int tempo_window, int hop_length = -1);
 
 
     /**
      * Computes a cyclic tempogram representation of a tempogram by identifying octave equivalences, simnilar as for
      * chroma features.
+     * @param y_axis
      * @param tempogram: a tempogram representation
      * @param bpm: tempo axis of the tempogram (in bpm)
      * @param octave_divider: number of tempo classes used for representing a tempo octave. This parameter controls the
@@ -57,7 +60,7 @@ namespace tempogram { namespace tempogram_processing {
      * @param ref_tempo: reference tempo defining the partition of BPM into tempo octaves
      * @return cyclic_tempogram, cyclic_axis
      */
-    std::tuple<mat, vec> tempogram_to_cyclic_tempogram(const cx_mat &tempogram, vec &bpm, int octave_divider = 120,
+    mat tempogram_to_cyclic_tempogram(vec &y_axis, const cx_mat &tempogram, const vec &bpm, int octave_divider = 120,
                                                        int ref_tempo = DEFAULT_REF_TEMPO);
 
 

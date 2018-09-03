@@ -13,15 +13,17 @@ using namespace arma;
 
 namespace tempogram {
     /**
+     * @param freqs
+     * @param t
      * @param s time domain signal
      * @param window vector containing window function
      * @param n_overlap overlap given in samples
      * @param f vector of frequencies values of fourier coefficients, in Hz
      * @param sr sampling rate of signal s in Hz
-     * @return complex fourier coefficients, frequency vector, time vector
+     * @return complex fourier coefficients
      */
-    std::tuple<cx_mat, vec, vec> compute_fourier_coefficients(const vec &s, const vec &window, int n_overlap,
-                                                              const vec &f, double sr);
+    cx_mat
+    compute_fourier_coefficients(vec &t, const vec &s, const vec &window, int n_overlap, const vec &f, double sr);
 
     /**
      * Normalizes a feature sequence according to the l^p norm

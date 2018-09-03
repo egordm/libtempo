@@ -10,36 +10,9 @@
 using namespace sp;
 using namespace tempogram;
 
-std::tuple<cx_mat, vec, vec>
-tempogram_processing::novelty_curve_to_tempogram_dft(const vec &novelty_curve, const vec &bpm, double feature_rate, int tempo_window,
-                                          int hop_length) {
-    if (hop_length <= 0) hop_length = (int) ceil(feature_rate / 5.);
-
-    auto win_length = static_cast<int>(round(tempo_window * feature_rate));
-    win_length = win_length + (win_length % 2) - 1;
-
-    auto window = sp::hann(static_cast<const uword>(win_length));
-    auto half_window = (int) round(win_length / 2.0);
-
-    vec pad(static_cast<const uword>(half_window), fill::zeros);
-
-    vec nc = join_cols(pad, novelty_curve);
-    nc = join_cols(novelty_curve, pad);
-
-    auto ret = tempogram::compute_fourier_coefficients(nc, window, win_length - hop_length, bpm / 60.,
-                                                       feature_rate);
-
-    std::get<0>(ret) = std::get<0>(ret) / sqrt((double) win_length) / sum(window) * win_length;
-    std::get<1>(ret) = std::get<1>(ret) * 60;
-    std::get<2>(ret) = std::get<2>(ret) - std::get<2>(ret)(0);
-
-    return ret;
-}
-
-
-std::tuple<vec, int>
-tempogram_processing::audio_to_novelty_curve(const vec &signal, int sr, int window_length, int hop_length, double compression_c,
-                                  bool log_compression, int resample_feature_rate) {
+vec tempogram_processing::audio_to_novelty_curve(int &feature_rate_ret, const vec &signal, int sr, int window_length,
+                                                 int hop_length, double compression_c,
+                                                 bool log_compression, int resample_feature_rate) {
     if (window_length <= 0) window_length = static_cast<int>(1024 * sr / 22050.);
     if (hop_length <= 0) hop_length = static_cast<int>(512 * sr / 22050.);
 
@@ -124,11 +97,35 @@ tempogram_processing::audio_to_novelty_curve(const vec &signal, int sr, int wind
 
     novelty_curve = novelty_smoothed_subtraction(novelty_curve, sr, hop_length);
 
-    return std::make_tuple(novelty_curve, (int) feature_rate);
+    feature_rate_ret = feature_rate;
+    return novelty_curve;
 }
 
-std::tuple<mat, vec>
-tempogram_processing::tempogram_to_cyclic_tempogram(const cx_mat &tempogram, vec &bpm, int octave_divider, int ref_tempo) {
+
+cx_mat tempogram_processing::novelty_curve_to_tempogram_dft(vec &t, const vec &novelty_curve, const vec &bpms,
+                                                            double feature_rate, int tempo_window, int hop_length) {
+    if (hop_length <= 0) hop_length = (int) ceil(feature_rate / 5.);
+
+    auto win_length = static_cast<int>(round(tempo_window * feature_rate));
+    win_length = win_length + (win_length % 2) - 1;
+
+    auto window = sp::hann(static_cast<const uword>(win_length));
+    auto half_window = (int) round(win_length / 2.0);
+
+    vec pad(static_cast<const uword>(half_window), fill::zeros);
+
+    vec nc = join_cols(pad, novelty_curve);
+    nc = join_cols(novelty_curve, pad);
+
+    auto ret = tempogram::compute_fourier_coefficients(t, nc, window, win_length - hop_length, bpms / 60.,
+                                                       feature_rate);
+
+    t -= t(0);
+    return ret / sqrt((double) win_length) / sum(window) * win_length;
+}
+
+mat tempogram_processing::tempogram_to_cyclic_tempogram(vec &y_axis, const cx_mat &tempogram, const vec &bpm,
+                                                        int octave_divider, int ref_tempo) {
     double ref_octave = ref_tempo / min(bpm);
     int min_octave = static_cast<int>(round(log2(min(bpm) / ref_tempo)));
     int max_octave = static_cast<int>(round(log2(max(bpm) / ref_tempo)) + 1);
@@ -145,15 +142,15 @@ tempogram_processing::tempogram_to_cyclic_tempogram(const cx_mat &tempogram, vec
     double max_bpm = max(bpm);
     double diff_bpm = max_bpm - min_bpm;
 
-    mat cyclic_tempogram((const uword)octave_divider, ref_tempogram.n_cols, fill::zeros);
+    mat cyclic_tempogram((const uword) octave_divider, ref_tempogram.n_cols, fill::zeros);
 
-    for(uword i = 0; i < octave_divider; ++i) {
+    for (uword i = 0; i < octave_divider; ++i) {
         int c = 0;
-        for(int j = 0; j < n_octaves; ++j) {
+        for (int j = 0; j < n_octaves; ++j) {
             double freq_offset = log_bpm.at(i + j * octave_divider) - min_bpm;
-            if(freq_offset < 0 || freq_offset > max_bpm) continue;
-            auto offset = (const uword)round(freq_offset / diff_bpm * bpm.n_rows);
-            if(offset >= ref_tempogram.n_rows) continue;
+            if (freq_offset < 0 || freq_offset > max_bpm) continue;
+            auto offset = (const uword) round(freq_offset / diff_bpm * bpm.n_rows);
+            if (offset >= ref_tempogram.n_rows) continue;
 
             cyclic_tempogram(i, span::all) += ref_tempogram(offset, span::all);
             c++;
@@ -161,6 +158,6 @@ tempogram_processing::tempogram_to_cyclic_tempogram(const cx_mat &tempogram, vec
         cyclic_tempogram(i, span::all) /= c;
     }
 
-    vec cyclic_axis = ref_octave * log_bpm(span(0, (const uword)octave_divider - 1)) / ref_tempo;
-    return std::make_tuple(cyclic_tempogram, cyclic_axis);
+    y_axis = ref_octave * log_bpm(span(0, (const uword) octave_divider - 1)) / ref_tempo;
+    return cyclic_tempogram;
 }
