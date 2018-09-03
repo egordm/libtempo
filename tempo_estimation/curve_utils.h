@@ -33,7 +33,7 @@ namespace tempogram { namespace curve_utils {
      * Correct curve by removing short value changes and thus removing small sudden spikes.
      *
      * @param measurements
-     * @param min_length
+     * @param min_length: maximum section length in seconds after which section is split in half
      * @return
      */
     vec correct_curve_by_length(const vec &measurements, int min_length);
@@ -82,10 +82,10 @@ namespace tempogram { namespace curve_utils {
      * Finds the optimal offset for given section. Also tunes the bpm to a more fitting value
      * @param novelty_curve
      * @param section
-     * @param tempo_multiples
+     * @param tempo_multiples: Tempo multiples to consider when searchin for correct offset
      * @param feature_rate
-     * @param bpm_doubt_window
-     * @param bpm_doubt_step
+     * @param bpm_doubt_window: Window around candidate bpm which to search for a more fine and correct bpm
+     * @param bpm_doubt_step: Steps which to take inside the doubt window to fine tune the bpm
      */
     void extract_offset(const vec &novelty_curve, Section &section, const std::vector<int> &tempo_multiples,
                         int feature_rate, float bpm_doubt_window = 2, double bpm_doubt_step = 0.1);

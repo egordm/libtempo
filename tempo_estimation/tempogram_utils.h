@@ -78,8 +78,8 @@ namespace tempogram { namespace tempogram_utils {
      *
      * @param tempogram
      * @param axis_lut
-     * @param temporal_unit_size
-     * @param triplet_weight
+     * @param temporal_unit_size: length over which the tempogram will be stabilized to extract a steady tempo.
+     * @param triplet_weight: weight of the triplet intensity which will be adeed to its base intensity
      * @return
      */
     mat smoothen_tempogram(const mat &tempogram, const vec &axis_lut, int temporal_unit_size = 100,

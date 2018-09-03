@@ -2,3 +2,6 @@
 	path = libs/pybind11
 	url = https://github.com/pybind/pybind11.git
 	branch = v2.2
+[submodule "libs/args"]
+	path = libs/args
+	url = git@github.com:Taywee/args.git

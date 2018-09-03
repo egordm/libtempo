@@ -6,12 +6,58 @@
 #include <generic_algothms.h>
 #include <defines.h>
 #include <signal_utils.h>
+#include <args.hxx>
 
 using namespace std::chrono;
 using namespace tempogram;
 
-int main(int argc, char** argv) {
-    if(argc <= 1) {
+int main(int argc, char **argv) {
+    args::ArgumentParser parser(
+            "CLI for tempo estimation developed by Egor Dmitriev.\nVisit github for library version.");
+    args::HelpFlag help(parser, "help", "Display the help menu", {'h', "help"});
+    args::ValueFlag<int> tempo_window_arg(parser, "tempo_window", "Analysis window length in seconds for calculating tempogram", {"tempo_window"}, 8);
+    args::ValueFlag<int> ref_tempo_arg(parser, "ref_tempo", "Reference tempo defining the partition of BPM into tempo octaves for calculating cyclic tempogram", {"ref_tempo"}, 60);
+    args::ValueFlag<int> octave_divider_arg(parser, "octave_divider", "Number of tempo classes used for representing a tempo octave. This parameter controls the dimensionality of cyclic tempogram", {"octave_divider"}, 120);
+    args::ValueFlag<int> smooth_length_arg(parser, "smooth_length", "Length over which the tempogram will be stabilized to extract a steady tempo", {"smooth_length"}, 100);
+    args::ValueFlag<float> triplet_weigh_arg(parser, "triplet_weight", "Weight of the triplet intensity which will be adeed to its base intensity", {"triplet_weight"}, 0.8f);
+    args::ValueFlag<int> min_section_length_arg(parser, "min_section_length", "Minimum length for a tempo section in samples", {"min_section_length"}, 40);
+    args::ValueFlag<int> max_section_length_arg(parser, "max_section_length", "Maximum section length in seconds after which section is split in half", {"max_section_length"}, 60);
+    args::ValueFlag<float> bpm_doubt_window_arg(parser, "bpm_doubt_window", "Window around candidate bpm which to search for a more fine and correct bpm", {"bpm_doubt_window"}, 2.f);
+    args::ValueFlag<float> bpm_doubt_step_arg(parser, "bpm_doubt_step", "Steps which to take inside the doubt window to fine tune the bpm", {"bpm_doubt_step"}, 0.1f);
+    args::ValueFlagList<int> tempo_multiples_arg(parser, "tempo_multiples", "Tempo multiples to consider when searching for correct offset", {"tempo_multiples", 'm'}, {1,2,4});
+    args::ValueFlag<bool> generate_click_track_arg(parser, "generate_click_track", "Wether or not a click track should be generated", {"generate_click_track", 'c'}, true);
+    args::ValueFlag<int> click_track_subdivision_arg(parser, "click_track_subdivision", "Click subdivision for the click track", {"click_track_subdivision"}, 8);
+    args::Flag osu_arg(parser, "osu", "Wether or not to generate tempo data in osu format.", {"osu"});
+    args::Positional<std::string> foo(parser, "audio", "Audio file to extract tempo of.");
+
+    try
+    {
+        parser.ParseCLI(argc, argv);
+    }
+    catch (args::Help&)
+    {
+        std::cout << parser;
+        return 0;
+    }
+    catch (args::ParseError &e)
+    {
+        std::cerr << e.what() << std::endl;
+        std::cerr << parser;
+        return 1;
+    }
+    catch (args::ValidationError &e)
+    {
+        std::cerr << e.what() << std::endl;
+        std::cerr << parser;
+        return 1;
+    }
+
+
+}
+/*
+
+int main(int argc, char **argv) {
+    if (argc <= 1) {
         std::cerr << "Please specify an audio file" << std::endl;
         exit(1);
     }
@@ -42,7 +88,8 @@ int main(int argc, char** argv) {
     tempo_curve = curve_utils::correct_curve_by_length(tempo_curve, 40);
 
     auto tempo_segments = curve_utils::split_curve(tempo_curve);
-    auto tempo_sections_tmp = curve_utils::tempo_segments_to_sections(tempo_segments, tempo_curve, t, DEFAULT_REF_TEMPO);
+    auto tempo_sections_tmp = curve_utils::tempo_segments_to_sections(tempo_segments, tempo_curve, t,
+                                                                      DEFAULT_REF_TEMPO);
     std::vector<curve_utils::Section> tempo_sections;
     for (const auto &section : tempo_sections_tmp) curve_utils::split_section(section, tempo_sections, 60);
 
@@ -78,9 +125,9 @@ int main(int argc, char** argv) {
 
     output_path += "_processed";
 
-    if(audio.format & SF_FORMAT_FLAC) {
+    if (audio.format & SF_FORMAT_FLAC) {
         output_path += ".flac";
-    } else if(audio.format & SF_FORMAT_WAV) {
+    } else if (audio.format & SF_FORMAT_WAV) {
         output_path += ".wav";
     } else {
         output_path += ".idk";
@@ -89,4 +136,4 @@ int main(int argc, char** argv) {
     audio.save(output_path.c_str());
 
     return 0;
-}
+}*/
