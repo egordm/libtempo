@@ -10,4 +10,9 @@ include_directories(${tempo_estimation_INCLUDE_DIRS} ../libs/args)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-target_link_libraries(${PROJECT_NAME} tempo_estimation)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set(COMPILER_LIBS stdc++fs)
+else ()
+endif ()
+
+target_link_libraries(${PROJECT_NAME} tempo_estimation ${COMPILER_LIBS})

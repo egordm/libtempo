@@ -35,9 +35,7 @@ void present_utils::save_click_track(audio::AudioFile &audio, const std::vector<
     output_path += "_click" + ext;
 
     std::cout << "Writing click track: " << output_path << std::endl;
-
-
-    vec click_track(audio.data.n_cols);
+    vec click_track(audio.data.n_cols, fill::zeros);
     for (auto &section : sections) {
         auto len = (unsigned long) ((section.end - section.start) * audio.sr);
         vec clicks = signal_utils::generate_click_track(section.bpm, section.offset - section.start, fraction, len,
@@ -47,7 +45,7 @@ void present_utils::save_click_track(audio::AudioFile &audio, const std::vector<
         click_track(span(start, start + clicks.n_rows - 1)) = clicks;
     }
 
-    for (int c = 0; c < audio.data.n_rows; ++c) {
+     for (int c = 0; c < audio.data.n_rows; ++c) {
         audio.data(c, span::all) = clamp(audio.data(c, span::all) + click_track.t(), -1, 1);
     }
 

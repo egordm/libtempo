@@ -21,7 +21,7 @@ vec tempogram::signal_utils::generate_click(int sr, double duration, double freq
 }
 
 vec tempogram::signal_utils::generate_click_track(const std::vector<float> &positions, unsigned long length, int sr) {
-    vec ret(static_cast<const uword>(length));
+    vec ret(static_cast<const uword>(length), fill::zeros);
     vec click = generate_click(sr);
 
     for(const auto &pos : positions) {
