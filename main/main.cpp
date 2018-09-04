@@ -8,17 +8,9 @@
 #include <args.hxx>
 #include "constants.h"
 #include "present_utils.h"
-
-#if __cplusplus < 201703L
-
-#include <experimental/filesystem>
-
-namespace fs = std::experimental::filesystem;
-
-#else
 #include <filesystem>
+
 namespace fs = std::filesystem;
-#endif
 
 using namespace std::chrono;
 using namespace tempogram;

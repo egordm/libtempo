@@ -10,4 +10,4 @@ include_directories(${tempo_estimation_INCLUDE_DIRS} ../libs/args)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-target_link_libraries(${PROJECT_NAME} tempo_estimation stdc++fs)
+target_link_libraries(${PROJECT_NAME} tempo_estimation)
