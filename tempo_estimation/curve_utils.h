@@ -90,6 +90,12 @@ namespace tempogram { namespace curve_utils {
     void extract_offset(const vec &novelty_curve, Section &section, const std::vector<int> &tempo_multiples,
                         int feature_rate, float bpm_doubt_window = 2, double bpm_doubt_step = 0.1);
 
+    /**
+     * Correct offset by shifting the offset as far as possible to the beginning of the section by using
+     * bar length steps
+     * @param section
+     * @param smallest_fraction_shift
+     */
     void correct_offset(Section &section, int smallest_fraction_shift = 4);
 
 }}

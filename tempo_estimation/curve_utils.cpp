@@ -175,7 +175,7 @@ void curve_utils::extract_offset(const vec &novelty_curve, curve_utils::Section 
                                                   return std::get<0>(l) < std::get<0>(r);
                                               });
 
-    section.offset = std::get<1>(candidate) / feature_rate + section.start;
+    section.offset = -std::get<1>(candidate) / feature_rate + section.start;
     section.bpm = std::get<2>(candidate);
 
 }

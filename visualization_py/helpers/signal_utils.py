@@ -4,9 +4,9 @@ import math
 from helpers.data_loading import Section
 
 
-def generate_pulse(bpm, window_length, feature_rate):
+def generate_pulse(bpm, window_length, feature_rate, shift: int =0):
     freq = bpm / 60
-    T = np.arange(0, window_length, 1) / feature_rate
+    T = np.arange(-shift, window_length - shift, 1) / feature_rate
     twoPiT = 2 * math.pi * T
     twoPiFt = freq * twoPiT
     cosine = np.cos(twoPiFt)
@@ -16,10 +16,9 @@ def generate_pulse(bpm, window_length, feature_rate):
 
 def pulse_for_section(section: Section, feature_rate, multiple=1):
     offset_rel = section.offset - section.start
-    cosine, sine = generate_pulse(section.bpm * multiple,
-                                  int((section.end - section.start + offset_rel) * feature_rate), feature_rate)
     offset_samples = int(offset_rel * feature_rate)
-    return cosine[offset_samples:], sine[offset_samples:]
+    window_length = int((section.end - section.start) * feature_rate)
+    return generate_pulse(section.bpm * multiple, window_length, feature_rate, shift=offset_samples)
 
 
 def times_from_feature_rate(feature_rate, start, length):
