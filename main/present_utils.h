@@ -18,8 +18,8 @@ namespace present_utils {
     void save_click_track(audio::AudioFile &audio, const std::vector<curve_utils::Section> &sections, int fraction);
 
     template<typename T>
-    inline void write_matrix_data(const std::string &filename, const Mat<T> &data, char type_identifier, const char* extra = nullptr, int extra_size=0)
-    {
+    inline void write_matrix_data(const std::string &filename, const Mat<T> &data, char type_identifier,
+                                  const char *extra = nullptr, int extra_size = 0) {
         std::ofstream file;
         file.open(filename, std::ios_base::binary);
         if (!file.is_open()) {
@@ -37,10 +37,13 @@ namespace present_utils {
             file.write(extra, extra_size);
         }
 
-        file.write((char*)data.memptr(), data.size() * sizeof(T));
+        file.write((char *) data.memptr(), data.size() * sizeof(T));
         file.close();
     }
 
+    std::string serialize_section(const curve_utils::Section &section);
+
+    void write_sections(const std::string &filename, const std::vector<curve_utils::Section> &sections);
 };
 
 

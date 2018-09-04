@@ -53,27 +53,24 @@ void present_utils::save_click_track(audio::AudioFile &audio, const std::vector<
 
     audio.save(output_path.c_str());
 }
-/*
-template<typename T>
-void present_utils::write_matrix_data(const std::string &filename, const Mat<T> &data, char type_identifier,
-                                      const char *extra, int extra_size) {
+
+std::string present_utils::serialize_section(const curve_utils::Section &section) {
+    std::stringstream ss;
+    ss << section.start << "," << section.end << "," << section.bpm << "," << section.offset;
+    return ss.str();
+}
+
+void present_utils::write_sections(const std::string &filename, const std::vector<curve_utils::Section> &sections) {
     std::ofstream file;
-    file.open(filename, std::ios_base::binary);
+    file.open(filename);
     if (!file.is_open()) {
         std::cerr << "Cant open: " << filename << std::endl;
         exit(1);
     }
 
-    unsigned long long size_data = {data.n_rows, data.n_cols};
-    file.write((char *) &size_data, sizeof(size_data));
-    file.write(&type_identifier, 1);
-
-    file.write((char *) &extra_size, sizeof(extra_size));
-
-    if (extra != nullptr) {
-        file.write(extra, extra_size);
+    for(const auto &section : sections) {
+        file << serialize_section(section) << std::endl;
     }
 
-    file.write(data.memptr(), data.size() * sizeof(T));
     file.close();
-}*/
+}
