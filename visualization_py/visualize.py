@@ -51,12 +51,14 @@ def plot_tempogram(data, tempo_multiples, save_path, name='tempogram'):
     ref_tempo = data.tempogram_cyclic.parameters['ref_tempo']
     tempogram_clean_data = subtract_mean_clean(np.abs(data.tempogram.data))
 
-    layout = go.Layout(title='Tempogram', showlegend=True)
+    layout = go.Layout(title='Tempogram', showlegend=True,
+                       xaxis=dict(title='Time (s)'), yaxis=dict(title='Tempo (BPM)'))
     fig = go.Figure(data=[], layout=layout)
+
     fig.add_heatmap(z=tempogram_clean_data, x=data.t.data, y=data.bpm.data, colorscale='Viridis', name='tempogram',
                     showscale=False)
     for multiple in tempo_multiples:
-        label = f'Tempo {multiple}x' if multiple == 1 else 'Tempo ref'
+        label = f'Tempo {multiple}x' if multiple != 1 else 'Tempo ref'
         fig.add_scatter(x=data.t_smooth.data, y=data.tempo_curve.data * ref_tempo * multiple, name=label)
 
     filename = f'{save_path}/{name}.html'
@@ -68,8 +70,10 @@ def plot_cyclic_tempogram(data, save_path, name='cyclic_tempogram'):
     ref_tempo = data.tempogram_cyclic.parameters['ref_tempo']
     tempogram_cyclic_clean_data = subtract_mean_clean(np.abs(data.tempogram_cyclic.data))
 
-    layout = go.Layout(title=f'Cyclic Tempogram | Ref tempo = {ref_tempo}', showlegend=True)
+    layout = go.Layout(title=f'Cyclic Tempogram | Ref tempo = {ref_tempo}', showlegend=True,
+                       xaxis=dict(title='Time (s)'), yaxis=dict(title='Tempo (rBPM)'))
     fig = go.Figure(data=[], layout=layout)
+
     fig.add_heatmap(z=tempogram_cyclic_clean_data, x=data.t.data, y=data.ct_y_axis.data, colorscale='Viridis',
                     showscale=False, name='tempogram')
     fig.add_scatter(x=data.t_smooth.data, y=data.tempo_curve.data, name='peak tempo')
@@ -83,7 +87,8 @@ def plot_smooth_tempogram(data, save_path, name='smooth_tempogram'):
     smooth_length = data.smooth_tempogram.parameters['smooth_length']
 
     layout = go.Layout(title=f'Smoothed Tempogram | Temp Units = {smooth_length}', showlegend=True,
-                       xaxis=dict(range=[data.t.data[0], data.t.data[-1]], autorange=False))
+                       xaxis=dict(range=[data.t.data[0], data.t.data[-1]], autorange=False, title='Time (s)'),
+                       yaxis=dict(title='Tempo (rBPM)'))
     fig = go.Figure(data=[], layout=layout)
     fig.add_heatmap(z=data.smooth_tempogram.data, x=data.t_smooth.data, y=data.ct_y_axis.data, colorscale='Viridis',
                     name='tempogram', showscale=False)
@@ -107,7 +112,8 @@ def plot_novelty_curve(data, sections, multiples, save_path, name='novelty_curve
 
     mag = max(data.novelty_curve.data) * 0.2
 
-    layout = go.Layout(title=f'Novelty curve & Computed BPM Onsets', showlegend=True)
+    layout = go.Layout(title=f'Novelty curve & Computed BPM Onsets', showlegend=True,
+                       xaxis=dict(title='Time (s)'), yaxis=dict(title='Amplitude'))
     fig = go.Figure(data=[], layout=layout)
 
     fig.add_scatter(x=t_nc, y=data.novelty_curve.data, name='novelty curve')
@@ -131,7 +137,8 @@ def plot_overlap_curve(data, sections, multiples, save_path, name='overlap_curve
             start = int(section.start * feature_rate)
             pulses[i][start:start + len(cosine)] = cosine
 
-    layout = go.Layout(title=f'Overlap Novelty curve & Computed BPM Onsets', showlegend=True)
+    layout = go.Layout(title=f'Overlap Novelty curve & Computed BPM Onsets', showlegend=True,
+                       xaxis=dict(title='Time (s)'), yaxis=dict(title='Amplitude'))
     fig = go.Figure(data=[], layout=layout)
 
     for i in range(len(multiples)):
