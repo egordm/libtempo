@@ -64,6 +64,7 @@ CMakeLists.txt.user*
 *.npd
 data/*
 !*/.gitignore
+*/temp-plot.html
 
 # Python package
 cmake-build*

@@ -88,9 +88,10 @@ int main(int argc, char **argv) {
 
     std::cout << " - Calculating cyclic tempogram" << std::endl;
     auto normalized_tempogram = tempogram::normalize_feature(tempogram, 2, 0.0001);
+    int ref_tempo = get(ref_tempo_arg);
     vec ct_y_axis;
     auto cyclic_tempgram = tempogram_processing::tempogram_to_cyclic_tempogram
-            (ct_y_axis, normalized_tempogram, bpm, get(octave_divider_arg), get(ref_tempo_arg));
+            (ct_y_axis, normalized_tempogram, bpm, get(octave_divider_arg), ref_tempo);
 
     std::cout << " - Preprocessing and cleaning tempogram" << std::endl;
     vec t_smooth = t(span((uword) get(smooth_length_arg), t.n_rows - 1));
@@ -139,18 +140,21 @@ int main(int argc, char **argv) {
         base_file += "/";
         fs::create_directories(base_file.c_str());
 
-        write_matrix_data(base_file + "novelty_curve.npd", novelty_curve, (char) (TYPE_DOUBLE), (char *) &feature_rate,
-                          sizeof(feature_rate));
+        write_matrix_data(base_file + "novelty_curve.npd", novelty_curve, (char) (TYPE_DOUBLE),
+                          (char *) &feature_rate, sizeof(feature_rate));
         write_matrix_data(base_file + "tempogram.npd", tempogram, (char) (TYPE_DOUBLE | TYPE_COMPLEX));
         write_matrix_data(base_file + "t.npd", t, (char) (TYPE_DOUBLE));
         write_matrix_data(base_file + "bpm.npd", bpm, (char) (TYPE_DOUBLE));
-        write_matrix_data(base_file + "tempogram_cyclic.npd", cyclic_tempgram, (char) (TYPE_DOUBLE));
+        write_matrix_data(base_file + "tempogram_cyclic.npd", cyclic_tempgram, (char) (TYPE_DOUBLE),
+                          (char *) &ref_tempo, sizeof(ref_tempo));
         write_matrix_data(base_file + "ct_y_axis.npd", ct_y_axis, (char) (TYPE_DOUBLE));
         write_matrix_data(base_file + "smooth_tempogram.npd", smooth_tempogram, (char) (TYPE_DOUBLE),
                           (char *) &smooth_length, sizeof(smooth_length));
         write_matrix_data(base_file + "t_smooth.npd", t_smooth, (char) (TYPE_DOUBLE));
         write_matrix_data(base_file + "tempo_curve.npd", tempo_curve, (char) (TYPE_DOUBLE),
                           (char *) &min_section_length, sizeof(min_section_length));
+
+        write_sections(base_file + "sections.txt", tempo_sections);
     }
 
     if (osu_arg) {
