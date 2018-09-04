@@ -77,3 +77,4 @@ dist/
 build/
 *.egg-info/
 .env
+*/.ipynb_checkpoints

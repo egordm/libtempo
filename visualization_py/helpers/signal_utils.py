@@ -20,3 +20,7 @@ def pulse_for_section(section: Section, feature_rate, multiple=1):
                                   int((section.end - section.start + offset_rel) * feature_rate), feature_rate)
     offset_samples = int(offset_rel * feature_rate)
     return cosine[offset_samples:], sine[offset_samples:]
+
+
+def times_from_feature_rate(feature_rate, start, length):
+    return [i / feature_rate for i in range(start, start + length)]
