@@ -156,7 +156,7 @@ void curve_utils::extract_offset(const vec &novelty_curve, curve_utils::Section 
 
             for (const auto &pulse : pulses) {
                 vec co = roi % std::get<0>(pulse)(span((uword) i, (uword) i + window_length - 1));
-                magnitude += sum(co /*% (co > 0)*/);
+                magnitude += sum(co % (co > 0));
             }
 
             if (magnitude > b_offset_magnitude) {
