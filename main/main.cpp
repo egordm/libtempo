@@ -58,12 +58,24 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    if(!audio_arg) {
+        std::cerr << "Please specify a input file or use -h argument for help." << std::endl;
+        exit(1);
+    }
+    std::string input_file = get(audio_arg);
+
+    fs::path p(input_file);
+    if(!fs::exists(p)) {
+        std::cerr << "File " << input_file << " doesnt exist." << std::endl;
+        exit(1);
+    }
+
     auto bpm_window = get(bpm_window_arg);
     if (bpm_window.size() < 2) bpm_window = {30, 600};
 
     // Do program logic
-    std::cout << "Processing " << get(audio_arg) << std::endl;
-    auto audio = tempogram::audio::open_audio(get(audio_arg).c_str());
+    std::cout << "Processing " << input_file << std::endl;
+    auto audio = tempogram::audio::open_audio(input_file.c_str());
 
     mat reduced_sig = mean(audio.data, 0);
     vec signal = reduced_sig.row(0).t();
@@ -122,7 +134,12 @@ int main(int argc, char **argv) {
 
     // Save audio click track
     if (get(generate_click_track_arg)) {
-        save_click_track(audio, tempo_sections, get(click_track_subdivision_arg));
+        //try {
+            save_click_track(audio, tempo_sections, get(click_track_subdivision_arg));
+        /*} catch (const std::runtime_error& error) {
+            std::cerr << error.what() << std::endl;
+            exit(1);
+        }*/
     }
 
     if (viz_arg) {
