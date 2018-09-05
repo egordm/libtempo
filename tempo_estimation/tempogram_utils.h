@@ -53,14 +53,14 @@ namespace tempogram { namespace tempogram_utils {
     vec extract_confidence(const mat &tempogram, const bool &rollover = true);
 
     /**
-     * Each temporal position becomes the sum of the temporal_size amount of temporal positions before it.
-     * TODO: mayby add weight to closer temoporal positions.
+     * Applies a window to the tempogram sums up the result of each window and uses these to generate a more
+     * smoothed tempogram.
      *
      * @param tempogram
-     * @param temporal_size
+     * @param window
      * @return
      */
-    mat accumulate_temporal(const mat &tempogram, int temporal_size);
+    mat tempogram_apply_window(const mat &tempogram, const vec &window);
 
     /**
      * Sums the bins with their corresponding triplet bins. triplet = 3/2 tempo
@@ -70,7 +70,7 @@ namespace tempogram { namespace tempogram_utils {
      * @param weight
      * @return
      */
-    mat tempogram_include_triplets(const mat &tempogram, const vec &axis_lut, float weight = 0.5f);
+    mat tempogram_include_triplets(const mat &tempogram, const vec &axis_lut, float weight = 2.f);
 
     /**
      * Smoothens tempogram to prepare it for peak extraction.

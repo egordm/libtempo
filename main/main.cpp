@@ -98,7 +98,6 @@ int main(int argc, char **argv) {
             (ct_y_axis, normalized_tempogram, bpm, get(octave_divider_arg), ref_tempo);
 
     std::cout << " - Preprocessing and cleaning tempogram" << std::endl;
-    vec t_smooth = t(span((uword) get(smooth_length_arg), t.n_rows - 1));
     int smooth_length = get(smooth_length_arg);
     auto smooth_tempogram = tempogram_utils::smoothen_tempogram
             (cyclic_tempgram, ct_y_axis, smooth_length, get(triplet_weigh_arg));
@@ -110,7 +109,7 @@ int main(int argc, char **argv) {
 
     auto tempo_segments = curve_utils::split_curve(tempo_curve);
     auto tempo_sections_tmp = curve_utils::tempo_segments_to_sections
-            (tempo_segments, tempo_curve, t_smooth, get(ref_tempo_arg));
+            (tempo_segments, tempo_curve, t, get(ref_tempo_arg));
 
     std::vector<curve_utils::Section> tempo_sections;
     for (const auto &section : tempo_sections_tmp)
@@ -134,12 +133,12 @@ int main(int argc, char **argv) {
 
     // Save audio click track
     if (get(generate_click_track_arg)) {
-        //try {
+        try {
             save_click_track(audio, tempo_sections, get(click_track_subdivision_arg));
-        /*} catch (const std::runtime_error& error) {
+        } catch (const std::runtime_error& error) {
             std::cerr << error.what() << std::endl;
             exit(1);
-        }*/
+        }
     }
 
     if (viz_arg) {
@@ -159,7 +158,7 @@ int main(int argc, char **argv) {
         write_matrix_data(base_file + "ct_y_axis.npd", ct_y_axis, (char) (TYPE_DOUBLE));
         write_matrix_data(base_file + "smooth_tempogram.npd", smooth_tempogram, (char) (TYPE_DOUBLE),
                           (char *) &smooth_length, sizeof(smooth_length));
-        write_matrix_data(base_file + "t_smooth.npd", t_smooth, (char) (TYPE_DOUBLE));
+        write_matrix_data(base_file + "t_smooth.npd", t, (char) (TYPE_DOUBLE));
         write_matrix_data(base_file + "tempo_curve.npd", tempo_curve, (char) (TYPE_DOUBLE),
                           (char *) &min_section_length, sizeof(min_section_length));
 
