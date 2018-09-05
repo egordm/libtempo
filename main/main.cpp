@@ -50,13 +50,14 @@ int main(int argc, char **argv) {
             (ct_y_axis, normalized_tempogram, bpm, settings.octave_divider, ref_tempo);
 
     std::cout << " - Preprocessing and cleaning tempogram" << std::endl;
-    int smooth_length = settings.smooth_length;
+    int smooth_length_samples =(int)(settings.smooth_length / (t[1] - t[0]));
     auto smooth_tempogram = tempogram_utils::smoothen_tempogram
-            (cyclic_tempgram, ct_y_axis, smooth_length, settings.triplet_weight);
+            (cyclic_tempgram, ct_y_axis, smooth_length_samples, settings.triplet_weight);
 
     std::cout << " - Tempo peaks extraction" << std::endl;
     auto tempo_curve = tempogram_utils::extract_tempo_curve(smooth_tempogram, ct_y_axis);
-    tempo_curve = curve_utils::correct_curve_by_length(tempo_curve, settings.min_section_length);
+    int min_section_length_samples = (int)(settings.min_section_length / (t[1] - t[0]));
+    tempo_curve = curve_utils::correct_curve_by_length(tempo_curve, min_section_length_samples);
 
     auto tempo_segments = curve_utils::split_curve(tempo_curve);
     auto tempo_sections_tmp = curve_utils::tempo_segments_to_sections
@@ -108,7 +109,7 @@ int main(int argc, char **argv) {
                           (char *) &ref_tempo, sizeof(ref_tempo));
         write_matrix_data(base_file + "ct_y_axis.npd", ct_y_axis, (char) (TYPE_DOUBLE));
         write_matrix_data(base_file + "smooth_tempogram.npd", smooth_tempogram, (char) (TYPE_DOUBLE),
-                          (char *) &smooth_length, sizeof(smooth_length));
+                          (char *) &smooth_length_samples, sizeof(smooth_length_samples));
         write_matrix_data(base_file + "t_smooth.npd", t, (char) (TYPE_DOUBLE));
         write_matrix_data(base_file + "tempo_curve.npd", tempo_curve, (char) (TYPE_DOUBLE),
                           (char *) &settings.min_section_length, sizeof(settings.min_section_length));
