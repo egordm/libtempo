@@ -1,9 +1,29 @@
 //
-// Created by egordm on 3-9-2018.
+// Created by egordm on 5-9-2018.
 //
 
-#ifndef MAIN_DEFINES_H
-#define MAIN_DEFINES_H
+#ifndef PROJECT_CLI_UTILS_H
+#define PROJECT_CLI_UTILS_H
+
+#include <tuple>
+#include <vector>
+#include <args.hxx>
+#include "settings.h"
+
+using namespace args;
+
+struct IntsReader {
+    void operator()(const std::string &name, const std::string &value, std::tuple<int, int> &destination) {
+        size_t commapos = value.find(',');
+        if (commapos == std::string::npos) return;
+
+        std::string v1 = value.substr(0, commapos);
+        std::string v2 = value.substr(commapos + 1, value.size() - commapos - 1);
+
+        std::get<0>(destination) = std::stoi(v1);
+        std::get<1>(destination) = std::stoi(v2);
+    }
+};
 
 #define TEMPO_WINDOW_DESC "Analysis window length in seconds for calculating tempogram"
 #define BPM_WINDOW_DESC "BPM window which to check for tempo peaks"
@@ -22,7 +42,27 @@
 #define VIZ_DESC "Saves all the generated structures to a binary fromat for manual visualization."
 #define AUDIO_DESC "Audio file to extract tempo of."
 
-#define TYPE_DOUBLE 0x1
-#define TYPE_COMPLEX 0x16
 
-#endif //MAIN_DEFINES_H
+void parse_arguments(Settings &settings, int argc, char **argv, bool &exit, bool &error);
+
+struct Applyable { // IDK
+    virtual ~Applyable() = default;
+
+    virtual void apply() = 0;
+};
+
+template<typename T>
+struct SettingArg : Applyable {
+    T &setting;
+    ValueFlag<T> arg;
+
+    SettingArg(Group &group, const std::string &name, const std::string &help, Matcher &&matcher, T &setting)
+            : setting(setting), arg(group, name, help, std::move(matcher), setting) {}
+
+    inline void apply() override {
+        if (arg) setting = get(arg);
+    }
+};
+
+
+#endif //PROJECT_CLI_UTILS_H

@@ -10,6 +10,9 @@
 
 using namespace tempogram;
 
+#define TYPE_DOUBLE 0x1
+#define TYPE_COMPLEX 0x16
+
 namespace present_utils {
     std::string split_ext(std::string &path);
 
