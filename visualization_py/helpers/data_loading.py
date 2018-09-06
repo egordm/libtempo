@@ -67,7 +67,7 @@ def parse_known_extras(name: str, data: DataFile):
     if name == 'smooth_tempogram':
         data.parameters = dict(smooth_length=struct.unpack('i', data.extra)[0])
     if name == 'tempo_curve':
-        data.parameters = dict(min_section_length=struct.unpack('i', data.extra)[0])
+        data.parameters = dict(min_section_length=struct.unpack('d', data.extra)[0])
 
     return data
 

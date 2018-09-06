@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
     auto novelty_curve = tempogram_processing::audio_to_novelty_curve(feature_rate, signal, audio.sr);
 
     std::cout << " - Calculating tempogram" << std::endl;
-    vec bpm = regspace(std::get<0>(settings.bpm_window), std::get<1>(settings.bpm_window));
+    vec bpm = regspace(std::get<0>(settings.bpm_scan_window), std::get<1>(settings.bpm_scan_window));
     vec t;
     auto tempogram = tempogram_processing::novelty_curve_to_tempogram_dft
             (t, novelty_curve, bpm, feature_rate, settings.tempo_window);
@@ -72,6 +72,11 @@ int main(int argc, char **argv) {
     if (tempo_multiples.empty()) tempo_multiples = {1, 2, 4};
     for (auto &section : tempo_sections) {
         section.bpm *= 2;
+
+        // Do bpm rounding
+        int precision_multiple = (int)round(section.bpm / settings.bpm_rounding_precision);
+        section.bpm = settings.bpm_rounding_precision * precision_multiple;
+
         curve_utils::extract_offset(novelty_curve, section, tempo_multiples, feature_rate, settings.bpm_doubt_window,
                                     settings.bpm_doubt_step);
         curve_utils::correct_offset(section, 4);

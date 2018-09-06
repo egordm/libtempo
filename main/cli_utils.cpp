@@ -12,10 +12,11 @@ void parse_arguments(Settings &settings, int argc, char **argv, bool &exit, bool
     HelpFlag help(parser, "help", "Display the help menu", {'h', "help"});
     args::Group basic_args(parser, "Basic");
 
-    ValueFlag<std::tuple<int, int>, IntsReader> bpm_window_arg(parser, "bpm_window", BPM_WINDOW_DESC, {"bpm_window"}, settings.bpm_window);
+    ValueFlag<std::tuple<int, int>, IntsReader> bpm_scan_window_arg(parser, "bpm_window", BPM_SCAN_WINDOW_DESC, {"bpm_window"}, settings.bpm_scan_window);
     ValueFlagList<int> tempo_multiples_arg(parser, "tempo_multiples", TEMPO_MULTIPLES_DESC, {"tempo_multiples", 'm'},  settings.tempo_multiples);
 
     std::vector<Applyable*> arguments;
+    arguments.push_back(new SettingArg<float>(basic_args, "bpm_rounding_precision", BPM_ROUNDING_PRECISION_DESC, {"bpm_rounding_precision"}, settings.bpm_rounding_precision));
     arguments.push_back(new SettingArg<int>(basic_args, "tempo_window", TEMPO_WINDOW_DESC, {"tempo_window"}, settings.tempo_window));
     arguments.push_back(new SettingArg<int>(basic_args, "ref_tempo", REF_TEMPO_DESC, {"ref_tempo"}, settings.ref_tempo));
     arguments.push_back(new SettingArg<int>(basic_args, "octave_divider", OCTAVE_DIVIDER_DESC, {"octave_divider"}, settings.octave_divider));
@@ -66,8 +67,10 @@ void parse_arguments(Settings &settings, int argc, char **argv, bool &exit, bool
     }
     arguments.clear();
 
-    if(bpm_window_arg) settings.bpm_window = get(bpm_window_arg);
+    if(bpm_scan_window_arg) settings.bpm_scan_window = get(bpm_scan_window_arg);
     if(tempo_multiples_arg) settings.tempo_multiples = get(tempo_multiples_arg);
+    if(osu_arg) settings.format_for_osu = true;
+    if(viz_arg) settings.format_for_visualization = true;
 
     return;
 }

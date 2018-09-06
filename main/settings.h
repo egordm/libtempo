@@ -9,8 +9,9 @@
 #include <vector>
 
 struct Settings {
+    float bpm_rounding_precision = 0.5f;
     int tempo_window = 8;
-    std::tuple<int, int> bpm_window = {30, 600};
+    std::tuple<int, int> bpm_scan_window = {30, 600};
     int ref_tempo = 60;
     int octave_divider = 120;
     double smooth_length = 20;
@@ -28,8 +29,9 @@ struct Settings {
     std::string audio_file;
 };
 
+#define BPM_ROUNDING_PRECISION_DESC "Precision to round the found bpm to before doing precision the check"
 #define TEMPO_WINDOW_DESC "Analysis window length in seconds for calculating tempogram"
-#define BPM_WINDOW_DESC "BPM window which to check for tempo peaks"
+#define BPM_SCAN_WINDOW_DESC "BPM window which to check for tempo peaks (must have large range)"
 #define REF_TEMPO_DESC "Reference tempo defining the partition of BPM into tempo octaves for calculating cyclic tempogram"
 #define OCTAVE_DIVIDER_DESC "Number of tempo classes used for representing a tempo octave. This parameter controls the dimensionality of cyclic tempogram"
 #define SMOOTH_LENGTH_DESC "Length in seconds over which the tempogram will be stabilized to extract a steady tempo"
