@@ -16,6 +16,7 @@ void parse_arguments(Settings &settings, int argc, char **argv, bool &exit, bool
     ValueFlagList<int> tempo_multiples_arg(parser, "tempo_multiples", TEMPO_MULTIPLES_DESC, {"tempo_multiples", 'm'},  settings.tempo_multiples);
 
     std::vector<Applyable*> arguments;
+    arguments.push_back(new SettingArg<int>(basic_args, "preferred_bpm", PREFERRED_BPM_DESC, {"preferred_bpm"}, settings.preferred_bpm));
     arguments.push_back(new SettingArg<float>(basic_args, "bpm_rounding_precision", BPM_ROUNDING_PRECISION_DESC, {"bpm_rounding_precision"}, settings.bpm_rounding_precision));
     arguments.push_back(new SettingArg<int>(basic_args, "tempo_window", TEMPO_WINDOW_DESC, {"tempo_window"}, settings.tempo_window));
     arguments.push_back(new SettingArg<int>(basic_args, "ref_tempo", REF_TEMPO_DESC, {"ref_tempo"}, settings.ref_tempo));

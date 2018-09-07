@@ -39,7 +39,8 @@ struct SettingArg : Applyable {
     ValueFlag<T> arg;
 
     SettingArg(Group &group, const std::string &name, const std::string &help, Matcher &&matcher, T &setting)
-            : setting(setting), arg(group, name, help, std::move(matcher), setting) {}
+            : setting(setting), arg(group, name, "(Default: " + std::to_string(setting) + ") " + help, std::move(matcher), setting) {
+    }
 
     inline void apply() override {
         if (arg) setting = get(arg);

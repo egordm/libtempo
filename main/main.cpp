@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
     bool error, do_exit;
     parse_arguments(settings, argc, argv, do_exit, error);
 
-    if(do_exit) exit(error ? 1 : 0);
+    if (do_exit) exit(error ? 1 : 0);
 
     // Do program logic
     std::cout << "Processing " << settings.audio_file << std::endl;
@@ -50,13 +50,13 @@ int main(int argc, char **argv) {
             (ct_y_axis, normalized_tempogram, bpm, settings.octave_divider, ref_tempo);
 
     std::cout << " - Preprocessing and cleaning tempogram" << std::endl;
-    int smooth_length_samples =(int)(settings.smooth_length / (t[1] - t[0]));
+    int smooth_length_samples = (int) (settings.smooth_length / (t[1] - t[0]));
     auto smooth_tempogram = tempogram_utils::smoothen_tempogram
             (cyclic_tempgram, ct_y_axis, smooth_length_samples, settings.triplet_weight);
 
     std::cout << " - Tempo peaks extraction" << std::endl;
     auto tempo_curve = tempogram_utils::extract_tempo_curve(smooth_tempogram, ct_y_axis);
-    int min_section_length_samples = (int)(settings.min_section_length / (t[1] - t[0]));
+    int min_section_length_samples = (int) (settings.min_section_length / (t[1] - t[0]));
     tempo_curve = curve_utils::correct_curve_by_length(tempo_curve, min_section_length_samples);
 
     auto tempo_segments = curve_utils::split_curve(tempo_curve);
@@ -68,17 +68,21 @@ int main(int argc, char **argv) {
         curve_utils::split_section(section, tempo_sections, settings.max_section_length);
 
     std::cout << " - Tempo offset estimation" << std::endl;
-    auto tempo_multiples = settings.tempo_multiples;
-    if (tempo_multiples.empty()) tempo_multiples = {1, 2, 4};
     for (auto &section : tempo_sections) {
-        section.bpm *= 2;
+        // BPM correction to preferred bpm
+        int best_multiple = *std::min_element(settings.tempo_multiples.begin(), settings.tempo_multiples.end(),
+                                                [&settings, &section](const int &a, const int &b) {
+                                                    return fabs(settings.preferred_bpm - a * section.bpm) <
+                                                           fabs(settings.preferred_bpm - b * section.bpm);
+                                                });
+        section.bpm = section.bpm * best_multiple;
 
         // Do bpm rounding
-        int precision_multiple = (int)round(section.bpm / settings.bpm_rounding_precision);
+        int precision_multiple = (int) round(section.bpm / settings.bpm_rounding_precision);
         section.bpm = settings.bpm_rounding_precision * precision_multiple;
 
-        curve_utils::extract_offset(novelty_curve, section, tempo_multiples, feature_rate, settings.bpm_doubt_window,
-                                    settings.bpm_doubt_step);
+        curve_utils::extract_offset(novelty_curve, section, settings.tempo_multiples, feature_rate,
+                                    settings.bpm_doubt_window, settings.bpm_doubt_step);
         curve_utils::correct_offset(section, 4);
     }
     std::cout << "Done!" << std::endl;
@@ -92,7 +96,7 @@ int main(int argc, char **argv) {
     if (settings.generate_click_track) {
         try {
             save_click_track(audio, tempo_sections, settings.click_track_subdivision);
-        } catch (const std::runtime_error& error) {
+        } catch (const std::runtime_error &error) {
             std::cerr << error.what() << std::endl;
             exit(1);
         }

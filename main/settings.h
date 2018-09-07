@@ -9,6 +9,7 @@
 #include <vector>
 
 struct Settings {
+    int preferred_bpm = 130;
     float bpm_rounding_precision = 0.5f;
     int tempo_window = 8;
     std::tuple<int, int> bpm_scan_window = {30, 600};
@@ -29,20 +30,21 @@ struct Settings {
     std::string audio_file;
 };
 
-#define BPM_ROUNDING_PRECISION_DESC "Precision to round the found bpm to before doing precision the check"
-#define TEMPO_WINDOW_DESC "Analysis window length in seconds for calculating tempogram"
-#define BPM_SCAN_WINDOW_DESC "BPM window which to check for tempo peaks (must have large range)"
-#define REF_TEMPO_DESC "Reference tempo defining the partition of BPM into tempo octaves for calculating cyclic tempogram"
-#define OCTAVE_DIVIDER_DESC "Number of tempo classes used for representing a tempo octave. This parameter controls the dimensionality of cyclic tempogram"
-#define SMOOTH_LENGTH_DESC "Length in seconds over which the tempogram will be stabilized to extract a steady tempo"
-#define TRIPLET_WEIGH_DESC "Weight of the triplet intensity which will be adeed to its base intensity"
-#define MIN_SECTION_LENGTH_DESC "Minimum length for a tempo section in seconds"
-#define MAX_SECTION_LENGTH_DESC "Maximum section length in seconds after which section is split in half"
-#define BPM_DOUBT_WINDOW_DESC "Window around candidate bpm which to search for a more fine and correct bpm"
-#define BPM_DOUBT_STEP_DESC "Steps which to take inside the doubt window to fine tune the bpm"
+#define PREFERRED_BPM_DESC "BPM around which the real bpm will be chosen."
+#define BPM_ROUNDING_PRECISION_DESC "Precision to round the found bpm to before doing precision the check."
+#define TEMPO_WINDOW_DESC "Analysis window length in seconds for calculating tempogram."
+#define BPM_SCAN_WINDOW_DESC "BPM window which to check for tempo peaks (must have large range)."
+#define REF_TEMPO_DESC "Reference tempo defining the partition of BPM into tempo octaves for calculating cyclic tempogram."
+#define OCTAVE_DIVIDER_DESC "Number of tempo classes used for representing a tempo octave. This parameter controls the dimensionality of cyclic tempogram."
+#define SMOOTH_LENGTH_DESC "Length in seconds over which the tempogram will be stabilized to extract a steady tempo."
+#define TRIPLET_WEIGH_DESC "Weight of the triplet intensity which will be adeed to its base intensity."
+#define MIN_SECTION_LENGTH_DESC "Minimum length for a tempo section in seconds."
+#define MAX_SECTION_LENGTH_DESC "Maximum section length in seconds after which section is split in half."
+#define BPM_DOUBT_WINDOW_DESC "Window around candidate bpm which to search for a more fine and correct bpm."
+#define BPM_DOUBT_STEP_DESC "Steps which to take inside the doubt window to fine tune the bpm."
 #define TEMPO_MULTIPLES_DESC "Tempo multiples to consider when searching for correct offset"
 #define GENERATE_CLICK_TRACK_DESC "Wether or not a click track should be generated"
-#define CLICK_TRACK_SUBDIVISION_DESC "Click subdivision for the click track"
+#define CLICK_TRACK_SUBDIVISION_DESC "Click subdivision for the click track."
 #define OSU_DESC "Wether or not to generate tempo data in osu format."
 #define VIZ_DESC "Saves all the generated structures to a binary fromat for manual visualization."
 #define AUDIO_DESC "Audio file to extract tempo of."
