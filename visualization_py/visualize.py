@@ -22,26 +22,21 @@ def main(data_path, multiples):
     sections = load_sections(f'{data_path}/sections.txt')
 
     # Plot
-    tempogram_plot = plot_tempogram(d, multiples, data_path)
-    cyclic_tempogram_plot = plot_cyclic_tempogram(d, data_path)
-    smooth_tempogram_plot = plot_smooth_tempogram(d, data_path)
-    novelty_curve_plot = plot_novelty_curve(d, sections, multiples, data_path)
-    overlap_curve_plot = plot_overlap_curve(d, sections, multiples, data_path)
+    plots = [
+        plot_tempogram(d, multiples, data_path),
+        plot_cyclic_tempogram(d, data_path),
+        plot_smooth_tempogram(d, data_path),
+        plot_novelty_curve(d, sections, multiples, data_path),
+        plot_overlap_curve(d, sections, multiples, data_path),
+    ]
 
     # Main plot write
     plot_height = 600
     main_plot_file = f'{data_path}/index.html'
     main_plot = open(main_plot_file, 'w')
-    main_plot.write("<html><head></head><body>\n")
-    main_plot.write(f'<object data="{os.path.basename(tempogram_plot)}" width="100%" height="{plot_height}"></object>')
-    main_plot.write(
-        f'<object data="{os.path.basename(cyclic_tempogram_plot)}" width="100%" height="{plot_height}"></object>')
-    main_plot.write(
-        f'<object data="{os.path.basename(smooth_tempogram_plot)}" width="100%" height="{plot_height}"></object>')
-    main_plot.write(
-        f'<object data="{os.path.basename(novelty_curve_plot)}" width="100%" height="{plot_height}"></object>')
-    main_plot.write(
-        f'<object data="{os.path.basename(overlap_curve_plot)}" width="100%" height="{plot_height}"></object>')
+    main_plot.write("<html><head><script src=\"https://cdn.plot.ly/plotly-1.2.0.min.js\"></script></head><body>\n")
+    for plt_gr in plots:
+        main_plot.write(f'<div style="width: 100%; height: {plot_height}">{plt_gr}</div>')
     main_plot.write("</body></html>")
     main_plot.close()
     webbrowser.open('file://' + os.path.realpath(main_plot_file))
@@ -61,9 +56,7 @@ def plot_tempogram(data, tempo_multiples, save_path, name='tempogram'):
         label = f'Tempo {multiple}x' if multiple != 1 else 'Tempo ref'
         fig.add_scatter(x=data.t_smooth.data, y=data.tempo_curve.data * ref_tempo * multiple, name=label)
 
-    filename = f'{save_path}/{name}.html'
-    plot(fig, filename=filename, auto_open=False)
-    return filename
+    return plot(fig, auto_open=False, include_plotlyjs=False, output_type='div')
 
 
 def plot_cyclic_tempogram(data, save_path, name='cyclic_tempogram'):
@@ -78,9 +71,7 @@ def plot_cyclic_tempogram(data, save_path, name='cyclic_tempogram'):
                     showscale=False, name='tempogram')
     fig.add_scatter(x=data.t_smooth.data, y=data.tempo_curve.data, name='peak tempo')
 
-    filename = f'{save_path}/{name}.html'
-    plot(fig, filename=filename, auto_open=False)
-    return filename
+    return plot(fig, auto_open=False, include_plotlyjs=False, output_type='div')
 
 
 def plot_smooth_tempogram(data, save_path, name='smooth_tempogram'):
@@ -94,9 +85,7 @@ def plot_smooth_tempogram(data, save_path, name='smooth_tempogram'):
                     name='tempogram', showscale=False)
     fig.add_scatter(x=data.t_smooth.data, y=data.tempo_curve.data, name='peak tempo')
 
-    filename = f'{save_path}/{name}.html'
-    plot(fig, filename=filename, auto_open=False)
-    return filename
+    return plot(fig, auto_open=False, include_plotlyjs=False, output_type='div')
 
 
 def plot_novelty_curve(data, sections, multiples, save_path, name='novelty_curve'):
@@ -121,9 +110,7 @@ def plot_novelty_curve(data, sections, multiples, save_path, name='novelty_curve
         y = pulses[i] * mag * (pulses[i] > 0)
         fig.add_scatter(x=t_nc, y=y, name=f'1/{multiples[i] * 4} notes')
 
-    filename = f'{save_path}/{name}.html'
-    plot(fig, filename=filename, auto_open=False)
-    return filename
+    return plot(fig, auto_open=False, include_plotlyjs=False, output_type='div')
 
 
 def plot_overlap_curve(data, sections, multiples, save_path, name='overlap_curve'):
@@ -145,9 +132,7 @@ def plot_overlap_curve(data, sections, multiples, save_path, name='overlap_curve
         y = pulses[i] * data.novelty_curve.data
         fig.add_scatter(x=t_nc, y=y, name=f'1/{multiples[i] * 4} notes')
 
-    filename = f'{save_path}/{name}.html'
-    plot(fig, filename=filename, auto_open=False)
-    return filename
+    return plot(fig, auto_open=False, include_plotlyjs=False, output_type='div')
 
 
 if __name__ == '__main__':
