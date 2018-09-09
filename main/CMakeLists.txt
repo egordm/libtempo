@@ -6,7 +6,7 @@ file(GLOB SOURCE_FILES
         "*.hpp"
         )
 
-include_directories(${tempo_estimation_INCLUDE_DIRS} ../libs/args)
+include_directories(${tempo_estimation_INCLUDE_DIRS} ../libs/args ../libs/json/single_include)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 

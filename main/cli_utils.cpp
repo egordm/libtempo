@@ -36,6 +36,7 @@ void parse_arguments(Settings &settings, int argc, char **argv, bool &exit, bool
 
     Flag osu_arg(output_args, "osu", OSU_DESC, {"osu"});
     Flag viz_arg(output_args, "viz", VIZ_DESC, {"viz"});
+    Flag dump_arg(output_args, "dump", DUMP_DESC, {"dump"});
 
     try {
         parser.ParseCLI(argc, argv);
@@ -74,5 +75,6 @@ void parse_arguments(Settings &settings, int argc, char **argv, bool &exit, bool
     if(bpm_scan_window_arg) settings.bpm_scan_window = get(bpm_scan_window_arg);
     if(tempo_multiples_arg) settings.tempo_multiples = get(tempo_multiples_arg);
     if(osu_arg) settings.format_for_osu = true;
-    if(viz_arg) settings.format_for_visualization = true;
+    if(viz_arg) settings.visualize = true;
+    if(dump_arg) settings.dump_data = true;
 }

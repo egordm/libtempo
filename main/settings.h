@@ -17,7 +17,7 @@ struct Settings {
     int octave_divider = 120;
     double smooth_length = 20;
     float triplet_weight = 3;
-    double min_section_length = 20;
+    double min_section_length = 10;
     double max_section_length = 40;
     float bpm_doubt_window = 2.f;
     float bpm_doubt_step = 0.1f;
@@ -25,7 +25,8 @@ struct Settings {
     bool generate_click_track = true;
     int click_track_subdivision = 4;
     bool format_for_osu = false;
-    bool format_for_visualization = false;
+    bool visualize = false;
+    bool dump_data = false;
 
     std::string audio_file;
 };
@@ -46,7 +47,8 @@ struct Settings {
 #define GENERATE_CLICK_TRACK_DESC "Wether or not a click track should be generated"
 #define CLICK_TRACK_SUBDIVISION_DESC "Click subdivision for the click track."
 #define OSU_DESC "Wether or not to generate tempo data in osu format."
-#define VIZ_DESC "Saves all the generated structures to a binary fromat for manual visualization."
+#define VIZ_DESC "Saves a html file with useful graphs."
+#define DUMP_DESC "Dump generated tempograms and novelty curves into a file."
 #define AUDIO_DESC "Audio file to extract tempo of."
 
 
