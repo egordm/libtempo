@@ -16,9 +16,10 @@ namespace tempogram { namespace signal_utils {
      * @param bpm
      * @param window_length
      * @param feature_rate
+     * @param shift by: number of samples by which the zero of the pulse should be fixed
      * @return
      */
-    std::tuple<vec, vec> generate_pulse(double bpm, int window_length, int feature_rate); // TODO: implement in compute_fourier_coefficients
+    std::tuple<vec, vec> generate_pulse(double bpm, int window_length, int feature_rate, int shift_by=0); // TODO: implement in compute_fourier_coefficients
 
     vec generate_click(int sr = 22050, double duration = 0.1, double freq = 1000.0);
 
