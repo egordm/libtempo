@@ -103,8 +103,9 @@ void dump(const std::string &filepath, Settings settings, const vec &novelty_cur
           const mat &smooth_tempogram, int ref_tempo, int feature_rate,
           const std::vector<curve_utils::Section> &tempo_sections) {
 
-    std::string base_dir = filepath + "/";
+    std::string base_dir = filepath;
     fs::create_directories(base_dir.c_str());
+    base_dir += "/";
 
     write_matrix_data(base_dir + "novelty_curve.npd", novelty_curve, (char) (TYPE_DOUBLE),
                       (char *) &feature_rate, sizeof(feature_rate));

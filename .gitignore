@@ -77,4 +77,6 @@ dist/
 build/
 *.egg-info/
 .env
+*.html
+!examples/*.html
 */.ipynb_checkpoints
