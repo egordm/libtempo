@@ -16,3 +16,8 @@ else ()
 endif ()
 
 target_link_libraries(${PROJECT_NAME} tempo_estimation ${COMPILER_LIBS})
+
+install(TARGETS ${PROJECT_NAME}
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
