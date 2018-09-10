@@ -76,7 +76,7 @@ void visualize(const std::string &filepath, Settings settings, const vec &novelt
     nc_plot.charts.emplace_back("novelty curve", plt::arma_to_json(t_nc), plt::arma_to_json(novelty_curve));
     for (int i = 0; i < settings.tempo_multiples.size(); ++i) {
         vec y = pulses[i] % (pulses[i] > 0) * mag;
-        nc_plot.charts.emplace_back("1/" + std::to_string(settings.tempo_multiples[i]) + " notes",
+        nc_plot.charts.emplace_back("1/" + std::to_string(settings.tempo_multiples[i] * 4) + " notes",
                                     plt::arma_to_json(t_nc), plt::arma_to_json(y));
     }
     nc_plot.attributes["xaxis"]["title"] = "Time (s)";
@@ -87,7 +87,7 @@ void visualize(const std::string &filepath, Settings settings, const vec &novelt
     plt::Plot diff_plot("Overlap Novelty curve & Computed BPM Onsets");
     for (int i = 0; i < settings.tempo_multiples.size(); ++i) {
         vec y = pulses[i] % novelty_curve;
-        diff_plot.charts.emplace_back("1/" + std::to_string(settings.tempo_multiples[i]) + " notes",
+        diff_plot.charts.emplace_back("1/" + std::to_string(settings.tempo_multiples[i] * 4) + " notes",
                                       plt::arma_to_json(t_nc), plt::arma_to_json(y));
     }
     diff_plot.attributes["xaxis"]["title"] = "Time (s)";

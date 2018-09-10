@@ -32,9 +32,9 @@ struct Settings {
 };
 
 #define PREFERRED_BPM_DESC "BPM around which the real bpm will be chosen."
-#define BPM_ROUNDING_PRECISION_DESC "Precision to round the found bpm to before doing precision the check."
+#define BPM_ROUNDING_PRECISION_DESC "Precision of the BPM before correction.."
 #define TEMPO_WINDOW_DESC "Analysis window length in seconds for calculating tempogram."
-#define BPM_SCAN_WINDOW_DESC "BPM window which to check for tempo peaks (must have large range)."
+#define BPM_SCAN_WINDOW_DESC "BPM range which to check for tempo peaks."
 #define REF_TEMPO_DESC "Reference tempo defining the partition of BPM into tempo octaves for calculating cyclic tempogram."
 #define OCTAVE_DIVIDER_DESC "Number of tempo classes used for representing a tempo octave. This parameter controls the dimensionality of cyclic tempogram."
 #define SMOOTH_LENGTH_DESC "Length in seconds over which the tempogram will be stabilized to extract a steady tempo."

@@ -8,7 +8,7 @@
 
 void parse_arguments(Settings &settings, int argc, char **argv, bool &exit, bool &error) {
     ArgumentParser parser(
-            "CLI for tempo estimation developed by Egor Dmitriev.\nVisit github for library version.");
+            "CLI for libtempo.\nVisit github for library version. (https://github.com/EgorDm/libtempo)");
     HelpFlag help(parser, "help", "Display the help menu", {'h', "help"});
     args::Group basic_args(parser, "Basic");
     args::Group advanced_args(parser, "Advanced");
