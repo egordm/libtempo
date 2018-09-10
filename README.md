@@ -13,18 +13,21 @@ C++ / Python library for signal processing and tempo information extraction.
 libtempo [audio] {OPTIONS}
 ```
 ```
-  OPTIONS:
+    OPTIONS:
 
       -h, --help                        Display the help menu
       Basic
+        -t[preferred_bpm],
         --preferred_bpm=[preferred_bpm]   (Default: 130) BPM around which the
                                           real bpm will be chosen.
         --bpm_rounding_precision=[bpm_rounding_precision]
                                           (Default: 0.500000) Precision of the
                                           BPM before correction..
+        -s[smooth_length],
         --smooth_length=[smooth_length]   (Default: 20.000000) Length in seconds
                                           over which the tempogram will be
                                           stabilized to extract a steady tempo.
+        -l[min_section_length],
         --min_section_length=[min_section_length]
                                           (Default: 10.000000) Minimum length
                                           for a tempo section in seconds.
@@ -60,17 +63,17 @@ libtempo [audio] {OPTIONS}
                                           take inside the doubt window to fine
                                           tune the bpm.
         --click_track_subdivision=[click_track_subdivision]
-                                          (Default: 4) Click subdivision for the
+                                          (Default: 8) Click subdivision for the
                                           click track.
       Output Flags
         -c[generate_click_track],
         --generate_click_track=[generate_click_track]
                                           (Default: 1) Wether or not a click
                                           track should be generated
-        --osu                             Wether or not to generate tempo data
+        -o, --osu                         Wether or not to generate tempo data
                                           in osu format.
         --viz                             Saves a html file with useful graphs.
-        --dump                            Dump generated tempograms and novelty
+        -d, --dump                        Dump generated tempograms and novelty
                                           curves into a file.
       audio                             Audio file to extract tempo of.
       "--" can be used to terminate flag options and force all following
