@@ -7,16 +7,16 @@
 #include <signal_utils.h>
 #include <args.hxx>
 #include "cli_utils.h"
-#include "present_utils.h"
-#include <filesystem>
 #include "settings.h"
 #include "flag_logic.h"
+#include "present_utils.h"
 
-namespace fs = std::filesystem;
+
 using namespace std::chrono;
 using namespace tempogram;
 using namespace args;
 using namespace present_utils;
+
 
 int main(int argc, char **argv) {
     Settings settings;
@@ -106,30 +106,15 @@ int main(int argc, char **argv) {
     split_ext(base_file);
 
     if (settings.visualize) {
-        std::cout << std::endl << "Writing results to a file" << std::endl;
+        std::cout << std::endl << "Writing visualization data" << std::endl;
         visualize(base_file, settings, novelty_curve, abs(normalized_tempogram), t, bpm, cyclic_tempogram, tempo_curve,
                   ct_y_axis, smooth_tempogram, ref_tempo, feature_rate, tempo_sections);
     }
 
     if (settings.dump_data) {
-        std::string base_dir = base_file + "/";
-        fs::create_directories(base_dir.c_str());
-
-        write_matrix_data(base_dir + "novelty_curve.npd", novelty_curve, (char) (TYPE_DOUBLE),
-                          (char *) &feature_rate, sizeof(feature_rate));
-        write_matrix_data(base_dir + "tempogram.npd", tempogram, (char) (TYPE_DOUBLE | TYPE_COMPLEX));
-        write_matrix_data(base_dir + "t.npd", t, (char) (TYPE_DOUBLE));
-        write_matrix_data(base_dir + "bpm.npd", bpm, (char) (TYPE_DOUBLE));
-        write_matrix_data(base_dir + "tempogram_cyclic.npd", cyclic_tempogram, (char) (TYPE_DOUBLE),
-                          (char *) &ref_tempo, sizeof(ref_tempo));
-        write_matrix_data(base_dir + "ct_y_axis.npd", ct_y_axis, (char) (TYPE_DOUBLE));
-        write_matrix_data(base_dir + "smooth_tempogram.npd", smooth_tempogram, (char) (TYPE_DOUBLE),
-                          (char *) &smooth_length_samples, sizeof(smooth_length_samples));
-        write_matrix_data(base_dir + "t_smooth.npd", t, (char) (TYPE_DOUBLE));
-        write_matrix_data(base_dir + "tempo_curve.npd", tempo_curve, (char) (TYPE_DOUBLE),
-                          (char *) &settings.min_section_length, sizeof(settings.min_section_length));
-
-        write_sections(base_dir + "sections.txt", tempo_sections);
+        std::cout << std::endl << "Dumping useful data" << std::endl;
+        dump(base_file, settings, novelty_curve, abs(normalized_tempogram), t, bpm, cyclic_tempogram, tempo_curve,
+                  ct_y_axis, smooth_tempogram, ref_tempo, feature_rate, tempo_sections);
     }
 
     if (settings.format_for_osu) {

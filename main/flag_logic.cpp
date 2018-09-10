@@ -4,6 +4,12 @@
 
 #include "flag_logic.h"
 #include <signal_utils.h>
+#include <filesystem>
+#include "present_utils.h"
+
+namespace fs = std::filesystem;
+using namespace present_utils;
+
 
 void visualize(const std::string &filepath, Settings settings, const vec &novelty_curve, const mat &tempogram, const vec &t,
                const vec &bpm, const mat &cyclic_tempogram, const vec &tempo_curve, const vec &ct_y_axis,
@@ -90,4 +96,30 @@ void visualize(const std::string &filepath, Settings settings, const vec &novelt
 
 
     viz_file.save(filepath + ".html");
+}
+
+void dump(const std::string &filepath, Settings settings, const vec &novelty_curve, const mat &tempogram, const vec &t,
+          const vec &bpm, const mat &cyclic_tempogram, const vec &tempo_curve, const vec &ct_y_axis,
+          const mat &smooth_tempogram, int ref_tempo, int feature_rate,
+          const std::vector<curve_utils::Section> &tempo_sections) {
+
+    std::string base_dir = filepath + "/";
+    fs::create_directories(base_dir.c_str());
+
+    write_matrix_data(base_dir + "novelty_curve.npd", novelty_curve, (char) (TYPE_DOUBLE),
+                      (char *) &feature_rate, sizeof(feature_rate));
+    write_matrix_data(base_dir + "tempogram.npd", tempogram, (char) (TYPE_DOUBLE | TYPE_COMPLEX));
+    write_matrix_data(base_dir + "t.npd", t, (char) (TYPE_DOUBLE));
+    write_matrix_data(base_dir + "bpm.npd", bpm, (char) (TYPE_DOUBLE));
+    write_matrix_data(base_dir + "tempogram_cyclic.npd", cyclic_tempogram, (char) (TYPE_DOUBLE),
+                      (char *) &ref_tempo, sizeof(ref_tempo));
+    write_matrix_data(base_dir + "ct_y_axis.npd", ct_y_axis, (char) (TYPE_DOUBLE));
+    write_matrix_data(base_dir + "smooth_tempogram.npd", smooth_tempogram, (char) (TYPE_DOUBLE),
+                      (char *) &settings.smooth_length, sizeof(settings.smooth_length));
+    write_matrix_data(base_dir + "t_smooth.npd", t, (char) (TYPE_DOUBLE));
+    write_matrix_data(base_dir + "tempo_curve.npd", tempo_curve, (char) (TYPE_DOUBLE),
+                      (char *) &settings.min_section_length, sizeof(settings.min_section_length));
+
+    write_sections(base_dir + "sections.txt", tempo_sections);
+
 }
