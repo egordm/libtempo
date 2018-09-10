@@ -20,23 +20,23 @@ void parse_arguments(Settings &settings, int argc, char **argv, bool &exit, bool
     ValueFlagList<int> tempo_multiples_arg(advanced_args, "tempo_multiples", TEMPO_MULTIPLES_DESC, {"tempo_multiples", 'm'},  settings.tempo_multiples);
 
     std::vector<Applyable*> arguments;
-    arguments.push_back(new SettingArg<int>(basic_args, "preferred_bpm", PREFERRED_BPM_DESC, {"preferred_bpm"}, settings.preferred_bpm));
+    arguments.push_back(new SettingArg<int>(basic_args, "preferred_bpm", PREFERRED_BPM_DESC, {"preferred_bpm", 't'}, settings.preferred_bpm));
     arguments.push_back(new SettingArg<float>(basic_args, "bpm_rounding_precision", BPM_ROUNDING_PRECISION_DESC, {"bpm_rounding_precision"}, settings.bpm_rounding_precision));
     arguments.push_back(new SettingArg<int>(advanced_args, "ref_tempo", REF_TEMPO_DESC, {"ref_tempo"}, settings.ref_tempo));
     arguments.push_back(new SettingArg<int>(advanced_args, "tempo_window", TEMPO_WINDOW_DESC, {"tempo_window"}, settings.tempo_window));
     arguments.push_back(new SettingArg<int>(advanced_args, "octave_divider", OCTAVE_DIVIDER_DESC, {"octave_divider"}, settings.octave_divider));
-    arguments.push_back(new SettingArg<double>(basic_args, "smooth_length", SMOOTH_LENGTH_DESC, {"smooth_length"}, settings.smooth_length));
+    arguments.push_back(new SettingArg<double>(basic_args, "smooth_length", SMOOTH_LENGTH_DESC, {"smooth_length", 's'}, settings.smooth_length));
     arguments.push_back(new SettingArg<float>(advanced_args, "triplet_weight", TRIPLET_WEIGH_DESC, {"triplet_weight"}, settings.triplet_weight));
-    arguments.push_back(new SettingArg<double>(basic_args, "min_section_length", MIN_SECTION_LENGTH_DESC, {"min_section_length"}, settings.min_section_length));
+    arguments.push_back(new SettingArg<double>(basic_args, "min_section_length", MIN_SECTION_LENGTH_DESC, {"min_section_length", 'l'}, settings.min_section_length));
     arguments.push_back(new SettingArg<double>(basic_args, "max_section_length", MAX_SECTION_LENGTH_DESC, {"max_section_length"}, settings.max_section_length));
     arguments.push_back(new SettingArg<float>(advanced_args, "bpm_doubt_window", BPM_DOUBT_WINDOW_DESC, {"bpm_doubt_window"}, settings.bpm_doubt_window));
     arguments.push_back(new SettingArg<float>(advanced_args, "bpm_doubt_step", BPM_DOUBT_STEP_DESC, {"bpm_doubt_step"}, settings.bpm_doubt_step));
     arguments.push_back(new SettingArg<int>(advanced_args, "click_track_subdivision", CLICK_TRACK_SUBDIVISION_DESC, {"click_track_subdivision"}, settings.click_track_subdivision));
     arguments.push_back(new SettingArg<bool>(output_args, "generate_click_track", GENERATE_CLICK_TRACK_DESC, {"generate_click_track", 'c'}, settings.generate_click_track));
 
-    Flag osu_arg(output_args, "osu", OSU_DESC, {"osu"});
+    Flag osu_arg(output_args, "osu", OSU_DESC, {"osu", 'o'});
     Flag viz_arg(output_args, "viz", VIZ_DESC, {"viz"});
-    Flag dump_arg(output_args, "dump", DUMP_DESC, {"dump"});
+    Flag dump_arg(output_args, "dump", DUMP_DESC, {"dump", 'd'});
 
     try {
         parser.ParseCLI(argc, argv);

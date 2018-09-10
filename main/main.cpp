@@ -21,7 +21,7 @@ using namespace present_utils;
 int main(int argc, char **argv) {
     Settings settings;
 
-    bool error, do_exit;
+    bool error = false, do_exit = false;
     parse_arguments(settings, argc, argv, do_exit, error);
 
     if (do_exit) exit(error ? 1 : 0);
