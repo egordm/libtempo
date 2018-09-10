@@ -10,10 +10,9 @@
 #include "present_utils.h"
 #include <filesystem>
 #include "settings.h"
-#include "plotly.h"
+#include "flag_logic.h"
 
 namespace fs = std::filesystem;
-namespace plt = plotly;
 using namespace std::chrono;
 using namespace tempogram;
 using namespace args;
@@ -47,13 +46,13 @@ int main(int argc, char **argv) {
     auto normalized_tempogram = tempogram::normalize_feature(tempogram, 2, 0.0001);
     int ref_tempo = settings.ref_tempo;
     vec ct_y_axis;
-    auto cyclic_tempgram = tempogram_processing::tempogram_to_cyclic_tempogram
+    auto cyclic_tempogram = tempogram_processing::tempogram_to_cyclic_tempogram
             (ct_y_axis, normalized_tempogram, bpm, settings.octave_divider, ref_tempo);
 
     std::cout << " - Preprocessing and cleaning tempogram" << std::endl;
     int smooth_length_samples = (int) (settings.smooth_length / (t[1] - t[0]));
     auto smooth_tempogram = tempogram_utils::smoothen_tempogram
-            (cyclic_tempgram, ct_y_axis, smooth_length_samples, settings.triplet_weight);
+            (cyclic_tempogram, ct_y_axis, smooth_length_samples, settings.triplet_weight);
 
     std::cout << " - Tempo peaks extraction" << std::endl;
     auto tempo_curve = tempogram_utils::extract_tempo_curve(smooth_tempogram, ct_y_axis);
@@ -108,82 +107,8 @@ int main(int argc, char **argv) {
 
     if (settings.visualize) {
         std::cout << std::endl << "Writing results to a file" << std::endl;
-        plt::File viz_file;
-
-        plt::Plot tempogram_plot("Tempogram");
-        mat cleaned_tempogram = abs(normalized_tempogram);
-        tempogram_plot.charts.push_back(plt::Chart::create_heatmap("tempogram", plt::arma_to_json(t),
-                                                                   plt::arma_to_json(bpm),
-                                                                   plt::arma_to_json(cleaned_tempogram)));
-        for (const auto &multiple : settings.tempo_multiples) {
-            std::string label = multiple == 1 ? "Tempo ref" : "Tempo " + std::to_string(multiple) + "x";
-            tempogram_plot.charts.emplace_back(label, plt::arma_to_json(t),
-                                               plt::arma_to_json((vec) (tempo_curve * ref_tempo * multiple)));
-        }
-        tempogram_plot.attributes["xaxis"]["title"] = "Time (s)";
-        tempogram_plot.attributes["yaxis"]["title"] = "Tempo (BPM)";
-        viz_file.plots.push_back(tempogram_plot);
-
-        plt::Plot cyclic_tempogram_plot("Cyclic Tempogram | Ref tempo = " + std::to_string(ref_tempo));
-        cyclic_tempogram_plot.charts.push_back(plt::Chart::create_heatmap("tempogram", plt::arma_to_json(t),
-                                                                   plt::arma_to_json(ct_y_axis),
-                                                                   plt::arma_to_json(cyclic_tempgram)));
-        cyclic_tempogram_plot.charts.emplace_back("peak tempo", plt::arma_to_json(t), plt::arma_to_json(tempo_curve));
-        cyclic_tempogram_plot.attributes["xaxis"]["title"] = "Time (s)";
-        cyclic_tempogram_plot.attributes["yaxis"]["title"] = "Tempo (rBPM)";
-        viz_file.plots.push_back(cyclic_tempogram_plot);
-
-        plt::Plot smooth_tempogram_plot("Smoothed Tempogram | Smooth length = " + std::to_string(settings.smooth_length));
-        smooth_tempogram_plot.charts.push_back(plt::Chart::create_heatmap("tempogram", plt::arma_to_json(t),
-                                                                          plt::arma_to_json(ct_y_axis),
-                                                                          plt::arma_to_json(smooth_tempogram)));
-        smooth_tempogram_plot.charts.emplace_back("peak tempo", plt::arma_to_json(t), plt::arma_to_json(tempo_curve));
-        smooth_tempogram_plot.attributes["xaxis"]["title"] = "Time (s)";
-        smooth_tempogram_plot.attributes["yaxis"]["title"] = "Tempo (rBPM)";
-        viz_file.plots.push_back(smooth_tempogram_plot);
-
-        std::vector<vec> pulses;
-        for(const auto &multiple : settings.tempo_multiples) {
-            vec pulse(novelty_curve.n_rows, fill::zeros);
-            int window_length;
-            int offset;
-            uword start;
-            for(const auto &section : tempo_sections) {
-                window_length = static_cast<int>(round((section.end - section.start) * feature_rate));
-                offset = static_cast<int>(round((section.start - section.offset) * feature_rate));
-                start = (uword)(section.start * feature_rate);
-                auto tmpuls = signal_utils::generate_pulse(section.bpm * multiple, window_length, feature_rate, offset);
-                pulse(span(start, start + window_length - 1)) = std::get<0>(tmpuls);
-            }
-            pulses.push_back(pulse);
-        }
-
-        double mag = max(novelty_curve) * 0.2;
-
-        plt::Plot nc_plot("Novelty curve & Computed BPM Onsets");
-        vec t_nc = regspace<vec>(0, novelty_curve.n_rows) / feature_rate;
-        nc_plot.charts.emplace_back("novelty curve", plt::arma_to_json(t_nc), plt::arma_to_json(novelty_curve));
-        for(int i = 0; i < settings.tempo_multiples.size(); ++i) {
-            vec y = pulses[i] % (pulses[i] > 0) * mag;
-            nc_plot.charts.emplace_back("1/" + std::to_string(settings.tempo_multiples[i]) + " notes",
-                    plt::arma_to_json(t_nc), plt::arma_to_json(y));
-        }
-        nc_plot.attributes["xaxis"]["title"] = "Time (s)";
-        nc_plot.attributes["yaxis"]["title"] = "Amplitude";
-        viz_file.plots.push_back(nc_plot);
-
-        plt::Plot diff_plot("Overlap Novelty curve & Computed BPM Onsets");
-        for(int i = 0; i < settings.tempo_multiples.size(); ++i) {
-            vec y = pulses[i] % novelty_curve;
-            diff_plot.charts.emplace_back("1/" + std::to_string(settings.tempo_multiples[i]) + " notes",
-                                        plt::arma_to_json(t_nc), plt::arma_to_json(y));
-        }
-        diff_plot.attributes["xaxis"]["title"] = "Time (s)";
-        diff_plot.attributes["yaxis"]["title"] = "Amplitude";
-        viz_file.plots.push_back(diff_plot);
-
-
-        viz_file.save(base_file + ".html");
+        visualize(base_file, settings, novelty_curve, abs(normalized_tempogram), t, bpm, cyclic_tempogram, tempo_curve,
+                  ct_y_axis, smooth_tempogram, ref_tempo, feature_rate, tempo_sections);
     }
 
     if (settings.dump_data) {
@@ -195,7 +120,7 @@ int main(int argc, char **argv) {
         write_matrix_data(base_dir + "tempogram.npd", tempogram, (char) (TYPE_DOUBLE | TYPE_COMPLEX));
         write_matrix_data(base_dir + "t.npd", t, (char) (TYPE_DOUBLE));
         write_matrix_data(base_dir + "bpm.npd", bpm, (char) (TYPE_DOUBLE));
-        write_matrix_data(base_dir + "tempogram_cyclic.npd", cyclic_tempgram, (char) (TYPE_DOUBLE),
+        write_matrix_data(base_dir + "tempogram_cyclic.npd", cyclic_tempogram, (char) (TYPE_DOUBLE),
                           (char *) &ref_tempo, sizeof(ref_tempo));
         write_matrix_data(base_dir + "ct_y_axis.npd", ct_y_axis, (char) (TYPE_DOUBLE));
         write_matrix_data(base_dir + "smooth_tempogram.npd", smooth_tempogram, (char) (TYPE_DOUBLE),
