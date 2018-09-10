@@ -1,119 +1,86 @@
-# Tempo Estimation
-C++ / Python library with signal processing and tempo estimation utilities.  
-Still WIP.
+# LibTempo
+C++ / Python library for signal processing and tempo information extraction.
 
-# Demo: Dragonforce - Valley of the Damned
-### Novelty Curve
-![Novely Curve](https://raw.githubusercontent.com/EgorDm/tempo_estimation/master/docs/assets/valley_novelty.png)
-### Tempogram
-![Tempogram](https://raw.githubusercontent.com/EgorDm/tempo_estimation/master/docs/assets/valley_tempogram.png)
-### Cyclic Tempogram: Ref Tempo = 60 bpm
-![Cyclic Tempogram](https://raw.githubusercontent.com/EgorDm/tempo_estimation/master/docs/assets/valley_cyclic_tempogram.png)
+## CLI
+### [Downloads](https://github.com/EgorDm/libtempo/releases)
+### Examples
+* [Megadeth - Five Magics](https://github.com/EgorDm/libtempo/raw/master/docs/assets/magics.png)
+* [Led Zeppelin - Stairway To Heaven](https://github.com/EgorDm/libtempo/raw/master/docs/assets/stairway.png)
+* [DragonForce - Valley of the Damned](https://github.com/EgorDm/libtempo/raw/master/docs/assets/valley_of.png)
 
-## Dependencies
-Libraries needed to compile the project.
-* [libsndfile 1.0.28](http://www.mega-nerd.com/libsndfile/)
-* [OpenBLAS 0.2.14](https://www.openblas.net/)
-* [Armadillo 8.600.0](http://arma.sourceforge.net/)
-* [FFTW 3.3.8](http://www.fftw.org/)
-* [SIGPACK 1.2.4](http://sigpack.sourceforge.net/)
-* [pybind11 2.2.3](https://github.com/pybind/pybind11)
-* [GTEST 1.8.0](https://github.com/google/googletest)
+### Usage
+```bash
+libtempo [audio] {OPTIONS}
+```
+```
+OPTIONS:
 
-#### Few useful cmake flags
-`DGMOCK_ROOT, Dpybind11_INCLUDE_DIR, DBLAS_LIBRARY, DLAPACK_LIBRARY, DARMADILLO_INCLUDE_DIR, DARMADILLO_LIBRARY, 
-DSIGPACK_INCLUDE_DIR, DFFTW_ROOT, DPYTHON_EXECUTABLE, DPYTHON_LIBRARY, DPYTHON_INCLUDE_DIRS`
+      -h, --help                        Display the help menu
+      Basic
+        --preferred_bpm=[preferred_bpm]   (Default: 130) BPM around which the
+                                          real bpm will be chosen.
+        --bpm_rounding_precision=[bpm_rounding_precision]
+                                          (Default: 0.500000) Precision to round
+                                          the found bpm to before doing
+                                          precision the check.
+        --smooth_length=[smooth_length]   (Default: 20.000000) Length in seconds
+                                          over which the tempogram will be
+                                          stabilized to extract a steady tempo.
+        --min_section_length=[min_section_length]
+                                          (Default: 10.000000) Minimum length
+                                          for a tempo section in seconds.
+        --max_section_length=[max_section_length]
+                                          (Default: 40.000000) Maximum section
+                                          length in seconds after which section
+                                          is split in half.
+      Advanced
+        --bpm_window=[bpm_window]         BPM window which to check for tempo
+                                          peaks (must have large range).
+        -m[tempo_multiples...],
+        --tempo_multiples=[tempo_multiples...]
+                                          Tempo multiples to consider when
+                                          searching for correct offset
+        --ref_tempo=[ref_tempo]           (Default: 60) Reference tempo defining
+                                          the partition of BPM into tempo
+                                          octaves for calculating cyclic
+                                          tempogram.
+        --tempo_window=[tempo_window]     (Default: 8) Analysis window length in
+                                          seconds for calculating tempogram.
+        --octave_divider=[octave_divider] (Default: 120) Number of tempo classes
+                                          used for representing a tempo octave.
+                                          This parameter controls the
+                                          dimensionality of cyclic tempogram.
+        --triplet_weight=[triplet_weight] (Default: 3.000000) Weight of the
+                                          triplet intensity which will be adeed
+                                          to its base intensity.
+        --bpm_doubt_window=[bpm_doubt_window]
+                                          (Default: 2.000000) Window around
+                                          candidate bpm which to search for a
+                                          more fine and correct bpm.
+        --bpm_doubt_step=[bpm_doubt_step] (Default: 0.100000) Steps which to
+                                          take inside the doubt window to fine
+                                          tune the bpm.
+        --click_track_subdivision=[click_track_subdivision]
+                                          (Default: 4) Click subdivision for the
+                                          click track.
+      Output Flags
+        -c[generate_click_track],
+        --generate_click_track=[generate_click_track]
+                                          (Default: 1) Wether or not a click
+                                          track should be generated
+        --osu                             Wether or not to generate tempo data
+                                          in osu format.
+        --viz                             Saves a html file with useful graphs.
+        --dump                            Dump generated tempograms and novelty
+                                          curves into a file.
+      audio                             Audio file to extract tempo of.
+      "--" can be used to terminate flag options and force all following
+      arguments to be treated as positional options
+```
 
-## Build targets
-`use cmake --build . --target my_target here`
-* `main` - command line app for tempo extraction. (WIP)
-* `tempo_estimation_py` - python library for interfacting the tempo estimation library (Usable, but WIP)
-* `tempo_estimation` - library with utilities for tempo extraction. (Usable, but WIP)
-
-Use `tempo_estimation` if you want to use this library in your project.
-
-## Documentation
-Applies to both C++ and Python API. In Python use numpy arrays and matrices instead.
-
-### audio_to_novelty_curve
-**Arguments**
-- signal: wavefrom of audio signal
-- sr: sampling rate of the audio (Hz)
-- window_length: window length for STFT (in samples)
-- hop_length: stepsize for the STFT
-- compression_c: constant for log compression
-- log_compression: enable/disable log compression
-- resample_feature_rate: feature rate of the resulting novelty curve (resampled, independent of stepsize)
-
-**Returns**  
-Tuple(novelty_curve, feature_rate)
-
-**Description**
-Computes a novelty curve (onset detection function) for the input audio signal. This implementation is a
-variant of the widely used spectral flux method with additional bandwise processing and a logarithmic intensity
-compression. This particularly addresses music with weak onset information (e.g., exhibiting string instruments.)
-
-
-### novelty_curve_to_tempogram_dft
-**Arguments**
-- novelty_curve: a novelty curve indicating note onset positions
-- bpm: vector containing BPM values to compute
-- feature_rate: feature rate of the novelty curve (Hz). This needs to be set to allow for setting other parameters in seconds!
-- tempo_window: Analysis window length in seconds
-- hop_length: window hop length in frames (of novelty curve)
-
-**Returns**  
-Tuple(tempogram, time vector, bpm vector)
-
-**Description**
-Computes a complex valued fourier tempogram for a given novelty curve
-indicating note onset candidates in the form of peaks.
-This implementation provides parameters for chosing fourier coefficients in a frequency range corresponding to 
-musically meaningful tempo values in bpm.
-
-### normalize_feature
-**Arguments**
-- feature: matrix
-- p
-- threshold
-
-**Returns**  
-Normalized feature matrix
-
-**Description**  
-Normalizes a feature sequence according to the l^p norm
-If the norm falls below threshold for a feature vector, then the normalized feature vector is set to be the
-unit vector.
-
-### compute_fourier_coefficients
-**Arguments**
-- s time domain signal
-- window vector containing window function
-- n_overlap overlap given in samples
-- f vector of frequencies values of fourier coefficients, in Hz
-- sr sampling rate of signal s in Hz
-
-**Returns**  
-Tuple(complex fourier coefficients, frequency vector, time vector)
-
-**Description**  
-Function that calculates a fourier coefficient with frequency f.  
-
-### stft
-**Arguments**
-- signal: wavefrom of audio signal
-- sr: sample rate
-- window
-- coefficient_range
-- n_fft: window length
-- hop_length
-
-**Returns**  
-Tuple(spectrogram, frequency vector, time vector)
-
-**Description**  
-Computes aspectrogram using a STFT (short-time fourier transform)
-
+## Library
+### [Building](https://github.com/EgorDm/libtempo/wiki/Building)
+### [Documentation](https://github.com/EgorDm/libtempo/wiki/Documentation)
 
 ## References
 * [Tempogram & novelty curve calculation](http://resources.mpi-inf.mpg.de/MIR/tempogramtoolbox/) [[1]](https://ieeexplore.ieee.org/document/5654580/) [[2]](http://resources.mpi-inf.mpg.de/MIR/tempogramtoolbox/2010_GroscheMuellerKurth_TempogramCyclic_ICASSP.pdf) [[3]](http://resources.mpi-inf.mpg.de/MIR/tempogramtoolbox/2009_GroscheMueller_PredominantLocalPeriodicy_WASPAA.pdf)
