@@ -120,6 +120,8 @@ int main(int argc, char **argv) {
             tempogram_plot.charts.emplace_back(label, plt::arma_to_json(t),
                                                plt::arma_to_json((vec) (tempo_curve * ref_tempo * multiple)));
         }
+        tempogram_plot.attributes["xaxis"]["title"] = "Time (s)";
+        tempogram_plot.attributes["yaxis"]["title"] = "Tempo (BPM)";
         viz_file.plots.push_back(tempogram_plot);
 
         plt::Plot cyclic_tempogram_plot("Cyclic Tempogram | Ref tempo = " + std::to_string(ref_tempo));
@@ -127,6 +129,8 @@ int main(int argc, char **argv) {
                                                                    plt::arma_to_json(ct_y_axis),
                                                                    plt::arma_to_json(cyclic_tempgram)));
         cyclic_tempogram_plot.charts.emplace_back("peak tempo", plt::arma_to_json(t), plt::arma_to_json(tempo_curve));
+        cyclic_tempogram_plot.attributes["xaxis"]["title"] = "Time (s)";
+        cyclic_tempogram_plot.attributes["yaxis"]["title"] = "Tempo (rBPM)";
         viz_file.plots.push_back(cyclic_tempogram_plot);
 
         plt::Plot smooth_tempogram_plot("Smoothed Tempogram | Smooth length = " + std::to_string(settings.smooth_length));
@@ -134,6 +138,8 @@ int main(int argc, char **argv) {
                                                                           plt::arma_to_json(ct_y_axis),
                                                                           plt::arma_to_json(smooth_tempogram)));
         smooth_tempogram_plot.charts.emplace_back("peak tempo", plt::arma_to_json(t), plt::arma_to_json(tempo_curve));
+        smooth_tempogram_plot.attributes["xaxis"]["title"] = "Time (s)";
+        smooth_tempogram_plot.attributes["yaxis"]["title"] = "Tempo (rBPM)";
         viz_file.plots.push_back(smooth_tempogram_plot);
 
         std::vector<vec> pulses;
@@ -162,6 +168,8 @@ int main(int argc, char **argv) {
             nc_plot.charts.emplace_back("1/" + std::to_string(settings.tempo_multiples[i]) + " notes",
                     plt::arma_to_json(t_nc), plt::arma_to_json(y));
         }
+        nc_plot.attributes["xaxis"]["title"] = "Time (s)";
+        nc_plot.attributes["yaxis"]["title"] = "Amplitude";
         viz_file.plots.push_back(nc_plot);
 
         plt::Plot diff_plot("Overlap Novelty curve & Computed BPM Onsets");
@@ -170,6 +178,8 @@ int main(int argc, char **argv) {
             diff_plot.charts.emplace_back("1/" + std::to_string(settings.tempo_multiples[i]) + " notes",
                                         plt::arma_to_json(t_nc), plt::arma_to_json(y));
         }
+        diff_plot.attributes["xaxis"]["title"] = "Time (s)";
+        diff_plot.attributes["yaxis"]["title"] = "Amplitude";
         viz_file.plots.push_back(diff_plot);
 
 
