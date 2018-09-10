@@ -23,7 +23,7 @@ struct Settings {
     float bpm_doubt_step = 0.1f;
     std::vector<int> tempo_multiples = {1, 2, 4};
     bool generate_click_track = true;
-    int click_track_subdivision = 4;
+    int click_track_subdivision = 8;
     bool format_for_osu = false;
     bool visualize = false;
     bool dump_data = false;
