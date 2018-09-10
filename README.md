@@ -13,16 +13,15 @@ C++ / Python library for signal processing and tempo information extraction.
 libtempo [audio] {OPTIONS}
 ```
 ```
-OPTIONS:
+  OPTIONS:
 
       -h, --help                        Display the help menu
       Basic
         --preferred_bpm=[preferred_bpm]   (Default: 130) BPM around which the
                                           real bpm will be chosen.
         --bpm_rounding_precision=[bpm_rounding_precision]
-                                          (Default: 0.500000) Precision to round
-                                          the found bpm to before doing
-                                          precision the check.
+                                          (Default: 0.500000) Precision of the
+                                          BPM before correction..
         --smooth_length=[smooth_length]   (Default: 20.000000) Length in seconds
                                           over which the tempogram will be
                                           stabilized to extract a steady tempo.
@@ -34,8 +33,8 @@ OPTIONS:
                                           length in seconds after which section
                                           is split in half.
       Advanced
-        --bpm_window=[bpm_window]         BPM window which to check for tempo
-                                          peaks (must have large range).
+        --bpm_window=[bpm_window]         BPM range which to check for tempo
+                                          peaks.
         -m[tempo_multiples...],
         --tempo_multiples=[tempo_multiples...]
                                           Tempo multiples to consider when
