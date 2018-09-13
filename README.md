@@ -2,6 +2,7 @@
 C++ / Python library for signal processing and tempo information extraction.
 
 ## CLI
+** Currently only .wav and .flac audo formats are supported **
 ### [Downloads](https://github.com/EgorDm/libtempo/releases)
 ### Examples
 * [Megadeth - Five Magics](https://github.com/EgorDm/libtempo/raw/master/docs/assets/magics.png)
@@ -83,6 +84,13 @@ libtempo [audio] {OPTIONS}
 ## Library
 ### [Building](https://github.com/EgorDm/libtempo/wiki/Building)
 ### [Documentation](https://github.com/EgorDm/libtempo/wiki/Documentation)
+
+## Flaws / TODO's
+* Find the right bpm multiple instead of taking a reference one and roudnign to it
+* Support mp3 files
+* GUI
+* Clean sections with small deviations and to only keep the essential ones
+* Completely implement lib into python bindings 
 
 ## References
 * [Tempogram & novelty curve calculation](http://resources.mpi-inf.mpg.de/MIR/tempogramtoolbox/) [[1]](https://ieeexplore.ieee.org/document/5654580/) [[2]](http://resources.mpi-inf.mpg.de/MIR/tempogramtoolbox/2010_GroscheMuellerKurth_TempogramCyclic_ICASSP.pdf) [[3]](http://resources.mpi-inf.mpg.de/MIR/tempogramtoolbox/2009_GroscheMueller_PredominantLocalPeriodicy_WASPAA.pdf)
