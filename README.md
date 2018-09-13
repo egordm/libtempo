@@ -2,7 +2,7 @@
 C++ / Python library for signal processing and tempo information extraction.
 
 ## CLI
-** Currently only .wav and .flac audo formats are supported **
+**Currently only .wav and .flac audo formats are supported**
 ### [Downloads](https://github.com/EgorDm/libtempo/releases)
 ### Examples
 * [Megadeth - Five Magics](https://github.com/EgorDm/libtempo/raw/master/docs/assets/magics.png)
