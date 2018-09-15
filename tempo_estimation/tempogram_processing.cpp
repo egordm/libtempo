@@ -17,7 +17,7 @@ vec tempogram_processing::audio_to_novelty_curve(int &feature_rate_ret, const ve
     if (hop_length <= 0) hop_length = static_cast<int>(512 * sr / 22050.);
 
     vec window = utils::math::my_hanning(static_cast<const uword>(window_length));
-    auto stft_ret = stft(signal, sr, window, window_length, hop_length);
+    auto stft_ret = fourier_utils::stft(signal, sr, window, window_length, hop_length);
     float feature_rate = std::get<1>(stft_ret);
 
 
@@ -117,7 +117,7 @@ cx_mat tempogram_processing::novelty_curve_to_tempogram_dft(vec &t, const vec &n
     vec nc = join_cols(pad, novelty_curve);
     nc = join_cols(novelty_curve, pad);
 
-    auto ret = tempogram::compute_fourier_coefficients(t, nc, window, win_length - hop_length, bpms / 60.,
+    auto ret = fourier_utils::compute_fourier_coefficients(t, nc, window, win_length - hop_length, bpms / 60.,
                                                        feature_rate);
 
     t -= t(0);
