@@ -41,15 +41,14 @@ namespace tempogram { namespace fourier_utils {
     * @return spectrogram, frequency vector, time vector
     */
     template<typename T>
-    std::tuple<mat, float, vec, vec>
-    stft(const Col<T> &signal, int sr, const vec &window, std::tuple<int, int> coefficient_range, int n_fft = -1,
-         int hop_length = -1) {
+    mat stft(float &feature_rate, vec &t, vec &f, const Col<T> &signal, int sr, const vec &window,
+            std::tuple<int, int> coefficient_range, int n_fft = -1, int hop_length = -1) {
         auto window_length = static_cast<int>(window.size());
         if (hop_length <= 0) hop_length = static_cast<int>(round(window_length / 2.));
         if (n_fft <= 0) n_fft = window_length;
 
         // Precalculate
-        float feature_rate = (float) sr / hop_length;
+        feature_rate = (float) sr / hop_length;
         auto signal_size = static_cast<int>(signal.size());
 
         auto first_window = (int) floor(window_length / 2.);
@@ -91,18 +90,18 @@ namespace tempogram { namespace fourier_utils {
 
         // Calculate the axes
         auto half_window = (int) floor(max(n_fft, window_length) / 2.);
-        vec t = regspace<vec>(0, s.n_cols - 1) * (hop_length / (double) sr);
-        vec f = linspace<vec>(0, half_window - 1, (const uword) half_window) / (double) half_window * (sr / 2.);
+        t = regspace<vec>(0, s.n_cols - 1) * (hop_length / (double) sr);
+        f = linspace<vec>(0, half_window - 1, (const uword) half_window) / (double) half_window * (sr / 2.);
         f = f(span((const uword) std::get<0>(coefficient_range), (const uword) std::get<1>(coefficient_range) - 2));
 
-        return make_tuple(s, feature_rate, t, f);
+        return s;
     }
 
     template<typename T>
-    std::tuple<Mat<T>, float, vec, vec>
-    stft(const Col<T> &s, int sr, const vec &window, int n_fft = -1, int hop_length = -1) {
+    Mat<T> stft(float &feature_rate, vec &t, vec &f, const Col<T> &s, int sr, const vec &window, int n_fft = -1,
+            int hop_length = -1) {
         std::tuple<int, int> coefficient_range = make_tuple(0, (int) floor(max(n_fft, (int) window.size()) / 2.) + 1);
-        return fourier_utils::stft(s, sr, window, coefficient_range, n_fft, hop_length);
+        return fourier_utils::stft(feature_rate, t, f, s, sr, window, coefficient_range, n_fft, hop_length);
     }
 }}
 
