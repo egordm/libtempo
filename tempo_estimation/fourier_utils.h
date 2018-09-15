@@ -42,7 +42,7 @@ namespace tempogram { namespace fourier_utils {
     */
     template<typename T>
     mat stft(float &feature_rate, vec &t, vec &f, const Col<T> &signal, int sr, const vec &window,
-            std::tuple<int, int> coefficient_range, int n_fft = -1, int hop_length = -1) {
+             std::tuple<int, int> coefficient_range, int n_fft = -1, int hop_length = -1) {
         auto window_length = static_cast<int>(window.size());
         if (hop_length <= 0) hop_length = static_cast<int>(round(window_length / 2.));
         if (n_fft <= 0) n_fft = window_length;
@@ -73,7 +73,8 @@ namespace tempogram { namespace fourier_utils {
             uword pad_before_n = (uword) sum(frame <= 0);
             uword pad_after_n = (uword) std::max(0, (int) (window_length - (signal.size() - frame(0))));
             x(span(pad_before_n, window_length - pad_after_n - frame_pad - 1)) =
-                    signal(span((uword) frame(pad_before_n), (uword) frame(frame.size() - pad_after_n - 1)));
+                    conv_to<vec>::from(
+                            signal(span((uword) frame(pad_before_n), (uword) frame(frame.size() - pad_after_n - 1))));
 
             // Apply the window
             x(span(0, static_cast<const uword>(window_length - frame_pad - 1))) %= window;
@@ -98,8 +99,8 @@ namespace tempogram { namespace fourier_utils {
     }
 
     template<typename T>
-    Mat<T> stft(float &feature_rate, vec &t, vec &f, const Col<T> &s, int sr, const vec &window, int n_fft = -1,
-            int hop_length = -1) {
+    mat stft(float &feature_rate, vec &t, vec &f, const Col<T> &s, int sr, const vec &window, int n_fft = -1,
+             int hop_length = -1) {
         std::tuple<int, int> coefficient_range = make_tuple(0, (int) floor(max(n_fft, (int) window.size()) / 2.) + 1);
         return fourier_utils::stft(feature_rate, t, f, s, sr, window, coefficient_range, n_fft, hop_length);
     }

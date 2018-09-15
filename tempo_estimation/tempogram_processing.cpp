@@ -10,7 +10,7 @@
 using namespace sp;
 using namespace tempogram;
 
-vec tempogram_processing::audio_to_novelty_curve(int &feature_rate_ret, const vec &signal, int sr, int window_length,
+vec tempogram_processing::audio_to_novelty_curve(int &feature_rate_ret, const fvec &signal, int sr, int window_length,
                                                  int hop_length, double compression_c,
                                                  bool log_compression, int resample_feature_rate) {
     if (window_length <= 0) window_length = static_cast<int>(1024 * sr / 22050.);

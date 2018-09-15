@@ -13,11 +13,11 @@ using namespace arma;
 namespace tempogram { namespace audio {
     struct AudioFile {
         std::string path;
-        mat data;
+        fmat data;
         int sr;
         int format;
 
-        AudioFile(const std::string &path, const mat &data, int sr, int format = SF_FORMAT_WAV | SF_FORMAT_PCM_24)
+        AudioFile(const std::string &path, const fmat &data, int sr, int format = SF_FORMAT_WAV | SF_FORMAT_PCM_24)
                 : path(path), data(data), sr(sr), format(format) {}
 
         void save(const char *path) const;

@@ -13,17 +13,17 @@ tempogram::signal_utils::generate_pulse(double bpm, int window_length, int featu
     return std::make_tuple(cos(twoPiFt), sin(twoPiFt));
 }
 
-vec tempogram::signal_utils::generate_click(int sr, double duration, double freq) {
+fvec tempogram::signal_utils::generate_click(int sr, double duration, double freq) {
     double angular_freq = 2 * M_PI * freq / sr;
-    vec click = exp2(linspace<vec>(0, -10, (uword) round(sr * duration)));
-    click %= sin(angular_freq * regspace<vec>(0, click.n_rows - 1));
+    fvec click = exp2(linspace<fvec>(0, -10, (uword) round(sr * duration)));
+    click %= sin(angular_freq * regspace<fvec>(0, click.n_rows - 1));
 
     return click;
 }
 
-vec tempogram::signal_utils::generate_click_track(const std::vector<float> &positions, unsigned long length, int sr) {
-    vec ret(static_cast<const uword>(length), fill::zeros);
-    vec click = generate_click(sr);
+fvec tempogram::signal_utils::generate_click_track(const std::vector<float> &positions, unsigned long length, int sr) {
+    fvec ret(static_cast<const uword>(length), fill::zeros);
+    fvec click = generate_click(sr);
 
     for (const auto &pos : positions) {
         auto position = static_cast<uword>(pos * sr);
@@ -37,7 +37,7 @@ vec tempogram::signal_utils::generate_click_track(const std::vector<float> &posi
     return ret;
 }
 
-vec tempogram::signal_utils::generate_click_track(double bpm, double offset, int note_fraction, unsigned long length,
+fvec tempogram::signal_utils::generate_click_track(double bpm, double offset, int note_fraction, unsigned long length,
                                                   int sr) {
     std::vector<float> positions;
     float end = length / (float) sr;

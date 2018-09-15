@@ -18,8 +18,8 @@ tempogram::audio::AudioFile tempogram::audio::open_audio(const char *path) {
         throw std::runtime_error(ss.str());
     }
 
-    mat data((const uword) sfinfo.channels, (const uword) sfinfo.frames);
-    sf_read_double(sndfile, data.memptr(), sfinfo.channels * sfinfo.frames);
+    fmat data((const uword) sfinfo.channels, (const uword) sfinfo.frames);
+    sf_read_float(sndfile, data.memptr(), sfinfo.channels * sfinfo.frames);
 
     tempogram::audio::AudioFile ret(path, data, sfinfo.samplerate, sfinfo.format);
 
@@ -48,7 +48,7 @@ void tempogram::audio::AudioFile::save(const char *path) const {
         throw std::runtime_error(ss.str());
     }
 
-    sf_count_t count = sf_write_double(sndfile, data.memptr(), data.size());
+    sf_count_t count = sf_write_float(sndfile, data.memptr(), data.size());
     sf_write_sync(sndfile);
     sf_close(sndfile);
 }

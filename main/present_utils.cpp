@@ -35,10 +35,10 @@ void present_utils::save_click_track(audio::AudioFile &audio, const std::vector<
     output_path += "_click" + ext;
 
     std::cout << "Writing click track: " << output_path << std::endl;
-    vec click_track(audio.data.n_cols, fill::zeros);
+    fvec click_track(audio.data.n_cols, fill::zeros);
     for (auto &section : sections) {
         auto len = (unsigned long) ((section.end - section.start) * audio.sr);
-        vec clicks = signal_utils::generate_click_track(section.bpm, section.offset - section.start, fraction, len,
+        fvec clicks = signal_utils::generate_click_track(section.bpm, section.offset - section.start, fraction, len,
                                                         audio.sr);
 
         auto start = (unsigned long) (section.start * audio.sr);

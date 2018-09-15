@@ -26,7 +26,7 @@ namespace tempogram { namespace tempogram_processing {
      * @param resample_feature_rate: feature rate of the resulting novelty curve (resampled, independent of stepsize)
      * @return novelty_curve
      */
-    vec audio_to_novelty_curve(int &feature_rate_ret, const vec &signal, int sr, int window_length = -1, int hop_length = -1,
+    vec audio_to_novelty_curve(int &feature_rate_ret, const fvec &signal, int sr, int window_length = -1, int hop_length = -1,
                                                 double compression_c = 1000, bool log_compression = true,
                                                 int resample_feature_rate = 200);
 

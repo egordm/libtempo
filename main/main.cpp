@@ -29,8 +29,8 @@ int main(int argc, char **argv) {
     // Do program logic
     std::cout << "Processing " << settings.audio_file << std::endl;
     auto audio = tempogram::audio::open_audio(settings.audio_file.c_str());
-    mat reduced_sig = mean(audio.data, 0);
-    vec signal = reduced_sig.row(0).t();
+    fmat reduced_sig = mean(audio.data, 0);
+    fvec signal = reduced_sig.row(0).t();
 
     std::cout << " - Calculating novelty curve" << std::endl;
     int feature_rate;
