@@ -2,7 +2,7 @@
 C++ / Python library for signal processing and tempo information extraction.
 
 ## CLI
-**Currently only .wav and .flac audo formats are supported**
+**MP3, FLAC and WAV audio formats are supported.**
 ### [Downloads](https://github.com/EgorDm/libtempo/releases)
 ### Examples
 * [Megadeth - Five Magics](https://github.com/EgorDm/libtempo/raw/master/docs/assets/magics.png)
@@ -87,7 +87,7 @@ libtempo [audio] {OPTIONS}
 
 ## Flaws / TODO's
 * Find the right bpm multiple instead of taking a reference one and roudnign to it
-* Support mp3 files
+* ~~Support mp3 files~~
 * GUI
 * Clean sections with small deviations and to only keep the essential ones
 * Completely implement lib into python bindings 

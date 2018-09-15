@@ -25,7 +25,10 @@ message(STATUS ${FFTW_LIBRARIES})
 
 find_package(Armadillo REQUIRED)
 include_directories(${ARMADILLO_INCLUDE_DIR})
+
 include_directories(${SIGPACK_INCLUDE_DIR})
+
+include_directories(../libs/minimp3)
 
 add_library(${PROJECT_NAME} ${SOURCE_FILES})
 
@@ -37,6 +40,7 @@ set(${PROJECT_NAME}_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}
         ${BLAS_INCLUDE_DIR}
         ${ARMADILLO_INCLUDE_DIR}
         ${SIGPACK_INCLUDE_DIR}
+        ../libs/minimp3
         CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE)
 
 install(TARGETS ${PROJECT_NAME}

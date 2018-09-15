@@ -5,18 +5,6 @@
 #include <signal_utils.h>
 #include "present_utils.h"
 
-std::string present_utils::split_ext(std::string &path) {
-    std::string ext;
-    size_t ext_pos = path.find_last_of('.');
-
-    if (ext_pos != std::string::npos) {
-        ext = path.substr(ext_pos, path.size() - ext_pos);
-        path = path.substr(0, ext_pos);
-    }
-
-    return ext;
-}
-
 std::string present_utils::section_to_osu(const curve_utils::Section &section) {
     std::stringstream ss;
     ss << (uword) (section.offset * 1000) << ","
@@ -30,7 +18,7 @@ void present_utils::save_click_track(audio::AudioFile &audio, const std::vector<
                                      int fraction) {
 
     std::string output_path = audio.path;
-    std::string ext = split_ext(output_path);
+    std::string ext = audio::split_ext(output_path);
 
     output_path += "_click" + ext;
 

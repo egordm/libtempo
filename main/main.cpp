@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 
     // Do program logic
     std::cout << "Processing " << settings.audio_file << std::endl;
-    auto audio = tempogram::audio::open_audio(settings.audio_file.c_str());
+    auto audio = audio::AudioFile::open(settings.audio_file.c_str());
     fmat reduced_sig = mean(audio.data, 0);
     fvec signal = reduced_sig.row(0).t();
 
@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
     }
 
     std::string base_file = audio.path;
-    split_ext(base_file);
+    audio::split_ext(base_file);
 
     if (settings.visualize) {
         std::cout << std::endl << "Writing visualization data" << std::endl;
@@ -114,7 +114,7 @@ int main(int argc, char **argv) {
     if (settings.dump_data) {
         std::cout << std::endl << "Dumping useful data" << std::endl;
         dump(base_file, settings, novelty_curve, abs(normalized_tempogram), t, bpm, cyclic_tempogram, tempo_curve,
-                  ct_y_axis, smooth_tempogram, ref_tempo, feature_rate, tempo_sections);
+             ct_y_axis, smooth_tempogram, ref_tempo, feature_rate, tempo_sections);
     }
 
     if (settings.format_for_osu) {

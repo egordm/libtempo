@@ -14,7 +14,7 @@ using namespace tempogram;
 #define TYPE_COMPLEX 0x16
 
 namespace present_utils {
-    std::string split_ext(std::string &path);
+
 
     std::string section_to_osu(const curve_utils::Section &section);
 
