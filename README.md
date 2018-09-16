@@ -89,7 +89,8 @@ libtempo [audio] {OPTIONS}
 * Find the right bpm multiple instead of taking a reference one and roudnign to it
 * ~~Support mp3 files~~
 * GUI
-* Clean sections with small deviations and to only keep the essential ones
+* ~~Clean sections with small deviations and to only keep the essential ones~~
+* Chunks with small sections are inaccurately approximated. (Ex. increasing tempo)
 * Completely implement lib into python bindings
 * Sometimes offset might be shifted by a 1/8th or 1/16th note
 
