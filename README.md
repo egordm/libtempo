@@ -90,7 +90,8 @@ libtempo [audio] {OPTIONS}
 * ~~Support mp3 files~~
 * GUI
 * Clean sections with small deviations and to only keep the essential ones
-* Completely implement lib into python bindings 
+* Completely implement lib into python bindings
+* Sometimes offset might be shifted by a 1/8th or 1/16th note
 
 ## References
 * [Tempogram & novelty curve calculation](http://resources.mpi-inf.mpg.de/MIR/tempogramtoolbox/) [[1]](https://ieeexplore.ieee.org/document/5654580/) [[2]](http://resources.mpi-inf.mpg.de/MIR/tempogramtoolbox/2010_GroscheMuellerKurth_TempogramCyclic_ICASSP.pdf) [[3]](http://resources.mpi-inf.mpg.de/MIR/tempogramtoolbox/2009_GroscheMueller_PredominantLocalPeriodicy_WASPAA.pdf)
