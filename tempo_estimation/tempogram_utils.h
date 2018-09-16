@@ -93,6 +93,14 @@ namespace tempogram { namespace tempogram_utils {
      */
     vec extract_tempo_curve(const mat &tempogram, const vec &axis_lut);
 
+    /**
+     * Convert bpm to cyclic bpm
+     * @param bpm
+     * @param ref_tempo
+     * @return
+     */
+    double bpm_to_cyclic(double bpm, double ref_tempo = 60);
+
 }}
 
 

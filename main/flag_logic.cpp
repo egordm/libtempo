@@ -4,6 +4,7 @@
 
 #include "flag_logic.h"
 #include <signal_utils.h>
+#include <tempogram_utils.h>
 #include <filesystem>
 #include "present_utils.h"
 
@@ -17,17 +18,31 @@ void visualize(const std::string &filepath, Settings settings, const vec &novelt
                const std::vector<curve_utils::Section> &tempo_sections) {
     plt::File viz_file;
 
+    std::vector<double> predicted_tempo;
+    std::vector<double> predicted_tempo_rel;
+    std::vector<double> predicted_tempo_t;
+    for(const auto &section : tempo_sections) {
+        predicted_tempo.push_back(section.bpm);
+        predicted_tempo.push_back(section.bpm);
+        predicted_tempo_rel.push_back(tempogram::tempogram_utils::bpm_to_cyclic(section.bpm, ref_tempo));
+        predicted_tempo_rel.push_back(tempogram::tempogram_utils::bpm_to_cyclic(section.bpm, ref_tempo));
+        predicted_tempo_t.push_back(section.start);
+        predicted_tempo_t.push_back(section.end - 0.0001);
+    }
+
     // Plot tempogram
     plt::Plot tempogram_plot("Tempogram");
     tempogram_plot.charts.push_back(plt::Chart::create_heatmap("tempogram", plt::arma_to_json(t),
                                                                plt::arma_to_json(bpm),
                                                                plt::arma_to_json(tempogram)));
     for (const auto &multiple : settings.tempo_multiples) {
-        std::string label = multiple == 1 ? "Tempo ref" : "Tempo " + std::to_string(multiple) + "x";
+        std::string label = multiple == 1 ? "Tempo curve ref" : "Tempo curve " + std::to_string(multiple) + "x";
         tempogram_plot.charts.emplace_back(label, plt::arma_to_json(t),
                                            plt::arma_to_json((vec) (tempo_curve * ref_tempo * multiple)));
     }
+    tempogram_plot.charts.emplace_back("Predict bpm", predicted_tempo_t, predicted_tempo);
     tempogram_plot.attributes["xaxis"]["title"] = "Time (s)";
+    tempogram_plot.attributes["xaxis"]["range"] = {tempo_sections.front().start, tempo_sections.back().end};
     tempogram_plot.attributes["yaxis"]["title"] = "Tempo (BPM)";
     viz_file.plots.push_back(tempogram_plot);
 
@@ -37,7 +52,9 @@ void visualize(const std::string &filepath, Settings settings, const vec &novelt
                                                                       plt::arma_to_json(ct_y_axis),
                                                                       plt::arma_to_json(cyclic_tempogram)));
     cyclic_tempogram_plot.charts.emplace_back("peak tempo", plt::arma_to_json(t), plt::arma_to_json(tempo_curve));
+    cyclic_tempogram_plot.charts.emplace_back("predicted tempo", predicted_tempo_t, predicted_tempo_rel);
     cyclic_tempogram_plot.attributes["xaxis"]["title"] = "Time (s)";
+    cyclic_tempogram_plot.attributes["xaxis"]["range"] = {tempo_sections.front().start, tempo_sections.back().end};
     cyclic_tempogram_plot.attributes["yaxis"]["title"] = "Tempo (rBPM)";
     viz_file.plots.push_back(cyclic_tempogram_plot);
 
@@ -47,7 +64,9 @@ void visualize(const std::string &filepath, Settings settings, const vec &novelt
                                                                       plt::arma_to_json(ct_y_axis),
                                                                       plt::arma_to_json(smooth_tempogram)));
     smooth_tempogram_plot.charts.emplace_back("peak tempo", plt::arma_to_json(t), plt::arma_to_json(tempo_curve));
+    smooth_tempogram_plot.charts.emplace_back("predicted tempo", predicted_tempo_t, predicted_tempo_rel);
     smooth_tempogram_plot.attributes["xaxis"]["title"] = "Time (s)";
+    smooth_tempogram_plot.attributes["xaxis"]["range"] = {tempo_sections.front().start, tempo_sections.back().end};
     smooth_tempogram_plot.attributes["yaxis"]["title"] = "Tempo (rBPM)";
     viz_file.plots.push_back(smooth_tempogram_plot);
 

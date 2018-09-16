@@ -80,8 +80,19 @@ namespace tempogram { namespace curve_utils {
      */
     void split_section(const Section &section, std::vector<Section> &sections, double max_section_len = 60);
 
+    /**
+     * Merges adjacent section if delta bpm is lower then the threshold
+     * @param sections
+     * @param threshold
+     * @return
+     */
     std::vector<Section> merge_sections(const std::vector<Section> &sections, float threshold = 0.5f);
 
+    /**
+     * Merges given sections by averaging bpm and offset
+     * @param sections
+     * @return
+     */
     Section average_sections(const std::vector<Section> &sections);
 
     /**

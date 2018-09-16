@@ -113,3 +113,9 @@ mat tempogram::tempogram_utils::smoothen_tempogram(const mat &tempogram, const v
 vec tempogram::tempogram_utils::extract_tempo_curve(const mat &tempogram, const vec &axis_lut) {
     return max_bucket(tempogram, axis_lut);
 }
+
+double tempogram::tempogram_utils::bpm_to_cyclic(double bpm, double ref_tempo) {
+    double mins = floor(log2(bpm / 60));
+    double diff = ((ref_tempo * pow(2, mins + 1)) - (ref_tempo * pow(2, mins)));
+    return  (bpm - (60 * pow(2, mins))) / diff + 1;
+}

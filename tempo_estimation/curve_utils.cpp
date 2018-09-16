@@ -216,11 +216,12 @@ curve_utils::Section curve_utils::average_sections(const std::vector<curve_utils
     curve_utils::Section ret(sections.front().start, sections.back().end, 0, 0);
 
     for (const auto &candidate : sections) {
-        ret.bpm += candidate.bpm;
-        ret.offset += candidate.offset - candidate.start;
+        ret.bpm += candidate.bpm * (candidate.end - candidate.start);
+        // TODO: should be done by makign it relative to the bar length or 1/4th note length
+        ret.offset += candidate.offset * (candidate.end - candidate.start);
     }
-    ret.bpm /= sections.size();
-    ret.offset /= sections.size();
+    ret.bpm /= (ret.end - ret.start);
+    ret.offset /= (ret.end - ret.start);
 
     return ret;
 }
