@@ -52,6 +52,8 @@ namespace tempogram { namespace curve_utils {
     struct Section {
         double start, end, bpm, offset;
 
+        Section() = default;
+
         Section(double start, double end, double bpm, double offset = 0)
                 : start(start), end(end), bpm(bpm), offset(offset) {}
 
@@ -78,6 +80,10 @@ namespace tempogram { namespace curve_utils {
      */
     void split_section(const Section &section, std::vector<Section> &sections, double max_section_len = 60);
 
+    std::vector<Section> merge_sections(const std::vector<Section> &sections, float threshold = 0.5f);
+
+    Section average_sections(const std::vector<Section> &sections);
+
     /**
      * Finds the optimal offset for given section. Also tunes the bpm to a more fitting value
      * @param novelty_curve
@@ -97,7 +103,6 @@ namespace tempogram { namespace curve_utils {
      * @param smallest_fraction_shift
      */
     void correct_offset(Section &section, int smallest_fraction_shift = 4);
-
 }}
 
 

@@ -185,8 +185,42 @@ void curve_utils::correct_offset(curve_utils::Section &section, int smallest_fra
     double bar_len = 60. / section.bpm * 4;
     double fraction_note_len = bar_len / smallest_fraction_shift;
 
-    if(offset < 0) offset += ceil(fabs(offset) / bar_len) * bar_len;
+    if (offset < 0) offset += ceil(fabs(offset) / bar_len) * bar_len;
     offset = std::fmod(offset, fraction_note_len);
 
     section.offset = section.start + offset;
+}
+
+std::vector<curve_utils::Section>
+curve_utils::merge_sections(const std::vector<curve_utils::Section> &sections, float threshold) {
+    if (sections.empty()) return sections;
+    std::vector<curve_utils::Section> ret;
+
+    std::vector<curve_utils::Section> candidates = {sections[0]};
+    for (int i = 1; i < sections.size(); ++i) {
+        double diff = fabs(candidates[0].bpm - sections[i].bpm);
+        if (diff > threshold) {
+            ret.push_back(average_sections(candidates));
+            candidates.clear();
+        }
+
+        candidates.push_back(sections[i]);
+    }
+
+    ret.push_back(average_sections(candidates));
+
+    return ret;
+}
+
+curve_utils::Section curve_utils::average_sections(const std::vector<curve_utils::Section> &sections) {
+    curve_utils::Section ret(sections.front().start, sections.back().end, 0, 0);
+
+    for (const auto &candidate : sections) {
+        ret.bpm += candidate.bpm;
+        ret.offset += candidate.offset - candidate.start;
+    }
+    ret.bpm /= sections.size();
+    ret.offset /= sections.size();
+
+    return ret;
 }

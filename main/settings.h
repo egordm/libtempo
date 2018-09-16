@@ -27,6 +27,7 @@ struct Settings {
     bool format_for_osu = false;
     bool visualize = false;
     bool dump_data = false;
+    float bpm_merge_threshold = 0.5f;
 
     std::string audio_file;
 };
@@ -41,6 +42,7 @@ struct Settings {
 #define TRIPLET_WEIGH_DESC "Weight of the triplet intensity which will be adeed to its base intensity."
 #define MIN_SECTION_LENGTH_DESC "Minimum length for a tempo section in seconds."
 #define MAX_SECTION_LENGTH_DESC "Maximum section length in seconds after which section is split in half."
+#define BPM_MERGE_THRESHOLD_DESC "Threshold within which the section will be merged with a similar bpm."
 #define BPM_DOUBT_WINDOW_DESC "Window around candidate bpm which to search for a more fine and correct bpm."
 #define BPM_DOUBT_STEP_DESC "Steps which to take inside the doubt window to fine tune the bpm."
 #define TEMPO_MULTIPLES_DESC "Tempo multiples to consider when searching for correct offset"

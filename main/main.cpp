@@ -63,6 +63,10 @@ int main(int argc, char **argv) {
     auto tempo_sections_tmp = curve_utils::tempo_segments_to_sections
             (tempo_segments, tempo_curve, t, settings.ref_tempo);
 
+    // Merge sections for consistency
+    tempo_sections_tmp = curve_utils::merge_sections(tempo_sections_tmp, settings.bpm_merge_threshold);
+
+    // Split section for precision
     std::vector<curve_utils::Section> tempo_sections;
     for (const auto &section : tempo_sections_tmp)
         curve_utils::split_section(section, tempo_sections, settings.max_section_length);
