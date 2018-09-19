@@ -11,6 +11,14 @@ endif ()
 
 #enable_testing()
 
+function(defineLibIncludes)
+    get_property(tmp_include_dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+    set(${PROJECT_NAME}_INCLUDE_DIRS ${PROJECT_SOURCE_DIR} ${tmp_include_dirs}
+            CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE)
+endfunction()
+
+
+add_subdirectory(audio_io)
 add_subdirectory(tempo_estimation)
 add_subdirectory(tempo_estimation_py)
 add_subdirectory(main)

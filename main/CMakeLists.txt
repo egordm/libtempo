@@ -6,7 +6,7 @@ file(GLOB SOURCE_FILES
         "*.hpp"
         )
 
-include_directories(${tempo_estimation_INCLUDE_DIRS} ../libs/args ../libs/json/single_include)
+include_directories(${tempo_estimation_INCLUDE_DIRS} ${audio_io_INCLUDE_DIRS} ../libs/args ../libs/json/single_include)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
@@ -15,7 +15,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 else ()
 endif ()
 
-target_link_libraries(${PROJECT_NAME} tempo_estimation ${COMPILER_LIBS})
+target_link_libraries(${PROJECT_NAME} tempo_estimation audio_io ${COMPILER_LIBS})
 
 install(TARGETS ${PROJECT_NAME}
         RUNTIME DESTINATION bin
