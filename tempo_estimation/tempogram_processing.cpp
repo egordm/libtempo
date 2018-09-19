@@ -131,33 +131,21 @@ mat tempogram_processing::tempogram_to_cyclic_tempogram(vec &y_axis, const cx_ma
     double ref_octave = ref_tempo / min(bpm);
     int min_octave = static_cast<int>(round(log2(min(bpm) / ref_tempo)));
     int max_octave = static_cast<int>(round(log2(max(bpm) / ref_tempo)) + 1);
-    int n_octaves = max_octave - min_octave;
 
     // to real vals
-    mat ref_tempogram = abs(tempogram);
+    mat mag_tempogram = abs(tempogram);
 
     // rescale to log tempo axis tempogram. Each octave is represented by octave_divider tempi
     vec log_bpm = ref_tempo * exp2(regspace<vec>(min_octave, 1. / octave_divider, (max_octave - 1. / octave_divider)));
+    mat log_tempogram;
+    mat_utils::mat_interp1_nearest(bpm, mag_tempogram, log_bpm, log_tempogram);
 
     // cyclic projection of log axis tempogram to the reference octave
-    double min_bpm = min(bpm);
-    double max_bpm = max(bpm);
-    double diff_bpm = max_bpm - min_bpm;
-
-    mat cyclic_tempogram((const uword) octave_divider, ref_tempogram.n_cols, fill::zeros);
-
-    for (uword i = 0; i < octave_divider; ++i) {
-        int c = 0;
-        for (int j = 0; j < n_octaves; ++j) {
-            double freq_offset = log_bpm.at(i + j * octave_divider) - min_bpm;
-            if (freq_offset < 0 || freq_offset > max_bpm) continue;
-            auto offset = (const uword) round(freq_offset / diff_bpm * bpm.n_rows);
-            if (offset >= ref_tempogram.n_rows) continue;
-
-            cyclic_tempogram(i, span::all) += ref_tempogram(offset, span::all);
-            c++;
-        }
-        cyclic_tempogram(i, span::all) /= c;
+    mat cyclic_tempogram((const uword) octave_divider, mag_tempogram.n_cols, fill::zeros);
+    uword end_pos = ((uvec)find(log_bpm < max(bpm), 1, "last")).at(0);
+    for (int i = 0; i < octave_divider; ++i) {
+        cyclic_tempogram((uword)i, span::all) =
+                mean(log_tempogram.rows(regspace<uvec>((uword)i, (uword)octave_divider,  end_pos)));
     }
 
     y_axis = ref_octave * log_bpm(span(0, (const uword) octave_divider - 1)) / ref_tempo;
