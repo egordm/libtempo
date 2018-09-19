@@ -3,33 +3,10 @@
 //
 
 #include "tempogram_utils.h"
-#include "generic_algothms.h"
+#include "mat_utils.h"
 #include "math_utils.hpp"
 
-using namespace tempogram::generic_algorithms;
-
-mat tempogram::tempogram_utils::subtract_mean(const mat &tempogram) {
-    auto ret = tempogram.each_row() - mean(tempogram, 0);
-    return ret % (ret > 0);
-}
-
-mat tempogram::tempogram_utils::normalize_tempogram(const mat &tempogram) {
-    rowvec sums = sum(tempogram, 0);
-    sums = sums + (sums == 0);
-    return tempogram.each_row() / sums;
-}
-
-uvec tempogram::tempogram_utils::argmax(const mat &tempogram) {
-    uvec ret(tempogram.n_cols);
-    for (uword i = 0; i < tempogram.n_cols; ++i) {
-        ret[i] = tempogram(span::all, i).index_max();
-    }
-    return ret;
-}
-
-vec tempogram::tempogram_utils::max_bucket(const mat &tempogram, const vec &axis_lut) {
-    return axis_lut(argmax(tempogram));
-}
+using namespace tempogram::mat_utils;
 
 vec tempogram::tempogram_utils::extract_confidence(const mat &tempogram, const bool &rollover) {
     rowvec median = sum(tempogram, 0) / 2;
@@ -106,7 +83,7 @@ mat tempogram::tempogram_utils::smoothen_tempogram(const mat &tempogram, const v
 
     mat ret = tempogram_apply_window(tripcor, window_const);
     ret += tempogram_apply_window(tripcor, window_hann);
-    ret = normalize_tempogram(subtract_mean(ret));
+    ret = rowwise_normalize(subtract_mean(ret));
     return ret;
 }
 

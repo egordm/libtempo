@@ -11,35 +11,6 @@ using namespace arma;
 
 namespace tempogram { namespace tempogram_utils {
     /**
-     * Subtracts mean from the tempogram and takes all positivbe results to reduce the noise.
-     * @param tempogram
-     * @return
-     */
-    mat subtract_mean(const mat &tempogram);
-
-    /**
-     * Normalize tempogram. Sum of bins at every time position will be 1
-     * @param tempogram
-     * @return
-     */
-    mat normalize_tempogram(const mat &tempogram);
-
-    /**
-     * Puts bin with max intensity at every time position in a vector.
-     * @param tempogram
-     * @return
-     */
-    uvec argmax(const mat &tempogram);
-
-    /**
-     * Puts value with max intensity at every time position in a vector.
-     * @param tempogram
-     * @param axis_lut
-     * @return
-     */
-    vec max_bucket(const mat &tempogram, const vec &axis_lut);
-
-    /**
      * Extracts confidence of the max peak measurement at every time position.
      *
      * Confidence is determined by how evenly intenity is distributed among the bins.

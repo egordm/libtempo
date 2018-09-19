@@ -6,6 +6,7 @@
 #include "tempogram_processing.h"
 #include "math_utils.hpp"
 #include "resample.h"
+#include "mat_utils.h"
 
 using namespace sp;
 using namespace tempogram;
@@ -18,9 +19,9 @@ vec tempogram_processing::audio_to_novelty_curve(int &feature_rate_ret, const fv
 
     vec window = utils::math::my_hanning(static_cast<const uword>(window_length));
     float feature_rate;
-    vec st;
-    vec sf;
-    auto stft = fourier_utils::stft(feature_rate, st, sf, signal, sr, window, window_length, hop_length);
+    vec stft_t;
+    vec stft_f;
+    auto stft = fourier_utils::stft(feature_rate, stft_t, stft_f, signal, sr, window, window_length, hop_length);
 
     // normalize and convert to dB
     mat spe = stft / stft.max();
@@ -37,7 +38,7 @@ vec tempogram_processing::audio_to_novelty_curve(int &feature_rate_ret, const fv
     mat band_novelty_curves(bands.n_rows, spe.n_cols, fill::zeros);
 
 #pragma omp parallel for
-    for (int i = 0; i < bands.n_rows; ++i) {
+    for (int i = 0; i < bands.n_rows; ++i) { // TODO: Contents rly need to be split in separete funcs. But also not idk
         rowvec bins = round(bands(i, span::all) / (sr / (double) window_length));
         bins = clamp(bins, 0, window_length / 2.);
 
@@ -107,20 +108,20 @@ cx_mat tempogram_processing::novelty_curve_to_tempogram_dft(vec &t, const vec &n
                                                             double feature_rate, int tempo_window, int hop_length) {
     if (hop_length <= 0) hop_length = (int) ceil(feature_rate / 5.);
 
+    // Create window
     auto win_length = static_cast<int>(round(tempo_window * feature_rate));
     win_length = win_length + (win_length % 2) - 1;
 
     auto window = sp::hann(static_cast<const uword>(win_length));
-    auto half_window = (int) round(win_length / 2.0);
+    auto half_window = (unsigned int) round(win_length / 2.0);
 
-    vec pad(static_cast<const uword>(half_window), fill::zeros);
+    vec nc = mat_utils::pad_vec(novelty_curve, half_window, half_window);
 
-    vec nc = join_cols(pad, novelty_curve);
-    nc = join_cols(novelty_curve, pad);
-
+    // Compute tempogram
     auto ret = fourier_utils::compute_fourier_coefficients(t, nc, window, win_length - hop_length, bpms / 60.,
                                                            feature_rate);
 
+    // Normalize and return
     t -= t(0);
     return ret / sqrt((double) win_length) / sum(window) * win_length;
 }

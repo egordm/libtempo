@@ -12,7 +12,7 @@ using namespace arma;
 
 namespace tempogram { namespace signal_utils {
     /**
-     * Generates sinus and cosinus pulse for given window and feature rate at given bpm.
+     * Generates sine and consine pulse for given window and feature rate at given bpm.
      * @param bpm
      * @param window_length
      * @param feature_rate

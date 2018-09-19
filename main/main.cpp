@@ -3,7 +3,7 @@
 #include <tempogram_processing.h>
 #include <tempogram_utils.h>
 #include <curve_utils.h>
-#include <generic_algothms.h>
+#include <mat_utils.h>
 #include <signal_utils.h>
 #include <args.hxx>
 #include "cli_utils.h"
