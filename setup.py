@@ -10,7 +10,7 @@ from distutils.version import LooseVersion
 from sphinx.setup_command import BuildDoc
 
 # Proj settings
-name = 'tempo_estimation_py'
+name = 'libtempo_py'
 version = '1.0.0'
 release = '1.0.0'
 
@@ -92,7 +92,7 @@ setup(name=name,
       description='C++ / Python library with signal processing and tempo estimation utilities.',
       long_description=readme(),
       long_description_content_type='text/markdown',
-      url='https://github.com/EgorDm/tempo_estimation',
+      url='https://github.com/EgorDm/libtempo',
       license='MIT',
       ext_modules=[CMakeExtension(name)],
       cmdclass=cmdclass,

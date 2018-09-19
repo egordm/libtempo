@@ -9,7 +9,7 @@
 
 #include <minimp3.h>
 
-using namespace tempogram;
+using namespace libtempo;
 
 audio::AudioFile audio::AudioFile::open(const char *path) {
     std::string base = path;

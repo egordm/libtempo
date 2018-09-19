@@ -4,7 +4,7 @@ import os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-# sys.path.insert(0, os.path.abspath('../tempo_estimation_py'))
+# sys.path.insert(0, os.path.abspath('../libtempo_py'))
 
 # -- General configuration ------------------------------------------------
 
@@ -39,7 +39,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'tempo_estimation_py'
+project = u'libtempo_py'
 copyright = u'2018, Egor Dmitriev'
 author = u'Egor Dmitriev'
 
@@ -215,7 +215,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'tempo_estimation_py.tex', u'tempo_estimation_py Documentation',
+    (master_doc, 'libtempo_py.tex', u'libtempo_py Documentation',
      u'Egor Dmitriev', 'manual'),
 ]
 
@@ -245,7 +245,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'tempo_estimation_py', u'tempo_estimation_py Documentation',
+    (master_doc, 'libtempo_py', u'libtempo_py Documentation',
      [author], 1)
 ]
 
@@ -259,8 +259,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'tempo_estimation_py', u'tempo_estimation_py Documentation',
-     author, 'tempo_estimation_py', 'Library with utilities to modify osu files.',
+    (master_doc, 'libtempo_py', u'libtempo_py Documentation',
+     author, 'libtempo_py', 'Library with utilities to modify osu files.',
      'Miscellaneous'),
 ]
 

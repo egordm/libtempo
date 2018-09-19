@@ -14,7 +14,7 @@
 
 using namespace arma;
 namespace plt = plotly;
-using namespace tempogram;
+using namespace libtempo;
 
 // TODO: this is a mess
 void visualize(const std::string &filepath, Settings settings, const vec &novelty_curve, const mat &tempogram, const vec &t,

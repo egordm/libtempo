@@ -8,9 +8,9 @@
 
 
 using namespace sp;
-using namespace tempogram;
+using namespace libtempo;
 
-vec tempogram::resample(const vec &signal, int upfactor, int downfactor) {
+vec libtempo::resample(const vec &signal, int upfactor, int downfactor) {
     const int n = 10;
     if (upfactor <= 0 || downfactor <= 0) throw std::runtime_error("factors must be positive integer");
 
@@ -38,11 +38,11 @@ vec tempogram::resample(const vec &signal, int upfactor, int downfactor) {
     nz = (output_size + delay) * downfactor - (((int)signal.size() - 1) * upfactor + (int)h.size()); // solve out size
     if(nz > 0) h = join_cols(h, vec((const uword)nz, fill::zeros));
 
-    vec resr = tempogram::upfirdn(signal, upfactor, downfactor, h);
+    vec resr = libtempo::upfirdn(signal, upfactor, downfactor, h);
     return resr(span((uword)delay, (uword) delay + output_size - 1));
 }
 
-vec tempogram::firls(int length, vec freq, const vec &amplitude) {
+vec libtempo::firls(int length, vec freq, const vec &amplitude) {
     int filter_length = length + 1;
     length = length / 2;
 
@@ -82,7 +82,7 @@ vec tempogram::firls(int length, vec freq, const vec &amplitude) {
     else return join_cols(flipud(a), a);
 }
 
-tempogram::Resampler::Resampler(int up_rate, int down_rate, const vec &coefs)
+libtempo::Resampler::Resampler(int up_rate, int down_rate, const vec &coefs)
         :  _up_rate(up_rate), _down_rate(down_rate), _t(0), _xoffset(0) {
     /*
     The coefficients are copied into local storage in a transposed, flipped
@@ -114,19 +114,19 @@ tempogram::Resampler::Resampler(int up_rate, int down_rate, const vec &coefs)
         }
 }
 
-tempogram::Resampler::~Resampler() {
+libtempo::Resampler::~Resampler() {
     delete [] _transposed_coefs;
     delete [] _state;
 }
 
-int tempogram::Resampler::out_count(int in_count) {
+int libtempo::Resampler::out_count(int in_count) {
     int np = in_count * _up_rate;
     int need = np / _down_rate;
     if ((_t + _up_rate * _xoffset) < (np % _down_rate))  need++;
     return need;
 }
 
-vec tempogram::Resampler::apply(vec &in) {
+vec libtempo::Resampler::apply(vec &in) {
     vec ret((const uword)(out_count((int)in.size())));
     // x points to the latest processed input sample
     double *start = in.memptr();
@@ -175,7 +175,7 @@ vec tempogram::Resampler::apply(vec &in) {
 }
 
 
-vec tempogram::upfirdn(const vec &signal, int up_rate, int down_rate, const vec &filter) {
+vec libtempo::upfirdn(const vec &signal, int up_rate, int down_rate, const vec &filter) {
     Resampler resampler(up_rate, down_rate, filter);
 
     // pad input by length of one polyphase of filter to flush all values out

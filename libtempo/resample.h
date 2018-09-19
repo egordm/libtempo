@@ -9,7 +9,7 @@
 
 using namespace arma;
 
-namespace tempogram {
+namespace libtempo {
     class Resampler {
     public:
         Resampler(int up_rate, int down_rate, const vec &coefs);

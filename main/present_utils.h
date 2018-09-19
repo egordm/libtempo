@@ -8,7 +8,7 @@
 #include <curve_utils.h>
 #include <audio_processing.h>
 
-using namespace tempogram;
+using namespace libtempo;
 
 #define TYPE_DOUBLE 0x1
 #define TYPE_COMPLEX 0x16

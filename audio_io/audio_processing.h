@@ -10,7 +10,7 @@
 
 using namespace arma;
 
-namespace tempogram { namespace audio {
+namespace libtempo { namespace audio {
     struct AudioFile {
         std::string path;
         fmat data;

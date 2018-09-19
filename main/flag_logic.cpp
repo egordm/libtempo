@@ -24,8 +24,8 @@ void visualize(const std::string &filepath, Settings settings, const vec &novelt
     for(const auto &section : tempo_sections) {
         predicted_tempo.push_back(section.bpm);
         predicted_tempo.push_back(section.bpm);
-        predicted_tempo_rel.push_back(tempogram::tempogram_utils::bpm_to_cyclic(section.bpm, ref_tempo));
-        predicted_tempo_rel.push_back(tempogram::tempogram_utils::bpm_to_cyclic(section.bpm, ref_tempo));
+        predicted_tempo_rel.push_back(libtempo::tempogram_utils::bpm_to_cyclic(section.bpm, ref_tempo));
+        predicted_tempo_rel.push_back(libtempo::tempogram_utils::bpm_to_cyclic(section.bpm, ref_tempo));
         predicted_tempo_t.push_back(section.start);
         predicted_tempo_t.push_back(section.end - 0.0001);
     }

@@ -9,7 +9,7 @@
 
 using namespace arma;
 
-namespace tempogram { namespace mat_utils {
+namespace libtempo { namespace mat_utils {
     /**
      * Finds index of nearest element to given value
      * @param a

@@ -19,7 +19,7 @@ endfunction()
 
 
 add_subdirectory(audio_io)
-add_subdirectory(tempo_estimation)
-add_subdirectory(tempo_estimation_py)
+add_subdirectory(libtempo)
+add_subdirectory(libtempo_py)
 add_subdirectory(main)
 #add_subdirectory(test)
