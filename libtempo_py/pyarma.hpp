@@ -27,15 +27,9 @@ using namespace arma;
 template<typename T>
 inline Mat<T> py_to_arma_mat(py::array_t<T, py::array::f_style | py::array::forcecast> &pyarr) {
     py::buffer_info info = pyarr.request(); // TODO: Can we move return type to arguments for deduction?
-    Mat<T> amat(reinterpret_cast<typename Mat<T>::elem_type *>(info.ptr), info.shape[0], info.shape[1]);
-    return amat;
-}
-
-
-template<typename T>
-inline Col<T> py_to_arma_vec(py::array_t<T, py::array::f_style | py::array::forcecast> &pyarr) {
-    py::buffer_info info = pyarr.request(); // TODO: Can we move return type to arguments for deduction?
-    Col<T> amat(reinterpret_cast<typename Col<T>::elem_type *>(info.ptr), info.shape[0]);
+    unsigned long n_rows = info.shape[0];
+    unsigned long n_cols = info.shape.size() >= 2 ? info.shape[1] : 1;
+    Mat<T> amat(reinterpret_cast<typename Mat<T>::elem_type *>(info.ptr), n_rows, n_cols);
     return amat;
 }
 
