@@ -7,7 +7,6 @@
 
 #include <armadillo>
 #include "defines.h"
-#include "helper_functions.h"
 
 using namespace arma;
 

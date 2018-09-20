@@ -26,6 +26,17 @@ namespace libtempo { namespace mat_utils {
     mat subtract_mean(const mat &tempogram);
 
     /**
+    * Normalizes a feature sequence according to the l^p norm
+    * If the norm falls below threshold for a feature vector, then the normalized feature vector is set to be the
+    * unit vector.
+    * @param feature
+    * @param p
+    * @param threshold
+    * @return normalized feature
+    */
+    cx_mat colwise_normalize_p1(const cx_mat &feature, unsigned int p, double threshold);
+
+    /**
      * Normalize tempogram. Sum of bins at every time position will be 1
      * @param tempogram
      * @return
@@ -56,6 +67,16 @@ namespace libtempo { namespace mat_utils {
      */
     vec pad_vec(const vec &x, unsigned int n_before, unsigned int n_after);
 
+    vec smooth_filter_subtract(const vec &novelty_curve, int sr, int hop_length);
+
+    /**
+     * Data interpolation
+     * @tparam T
+     * @param XG Input axis
+     * @param YG Input values
+     * @param XI Output axis
+     * @param YI Output values
+     */
     template<typename T>
     void mat_interp1_nearest(const Col<T>& XG, const Mat<T>& YG, const Col<T>& XI, Mat<T>& YI) {
         const T XG_min = XG.min();

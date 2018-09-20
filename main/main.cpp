@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
             (t, novelty_curve, bpm, feature_rate, settings.tempo_window);
 
     std::cout << " - Calculating cyclic tempogram" << std::endl;
-    auto normalized_tempogram = libtempo::normalize_feature(tempogram, 2, 0.0001);
+    auto normalized_tempogram = mat_utils::colwise_normalize_p1(tempogram, 2, 0.0001);
     int ref_tempo = settings.ref_tempo;
     vec ct_y_axis;
     auto cyclic_tempogram = tempogram_processing::tempogram_to_cyclic_tempogram

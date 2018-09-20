@@ -4,6 +4,7 @@
 
 #include <sigpack.h>
 #include "tempogram_processing.h"
+#include "fourier_utils.h"
 #include "math_utils.hpp"
 #include "resample.h"
 #include "mat_utils.h"
@@ -97,7 +98,7 @@ vec tempogram_processing::audio_to_novelty_curve(int &feature_rate_ret, const fv
         feature_rate = (float) resample_feature_rate;
     }
 
-    novelty_curve = novelty_smoothed_subtraction(novelty_curve, sr, hop_length);
+    novelty_curve = mat_utils::smooth_filter_subtract(novelty_curve, sr, hop_length);
 
     feature_rate_ret = feature_rate;
     return novelty_curve;
