@@ -1,4 +1,4 @@
-project(tempo_estimation_py C CXX)
+project(libtempo_py C CXX)
 
 file(GLOB SOURCE_FILES
         "*.h"
@@ -8,8 +8,8 @@ file(GLOB SOURCE_FILES
 
 add_subdirectory(../libs/pybind11 "${CMAKE_CURRENT_BINARY_DIR}/pybind11")
 
-include_directories(${tempo_estimation_INCLUDE_DIRS})
+include_directories(${libtempo_INCLUDE_DIRS})
 
 pybind11_add_module(${PROJECT_NAME} ${SOURCE_FILES})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE tempo_estimation)
+target_link_libraries(${PROJECT_NAME} PRIVATE libtempo)

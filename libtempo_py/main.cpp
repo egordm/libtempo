@@ -1,11 +1,11 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include "tempogram_wrapper.hpp"
+#include "libtempo_wrapper.hpp"
 #include <curve_utils.h>
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(tempo_estimation_py, m) {
+PYBIND11_MODULE(libtempo_py, m) {
     m.doc() = R"pbdoc(
         libtempo_py
         -----------------------
@@ -20,7 +20,7 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
            tempogram_to_cyclic_tempogram
     )pbdoc";
 
-    m.def("novelty_curve_to_tempogram_dft", &tempogram_wrapper::novelty_curve_to_tempogram_dft,
+    m.def("novelty_curve_to_tempogram_dft", &libtempo_wrapper::novelty_curve_to_tempogram_dft,
           R"pbdoc(
           Computes a complex valued fourier tempogram for a given novelty curve
 
@@ -49,7 +49,7 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
           py::arg("hop_length") = -1
     );
 
-    m.def("normalize_feature", &tempogram_wrapper::normalize_feature,
+    m.def("normalize_feature", &libtempo_wrapper::normalize_feature,
           R"pbdoc(
           Normalizes a feature sequence according to the l^p norm
           If the norm falls below threshold for a feature vector, then the normalized feature vector is set to be the
@@ -71,7 +71,7 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
           py::arg("threshold")
     );
 
-    m.def("audio_to_novelty_curve", &tempogram_wrapper::audio_to_novelty_curve,
+    m.def("audio_to_novelty_curve", &libtempo_wrapper::audio_to_novelty_curve,
           R"pbdoc(
           Computes a complex valued fourier tempogram for a given novelty curve
 
@@ -106,7 +106,7 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
           py::arg("resample_feature_rate") = 200
     );
 
-    m.def("audio_to_novelty_curve_tempogram", &tempogram_wrapper::audio_to_novelty_curve_tempogram,
+    m.def("audio_to_novelty_curve_tempogram", &libtempo_wrapper::audio_to_novelty_curve_tempogram,
           R"pbdoc(
           Computes a novelty curve and a complex valued fourier tempogram for a given audio signal.
 
@@ -135,7 +135,7 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
           py::arg("hop_length") = -1
     );
 
-    m.def("tempogram_to_cyclic_tempogram", &tempogram_wrapper::tempogram_to_cyclic_tempogram,
+    m.def("tempogram_to_cyclic_tempogram", &libtempo_wrapper::tempogram_to_cyclic_tempogram,
           R"pbdoc(
           Computes a cyclic tempogram representation of a tempogram by identifying octave equivalences, simnilar as for chroma features.
 
@@ -161,14 +161,14 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
           py::arg("ref_tempo") = 60
     );
 
-    py::class_<tempogram::curve_utils::Section>(m, "Section")
+    py::class_<libtempo::curve_utils::Section>(m, "Section")
             .def(py::init<double, double, double, double>())
-            .def_readwrite("start", &tempogram::curve_utils::Section::start)
-            .def_readwrite("end", &tempogram::curve_utils::Section::end)
-            .def_readwrite("bpm", &tempogram::curve_utils::Section::bpm)
-            .def_readwrite("offset", &tempogram::curve_utils::Section::offset);
+            .def_readwrite("start", &libtempo::curve_utils::Section::start)
+            .def_readwrite("end", &libtempo::curve_utils::Section::end)
+            .def_readwrite("bpm", &libtempo::curve_utils::Section::bpm)
+            .def_readwrite("offset", &libtempo::curve_utils::Section::offset);
 
-    m.def("smoothen_tempogram", &tempogram_wrapper::smoothen_tempogram,
+    m.def("smoothen_tempogram", &libtempo_wrapper::smoothen_tempogram,
           R"pbdoc(
 
           )pbdoc",
@@ -178,7 +178,7 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
           py::arg("triplet_weight") = 0.8f
     );
 
-    m.def("tempogram_to_tempo_curve_corrected", &tempogram_wrapper::tempogram_to_tempo_curve_corrected,
+    m.def("tempogram_to_tempo_curve_corrected", &libtempo_wrapper::tempogram_to_tempo_curve_corrected,
           R"pbdoc(
 
           )pbdoc",
@@ -187,7 +187,7 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
           py::arg("min_length") = 40
     );
 
-    m.def("curve_to_sections", &tempogram_wrapper::curve_to_sections,
+    m.def("curve_to_sections", &libtempo_wrapper::curve_to_sections,
           R"pbdoc(
 
           )pbdoc",
@@ -197,7 +197,7 @@ PYBIND11_MODULE(tempo_estimation_py, m) {
           py::arg("max_section_size") = 60
     );
 
-    m.def("sections_extract_offset", &tempogram_wrapper::sections_extract_offset,
+    m.def("sections_extract_offset", &libtempo_wrapper::sections_extract_offset,
           R"pbdoc(
 
           )pbdoc",

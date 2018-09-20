@@ -12,6 +12,7 @@
 namespace py=pybind11;
 
 typedef py::array_t<double, py::array::f_style | py::array::forcecast> pyarr_d;
+typedef py::array_t<float, py::array::f_style | py::array::forcecast> pyarr_f;
 typedef py::array_t<arma::cx_double, py::array::f_style | py::array::forcecast> pyarr_cd;
 
 using namespace arma;
