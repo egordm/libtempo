@@ -15,7 +15,7 @@
 
 using namespace libtempo;
 
-namespace libtempo_wrapper {
+namespace wrapper_libtempo {
     template<typename T>
     struct MatrixWrapper {
         Mat<T> data;

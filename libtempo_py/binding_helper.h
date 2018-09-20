@@ -10,11 +10,11 @@
 namespace binding_helper {
     template<typename T>
     inline void define_matrix_wrapper(pybind11::module &m) {
-        py::class_<libtempo_wrapper::MatrixWrapper<T >>(m, "MatrixWrapper")
-                .def("get_size", &libtempo_wrapper::MatrixWrapper<T>::get_size)
-                .def("to_array", &libtempo_wrapper::MatrixWrapper<T>::to_array);
+        py::class_<wrapper_libtempo::MatrixWrapper<T >>(m, "MatrixWrapper")
+                .def("get_size", &wrapper_libtempo::MatrixWrapper<T>::get_size)
+                .def("to_array", &wrapper_libtempo::MatrixWrapper<T>::to_array);
 
-        m.def("wrap_array", &libtempo_wrapper::wrap_array<T>,
+        m.def("wrap_array", &wrapper_libtempo::wrap_array<T>,
                 R"pbdoc(
                 Wraps a python array into an own object to speedup the tempo actions.
 
