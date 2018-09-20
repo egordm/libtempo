@@ -61,7 +61,7 @@ namespace libtempo { namespace curve_utils {
     };
 
     /**
-     * Converts secgents with indices of a curve to section which holds all the data
+     * Converts segments with indices of a curve to section which holds all the data
      * @param segments
      * @param curve
      * @param t

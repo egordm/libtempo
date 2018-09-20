@@ -1,6 +1,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include "libtempo_wrapper.hpp"
+#include "binding_helper.h"
 #include <curve_utils.h>
 
 namespace py = pybind11;
@@ -14,62 +15,13 @@ PYBIND11_MODULE(libtempo_py, m) {
            :toctree: _generate
 
            novelty_curve_to_tempogram_dft
-           normalize_feature
            audio_to_novelty_curve
-           audio_to_novelty_curve_tempogram
            tempogram_to_cyclic_tempogram
     )pbdoc";
 
-    m.def("novelty_curve_to_tempogram_dft", &libtempo_wrapper::novelty_curve_to_tempogram_dft,
-          R"pbdoc(
-          Computes a complex valued fourier tempogram for a given novelty curve
-
-          Parameters
-          ----------
-          novelty_curve
-              a novelty curve indicating note onset positions
-          bpm
-              vector containing BPM values to compute.
-          feature_rate
-              feature rate of the novelty curve (Hz). This needs to be set to allow for setting other parameters in seconds!
-          tempo_window
-              Analysis window length in seconds
-          hop_length
-              window hop length in frames (of novelty curve)
-
-          Returns
-          -------
-          Tuple[array, array, array]
-              tempogram, bpm, time vector
-          )pbdoc",
-          py::arg("novelty_curve"),
-          py::arg("bpm"),
-          py::arg("feature_rate"),
-          py::arg("tempo_window"),
-          py::arg("hop_length") = -1
-    );
-
-    m.def("normalize_feature", &libtempo_wrapper::normalize_feature,
-          R"pbdoc(
-          Normalizes a feature sequence according to the l^p norm
-          If the norm falls below threshold for a feature vector, then the normalized feature vector is set to be the
-          unit vector.
-
-          Parameters
-          ----------
-          feature
-          p
-          threshold
-
-          Returns
-          -------
-          array
-              normalized feature
-          )pbdoc",
-          py::arg("feature"),
-          py::arg("p"),
-          py::arg("threshold")
-    );
+    binding_helper::define_matrix_wrapper<double>(m);
+    binding_helper::define_matrix_wrapper<float>(m);
+    binding_helper::define_matrix_wrapper<cx_double>(m);
 
     m.def("audio_to_novelty_curve", &libtempo_wrapper::audio_to_novelty_curve,
           R"pbdoc(
@@ -94,7 +46,7 @@ PYBIND11_MODULE(libtempo_py, m) {
 
           Returns
           -------
-          Tuple[array, int]
+          Tuple[MatrixWrapper, int]
               novelty_curve, feature_rate
           )pbdoc",
           py::arg("signal"),
@@ -106,18 +58,19 @@ PYBIND11_MODULE(libtempo_py, m) {
           py::arg("resample_feature_rate") = 200
     );
 
-    m.def("audio_to_novelty_curve_tempogram", &libtempo_wrapper::audio_to_novelty_curve_tempogram,
+
+    m.def("novelty_curve_to_tempogram", &libtempo_wrapper::novelty_curve_to_tempogram,
           R"pbdoc(
-          Computes a novelty curve and a complex valued fourier tempogram for a given audio signal.
+          Computes a complex valued fourier tempogram for a given novelty curve
 
           Parameters
           ----------
-          signal
-              wavefrom of audio signal
-          sr
-              sampling rate of the audio (Hz)
+          novelty_curve
+              a novelty curve indicating note onset positions
           bpm
               vector containing BPM values to compute.
+          feature_rate
+              feature rate of the novelty curve (Hz). This needs to be set to allow for setting other parameters in seconds!
           tempo_window
               Analysis window length in seconds
           hop_length
@@ -125,12 +78,12 @@ PYBIND11_MODULE(libtempo_py, m) {
 
           Returns
           -------
-          Tuple[array, int, array, array, array]
-              novelty_curve, novelty curve feature rate, tempogram, tempogram frequencies, tempogram times
+          Tuple[MatrixWrapper, MatrixWrapper, MatrixWrapper]
+              tempogram, bpm, time vector
           )pbdoc",
-          py::arg("signal"),
-          py::arg("sr"),
+          py::arg("novelty_curve"),
           py::arg("bpm"),
+          py::arg("feature_rate"),
           py::arg("tempo_window"),
           py::arg("hop_length") = -1
     );
@@ -152,13 +105,86 @@ PYBIND11_MODULE(libtempo_py, m) {
 
           Returns
           -------
-          Tuple[array, array]
+          Tuple[MatrixWrapper, MatrixWrapper]
               cyclic_tempogram, cyclic_axis
           )pbdoc",
           py::arg("tempogram"),
           py::arg("bpm"),
           py::arg("octave_divider") = 120,
           py::arg("ref_tempo") = 60
+    );
+
+    m.def("smoothen_tempogram", &libtempo_wrapper::smoothen_tempogram,
+          R"pbdoc(
+          Smoothens tempogram to prepare it for peak extraction.
+          It adds triplets to the intensities, does temporal accumulation, denoising and normalization.
+
+          Parameters
+          ----------
+          tempogram
+              a tempogram representation
+          y_axis
+              y axis values of the tempogram
+          t
+              x axis values of the tempogram
+          temporal_unit_size
+              length over which the tempogram will be stabilized to extract a steady tempo
+          triplet_weight
+              weight of the triplet intensity which will be adeed to its base intensity
+
+          Returns
+          -------
+          MatrixWrapper
+              smoothed_tempogram
+
+          )pbdoc",
+          py::arg("tempogram"),
+          py::arg("y_axis"),
+          py::arg("t"),
+          py::arg("temporal_unit_size") = 20.,
+          py::arg("triplet_weight") = 0.8f
+    );
+
+    m.def("tempogram_to_tempo_curve", &libtempo_wrapper::tempogram_to_tempo_curve,
+          R"pbdoc(
+          Creates curve with values of the bins with max intensities from the tempogram.
+
+          Parameters
+          ----------
+          tempogram
+              a tempogram representation
+          y_axis
+              y axis values of the tempogram
+
+          Returns
+          -------
+          MatrixWrapper
+              tempo_curve
+          )pbdoc",
+          py::arg("tempogram"),
+          py::arg("y_axis")
+    );
+
+    m.def("correct_tempo_curve", &libtempo_wrapper::correct_tempo_curve,
+          R"pbdoc(
+          Correct curve by removing short value changes and thus removing small sudden spikes.
+
+          Parameters
+          ----------
+          tempo_curve
+          t
+              x axis values of the curve
+          min_length
+              maximum section length in seconds after which section is split in half
+
+          Returns
+          -------
+          MatrixWrapper
+              tempo_curve
+          )pbdoc",
+          py::arg("tempo_curve"),
+          py::arg("t"),
+          py::arg("min_section_length") = 10
     );
 
     py::class_<libtempo::curve_utils::Section>(m, "Section")
@@ -168,38 +194,59 @@ PYBIND11_MODULE(libtempo_py, m) {
             .def_readwrite("bpm", &libtempo::curve_utils::Section::bpm)
             .def_readwrite("offset", &libtempo::curve_utils::Section::offset);
 
-    m.def("smoothen_tempogram", &libtempo_wrapper::smoothen_tempogram,
-          R"pbdoc(
-
-          )pbdoc",
-          py::arg("tempogram"),
-          py::arg("axis_lut"),
-          py::arg("temporal_unit_size") = 100,
-          py::arg("triplet_weight") = 0.8f
-    );
-
-    m.def("tempogram_to_tempo_curve_corrected", &libtempo_wrapper::tempogram_to_tempo_curve_corrected,
-          R"pbdoc(
-
-          )pbdoc",
-          py::arg("tempogram"),
-          py::arg("axis_lut"),
-          py::arg("min_length") = 40
-    );
-
     m.def("curve_to_sections", &libtempo_wrapper::curve_to_sections,
           R"pbdoc(
+          Converts given curve to sections. Inbetween it clens some inconsistencies to extract as much straight
+          lines as possible.
 
+          Parameters
+          ----------
+          tempo_curve
+          t
+              x axis values of the curve
+          bpm_reference
+              reference bpm for the curve
+          max_section_size
+              maximum section length after which it will be split in half. Use for more accurate offset estimation.
+              Keep value high if you want as few sections as possible
+          bpm_merge_threshold
+              Threshold within which similar bpm will be merged into the same section.
+
+          Returns
+          -------
+          List[Section]
+              sections
           )pbdoc",
           py::arg("curve"),
           py::arg("t"),
           py::arg("bpm_reference") = DEFAULT_REF_TEMPO,
-          py::arg("max_section_size") = 60
+          py::arg("max_section_size") = 60,
+          py::arg("bpm_merge_threshold") = 0.5f
     );
 
     m.def("sections_extract_offset", &libtempo_wrapper::sections_extract_offset,
           R"pbdoc(
+          Finds the optimal offset for given section. Also tunes the bpm to a more fitting value
 
+          Parameters
+          ----------
+          novelty_curve
+              a novelty curve indicating note onset positions
+          sections
+              sections you want offset to be calculated for.
+          tempo_multiples
+              tempo multiples to consider when searchin for correct offset
+          feature_rate
+              feature rate of the novelty curve (Hz).
+          bpm_doubt_window
+               window around candidate bpm which to search for a more fine and correct bpm
+          bpm_doubt_step
+               steps which to take inside the doubt window to fine tune the bpm
+
+          Returns
+          -------
+          List[Section]
+              sections
           )pbdoc",
           py::arg("novelty_curve"),
           py::arg("sections"),
