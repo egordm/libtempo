@@ -18,6 +18,7 @@ using namespace sp;
 namespace libtempo { namespace fourier_utils {
 
     /**
+    * returns the complex fourier coefficients of frequency f of the signal s
     * @param freqs
     * @param t
     * @param s time domain signal
@@ -31,14 +32,14 @@ namespace libtempo { namespace fourier_utils {
     compute_fourier_coefficients(vec &t, const vec &s, const vec &window, int n_overlap, const vec &f, double sr);
 
     /**
-    * Computes aspectrogram using a STFT (short-time fourier transform)
+    * Computes a spectrogram using a STFT (short-time fourier transform)
     * @param signal: wavefrom of audio signal
     * @param sr: sample rate
     * @param window
     * @param coefficient_range
     * @param n_fft: window length
     * @param hop_length
-    * @return spectrogram, frequency vector, time vector
+    * @return spectrogram
     */
     template<typename T>
     mat stft(float &feature_rate, vec &t, vec &f, const Col<T> &signal, int sr, const vec &window,
@@ -65,7 +66,7 @@ namespace libtempo { namespace fourier_utils {
         // Allocate window chunk
         vec x((uword) window_length);
 
-        sp::FFTW fftw(static_cast<unsigned int>(frame.size()));
+        sp::FFTW fftw(static_cast<unsigned int>(frame.size())); // TODO: openmp mb
         for (int i = 0; i < num_frames; ++i) {
             x.zeros();
 

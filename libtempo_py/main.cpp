@@ -4,6 +4,7 @@
 #include "binding_helper.h"
 #include "module_libtempo.h"
 #include "module_audio_io.h"
+#include "module_signal_processing.h"
 #include <curve_utils.h>
 
 namespace py = pybind11;
@@ -36,4 +37,7 @@ PYBIND11_MODULE(libtempo_py, m) {
 
     auto audio_module = m.def_submodule("audio");
     register_audio_io(audio_module);
+
+    auto signal_module = m.def_submodule("signal");
+    register_signal_processing(signal_module);
 };
