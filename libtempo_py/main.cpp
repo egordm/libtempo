@@ -15,23 +15,29 @@ PYBIND11_MODULE(libtempo_py, m) {
         -----------------------
         .. currentmodule:: libtempo_py
         .. autosummary::
-           :toctree: _generate
+            :toctree: _generate
 
-           audio_to_novelty_curve
-           novelty_curve_to_tempogram
-           tempogram_to_cyclic_tempogram
-           smoothen_tempogram
-           tempogram_to_tempo_curve
-           correct_tempo_curve
-           curve_to_sections
-           sections_extract_offset
-           Section
-           MatrixWrapper
+            audio_to_novelty_curve
+            novelty_curve_to_tempogram
+            tempogram_to_cyclic_tempogram
+            smoothen_tempogram
+            tempogram_to_tempo_curve
+            correct_tempo_curve
+            curve_to_sections
+            sections_extract_offset
+            Section
+            MatrixWrapperF
+            MatrixWrapperD
+            MatrixWrapperCD
+            audio.AudioWrapper
+            signal.stft
+            signal.stft_noc
+            signal.compute_fourier_coefficients
     )pbdoc";
 
-    binding_helper::define_matrix_wrapper<double>(m);
-    binding_helper::define_matrix_wrapper<float>(m);
-    binding_helper::define_matrix_wrapper<cx_double>(m);
+    binding_helper::define_matrix_wrapper<double>(m, "D");
+    binding_helper::define_matrix_wrapper<float>(m, "F");
+    binding_helper::define_matrix_wrapper<cx_double>(m, "CD");
 
     register_libtempo(m);
 

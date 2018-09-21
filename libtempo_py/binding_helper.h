@@ -9,13 +9,16 @@
 
 namespace binding_helper {
     template<typename T>
-    inline void define_matrix_wrapper(pybind11::module &m) {
-        py::class_<wrapper_libtempo::MatrixWrapper<T >>(m, "MatrixWrapper")
-                .def("get_size", &wrapper_libtempo::MatrixWrapper<T>::get_size)
-                .def("to_array", &wrapper_libtempo::MatrixWrapper<T>::to_array);
+    inline void define_matrix_wrapper(pybind11::module &m, const std::string &type_string) {
+        std::string pyclass_name = "MatrixWrapper" + type_string;
+        py::class_<wrapper_libtempo::MatrixWrapper<T>, shared_ptr < wrapper_libtempo::MatrixWrapper<T>> >
+        (m, pyclass_name.c_str())
+                .def("get_size", &wrapper_libtempo::MatrixWrapper<T>::get_size, R"pbdoc(Get data shape)pbdoc")
+                .def("to_array", &wrapper_libtempo::MatrixWrapper<T>::to_array, R"pbdoc(Get data as numpy array)pbdoc");
 
-        m.def("wrap_array", &wrapper_libtempo::wrap_array<T>,
-                R"pbdoc(
+        std::string pyfunc_name = "wrap_array" + type_string;
+        m.def(pyfunc_name.c_str(), &wrapper_libtempo::wrap_array<T>,
+              R"pbdoc(
                 Wraps a python array into an own object to speedup the tempo actions.
 
                 Parameters
@@ -25,7 +28,7 @@ namespace binding_helper {
 
                  Returns
                  -------
-                 MatrixWrapper
+                 MatrixWrapperX
                     wrapper
           )pbdoc", py::arg("data"));
     }

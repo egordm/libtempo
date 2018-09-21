@@ -1,4 +1,4 @@
-tempo_estimation_py Documentation
+libtempo_py Documentation
 ============================
 
 Contents:
@@ -6,4 +6,4 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   tempo_estimation_py
+   libtempo_py

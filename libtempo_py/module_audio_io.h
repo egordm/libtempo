@@ -11,7 +11,7 @@
 
 void register_audio_io(pybind11::module &m) {
     py::class_<wrapper_audio_io::AudioWrapper>(m, "AudioWrapper")
-            .def(py::init<const char *>())
+            .def(py::init<const char *>(), py::arg("path"))
             .def("get_path", &wrapper_audio_io::AudioWrapper::get_path,
                  R"pbdoc(Gets path of the audio file)pbdoc")
             .def("get_sr", &wrapper_audio_io::AudioWrapper::get_sr,
