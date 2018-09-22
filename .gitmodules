@@ -14,3 +14,6 @@
 [submodule "libs/armadillo"]
 	path = libs/armadillo
 	url = https://gitlab.com/conradsnicta/armadillo-code.git
+[submodule "libs/sigpack"]
+	path = libs/sigpack
+	url = https://github.com/EgorDm/sigpack-fork.git
