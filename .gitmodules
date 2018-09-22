@@ -4,13 +4,13 @@
 	branch = v2.2
 [submodule "libs/args"]
 	path = libs/args
-	url = git@github.com:Taywee/args.git
+	url = https://github.com/Taywee/args.git
 [submodule "libs/json"]
 	path = libs/json
-	url = git@github.com:nlohmann/json.git
+	url = https://github.com/nlohmann/json.git
 [submodule "libs/minimp3"]
 	path = libs/minimp3
-	url = git@github.com:lieff/minimp3.git
+	url = https://github.com/lieff/minimp3.git
 [submodule "libs/armadillo"]
 	path = libs/armadillo
 	url = https://gitlab.com/conradsnicta/armadillo-code.git
