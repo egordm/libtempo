@@ -3,7 +3,13 @@ cmake_minimum_required(VERSION 3.9)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+# Libraries
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs")
+set(MINIMP3_INCLUDE_DIR "${LIB_DIR}/minimp3")
+set(ARMADILLO_LIBRARY "${LIB_DIR}/armadillo")
+set(ARMADILLO_INCLUDE_DIR "${LIB_DIR}/armadillo/include")
+set(SIGPACK_INCLUDE_DIR "${LIB_DIR}/sigpack")
 
 if (WIN32)
     set(CMAKE_SHARED_LIBRARY_PREFIX "")
@@ -16,18 +22,6 @@ function(defineLibIncludes)
     set(${PROJECT_NAME}_INCLUDE_DIRS ${PROJECT_SOURCE_DIR} ${tmp_include_dirs}
             CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE)
 endfunction()
-
-# Libraries
-if (EXISTS "${LIB_DIR}/minimp3")
-    set(MINIMP3_INCLUDE_DIR "${LIB_DIR}/minimp3")
-endif ()
-if (EXISTS "${LIB_DIR}/armadillo")
-    set(ARMADILLO_LIBRARY "${LIB_DIR}/armadillo")
-    set(ARMADILLO_INCLUDE_DIR "${LIB_DIR}/armadillo/include")
-endif ()
-if (EXISTS "${LIB_DIR}/sigpack")
-    set(SIGPACK_INCLUDE_DIR "${LIB_DIR}/sigpack")
-endif ()
 
 add_subdirectory(audio_io)
 add_subdirectory(libtempo)

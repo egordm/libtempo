@@ -32,9 +32,12 @@
 
 find_path(ARMADILLO_INCLUDE_DIR
   NAMES armadillo
-  PATHS "$ENV{ProgramFiles}/Armadillo/include"
+  PATHS "${LIB_DIR}/armadillo/include"
   )
 
+if(EXISTS ${LIB_DIR}/armadillo/include)
+  set(ARMADILLO_INCLUDE_DIR "${LIB_DIR}/armadillo/include")
+endif()
 
 if(ARMADILLO_INCLUDE_DIR)
   # ------------------------------------------------------------------------
@@ -73,6 +76,7 @@ endif ()
 set(SUPPORT_INCLUDE_DIRS "")
 set(SUPPORT_LIBRARIES "")
 set(ARMA_NEED_LIBRARY true) # Assume true.
+
 if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
   file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" _armadillo_CONFIG_CONTENTS)
   # ARMA_USE_WRAPPER
