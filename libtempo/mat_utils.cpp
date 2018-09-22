@@ -62,7 +62,7 @@ cx_mat mat_utils::colwise_normalize_p1(const cx_mat &feature, unsigned int p, do
 
 vec mat_utils::smooth_filter_subtract(const vec &novelty_curve, int sr, int hop_length) {
     double smooth_len = 1.5;
-    smooth_len = max(ceil(smooth_len * sr / (double) hop_length), 3.);
+    smooth_len = fmax(ceil(smooth_len * sr / (double) hop_length), 3.);
     rowvec smooth_filter = (utils::math::my_hanning((const uword) smooth_len)).t();
     rowvec novelty_curve_t = novelty_curve.t();
     mat local_average = conv2(novelty_curve_t, flipud(fliplr(smooth_filter / sum(smooth_filter))), "same");

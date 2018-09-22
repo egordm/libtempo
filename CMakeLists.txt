@@ -17,6 +17,10 @@ function(defineLibIncludes)
             CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE)
 endfunction()
 
+set(MINIMP3_INCLUDE_DIR "${LIB_DIR}/minimp3")
+set(ARMADILLO_LIBRARY "${LIB_DIR}/armadillo")
+set(ARMADILLO_INCLUDE_DIR "${LIB_DIR}/armadillo/include")
+set(SIGPACK_INCLUDE_DIR "${LIB_DIR}/sigpack")
 
 add_subdirectory(audio_io)
 add_subdirectory(libtempo)

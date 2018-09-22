@@ -19,7 +19,7 @@ vec libtempo::resample(const vec &signal, int upfactor, int downfactor) {
     downfactor /= gcd;
 
     if (upfactor == downfactor) return signal;
-    int max_factor = max(upfactor, downfactor);
+    int max_factor = std::max(upfactor, downfactor);
 
     double firls_freq = 0.5 / max_factor;
     vec firls_freqs = { 0.0, 2.0 * firls_freq, 2.0 * firls_freq, 1.0 };

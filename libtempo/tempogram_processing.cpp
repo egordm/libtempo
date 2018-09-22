@@ -50,7 +50,7 @@ vec tempogram_processing::audio_to_novelty_curve(int &feature_rate_ret, const fv
 
         // smoothed differentiator
         double diff_len = 0.3;
-        diff_len = max(ceil(diff_len * sr / (double) hop_length), 5.);
+        diff_len = std::max(ceil(diff_len * sr / (double) hop_length), 5.);
         diff_len = 2 * round(diff_len / 2.) + 1;
         auto half_diff_len = (const uword) floor(diff_len / 2);
 
@@ -65,7 +65,7 @@ vec tempogram_processing::audio_to_novelty_curve(int &feature_rate_ret, const fv
 
         // normalize band
         double norm_len = 5; // sec
-        norm_len = max(ceil(norm_len * sr / hop_length), 3.);
+        norm_len = std::max(ceil(norm_len * sr / hop_length), 3.);
         rowvec norm_filter = utils::math::my_hanning((const uword) norm_len).t();
         mat norm_curve = conv2(sum(band_data, 0), flipud(fliplr(norm_filter / sum(norm_filter))), "same");
 

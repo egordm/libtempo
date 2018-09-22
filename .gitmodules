@@ -11,3 +11,6 @@
 [submodule "libs/minimp3"]
 	path = libs/minimp3
 	url = git@github.com:lieff/minimp3.git
+[submodule "libs/armadillo"]
+	path = libs/armadillo
+	url = https://gitlab.com/conradsnicta/armadillo-code.git

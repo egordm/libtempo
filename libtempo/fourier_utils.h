@@ -55,7 +55,7 @@ namespace libtempo { namespace fourier_utils {
         auto first_window = (int) floor(window_length / 2.);
         auto num_frames = (int) ceil((double) signal_size / hop_length);
         int num_coeffs = std::get<1>(coefficient_range) - std::get<0>(coefficient_range);
-        int frame_pad = max(0, n_fft - window_length);
+        int frame_pad = std::max(0, n_fft - window_length);
 
         // Spectrogram alloc
         mat s((const uword) num_coeffs, (const uword) num_frames);
@@ -91,7 +91,7 @@ namespace libtempo { namespace fourier_utils {
         }
 
         // Calculate the axes
-        auto half_window = (int) floor(max(n_fft, window_length) / 2.);
+        auto half_window = (int) floor(fmax(n_fft, window_length) / 2.);
         t = regspace<vec>(0, s.n_cols - 1) * (hop_length / (double) sr);
         f = linspace<vec>(0, half_window - 1, (const uword) half_window) / (double) half_window * (sr / 2.);
         f = f(span((const uword) std::get<0>(coefficient_range), (const uword) std::get<1>(coefficient_range) - 2));
@@ -102,7 +102,7 @@ namespace libtempo { namespace fourier_utils {
     template<typename T>
     mat stft(float &feature_rate, vec &t, vec &f, const Col<T> &s, int sr, const vec &window, int n_fft = -1,
              int hop_length = -1) {
-        std::tuple<int, int> coefficient_range = make_tuple(0, (int) floor(max(n_fft, (int) window.size()) / 2.) + 1);
+        std::tuple<int, int> coefficient_range = std::make_tuple(0, (int) floor(fmax(n_fft, (int) window.size()) / 2.) + 1);
         return fourier_utils::stft(feature_rate, t, f, s, sr, window, coefficient_range, n_fft, hop_length);
     }
 }}

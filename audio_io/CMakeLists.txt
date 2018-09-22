@@ -15,7 +15,7 @@ find_package(Armadillo REQUIRED)
 include_directories(${ARMADILLO_INCLUDE_DIR} )
 
 # Minimp3
-include_directories(../libs/minimp3)
+include_directories(${MINIMP3_INCLUDE_DIR})
 
 add_library(${PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${LIBSNDFILE_LIBRARIES} ${ARMADILLO_LIBRARIES})
