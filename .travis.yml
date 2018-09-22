@@ -1,0 +1,29 @@
+language: python
+
+matrix:
+  include:
+  - os: linux
+    compiler: gcc
+    addons:
+      apt:
+        packages:
+          - gcc
+          - g++
+          - cmake
+          - gfortran
+          - liblapack-dev
+          - libfftw3-dev
+          - libsndfile1-dev
+    env:
+    - CXX=g++
+    - CC=gcc
+    - PIP=pip
+    python: 3.6.5
+
+install:
+  - $PIP install -r requirements.txt --upgrade
+  - $PIP install cibuildwheel
+  - python --version
+
+script:
+  - cibuildwheel --output-dir build_wheel
