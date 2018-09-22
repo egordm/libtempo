@@ -26,4 +26,4 @@ install:
   - python --version
 
 script:
-  - cibuildwheel --output-dir build_wheel
+  - pip install .
