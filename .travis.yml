@@ -6,23 +6,23 @@ matrix:
     compiler: gcc
     addons:
       apt:
+        sources: ['ubuntu-toolchain-r-test']
         packages:
-          - gcc
-          - g++
+          - gcc-6
+          - g++-6
           - cmake
           - gfortran
           - liblapack-dev
           - libfftw3-dev
           - libsndfile1-dev
     env:
-    - CXX=g++
-    - CC=gcc
+    - CXX=g++-6
+    - CC=gcc-6
     - PIP=pip
     python: 3.6.5
 
 install:
   - $PIP install -r requirements.txt --upgrade
-  - $PIP install cibuildwheel
   - python --version
 
 script:
