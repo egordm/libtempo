@@ -21,7 +21,7 @@ namespace libtempo { namespace utils { namespace math {
     inline vec sinc_fac(const vec &x) {
         vec ret(x.size());
         for(uword i = 0; i < x.size(); ++i) {
-            if (fabs(x.at(i) - 0.0) < 0.000001) ret.at(i) = 1;
+            if (fabs(x.at(i)) < EPSILON) ret.at(i) = 1;
             else ret.at(i) = sin(M_PI * x.at(i)) / (M_PI * x.at(i));
         }
 
