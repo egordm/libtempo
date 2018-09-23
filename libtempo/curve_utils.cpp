@@ -84,7 +84,7 @@ std::vector<uvec> curve_utils::join_adjacent_segments(const std::vector<uvec> &s
     return ret;
 }
 
-std::ostream &curve_utils::operator<<(std::ostream &os, const curve_utils::Section &section) {
+std::ostream &libtempo::curve_utils::operator<<(std::ostream &os, const curve_utils::Section &section) {
     os << "Section: start: " << section.start << " end: " << section.end << " bpm: " << section.bpm
        << " offset: " << section.offset << " offset relative: " << (section.offset - section.start);
     return os;

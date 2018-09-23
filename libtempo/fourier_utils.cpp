@@ -13,7 +13,7 @@ cx_mat fourier_utils::compute_fourier_coefficients(vec &t, const vec &s, const v
     int hop_length = win_length - n_overlap;
 
     vec twoPiT = (2 * M_PI / sr) * regspace<vec>(0, win_length - 1);
-    int win_num = utils::math::fix((s.size() - n_overlap) / (win_length - n_overlap));
+    int win_num = (int)utils::math::fix((s.size() - n_overlap) / (win_length - n_overlap));
 
     cx_mat x(static_cast<const uword>(win_num), f.size(), fill::zeros);
     t = linspace(win_length_half, win_length_half + (win_num - 1) * hop_length, (const uword) win_num) / sr;

@@ -73,4 +73,29 @@ inline py::array_t<T> arma_to_py(arma::Col<T> &vec) {
     return py::array_t<T>(buffer);
 }
 
+template<typename T>
+struct MatrixWrapper {
+    Mat<T> data;
+
+    using ArrayType = py::array_t<T, py::array::f_style | py::array::forcecast>;
+
+    explicit MatrixWrapper(Mat<T> data) : data(std::move(data)) {}
+
+    std::tuple<unsigned long, unsigned long> get_shape() { return std::make_tuple(data.n_rows, data.n_cols); }
+
+    ArrayType to_array() {
+        return arma_to_py(data);
+    }
+};
+
+using MatWD = MatrixWrapper<double>;
+using MatWF = MatrixWrapper<float>;
+using MatWCD = MatrixWrapper<cx_double>;
+
+template<typename T>
+inline MatrixWrapper<T> wrap_array(py::array_t<T, py::array::f_style | py::array::forcecast> &array) {
+    auto data = py_to_arma_mat<T>(array);
+    return MatrixWrapper<T>(data);
+}
+
 #endif //TEMPOGRAM_TEMPO_ESTIMATION_PYARMA_HPP

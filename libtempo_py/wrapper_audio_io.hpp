@@ -25,7 +25,7 @@ namespace wrapper_audio_io {
 
         int get_format() { return audio.format; }
 
-        MatrixWrapper<float> get_data() { return MatrixWrapper<float>(audio.data);}
+        MatWF get_data() { return MatWF(audio.data);}
 
         void set_data(const MatrixWrapper<float> &data) { audio.data = data.data;}
 
