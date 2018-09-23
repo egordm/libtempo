@@ -2,8 +2,8 @@
 // Created by egordm on 5-2-18.
 //
 
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 class BaseTests : public ::testing::Test {
 

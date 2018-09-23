@@ -17,3 +17,7 @@
 [submodule "libs/sigpack"]
 	path = libs/sigpack
 	url = https://github.com/EgorDm/sigpack-fork.git
+[submodule "libs/googletest"]
+	path = libs/googletest
+	url = https://github.com/google/googletest.git
+	branch = release-1.8.1

@@ -6,6 +6,6 @@ LIST(GET CUR_DIRECTORY_TOKENS 0 PROJECT_NAME)
 
 add_executable(${PROJECT_NAME} ${SRCS})
 
-target_link_libraries(${PROJECT_NAME} gtest gmock)
+target_link_libraries(${PROJECT_NAME} ${GOOGLETEST_LIBRARIES})
 
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
