@@ -56,9 +56,9 @@ namespace libtempo { namespace curve_utils {
 
         Section(double start, double end, double bpm, double offset = 0)
                 : start(start), end(end), bpm(bpm), offset(offset) {}
-
-        friend std::ostream &operator<<(std::ostream &os, const Section &section);
     };
+
+    std::ostream &operator<<(std::ostream &os, const Section &section);
 
     /**
      * Converts segments with indices of a curve to section which holds all the data

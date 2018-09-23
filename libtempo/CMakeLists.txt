@@ -6,7 +6,6 @@ file(GLOB SOURCE_FILES
         "*.hpp"
         )
 
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
