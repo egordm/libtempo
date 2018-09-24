@@ -49,7 +49,7 @@ void register_libtempo(pybind11::module &m) {
 
           Returns:
               Tuple[MatrixWrapperCD, MatrixWrapperD, MatrixWrapperD]
-              tempogram, bpm, time vector
+              tempogram, time vector
           )pbdoc",
           py::arg("novelty_curve"),
           py::arg("bpm"),
@@ -87,7 +87,7 @@ void register_libtempo(pybind11::module &m) {
               tempogram: a tempogram representation
               y_axis: y axis values of the tempogram
               t: x axis values of the tempogram
-              temporal_unit_size: length over which the tempogram will be stabilized to extract a steady tempo
+              temporal_unit_size: length in seconds over which the tempogram will be stabilized to extract a steady tempo
               triplet_weight: weight of the triplet intensity which will be adeed to its base intensity
 
           Returns:

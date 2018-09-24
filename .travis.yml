@@ -1,5 +1,9 @@
 language: python
 
+branches:
+  except:
+  - dev
+
 matrix:
   include:
   - os: linux
@@ -27,3 +31,6 @@ install:
 
 script:
   - pip install .
+
+notifications:
+  email: false

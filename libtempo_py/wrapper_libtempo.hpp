@@ -27,7 +27,7 @@ namespace wrapper_libtempo {
         return std::make_tuple(MatWD(novelty_curve), feature_rate);
     }
 
-    inline std::tuple<MatWCD, MatWD, MatWD>
+    inline std::tuple<MatWCD, MatWD>
     novelty_curve_to_tempogram(const MatWD &novelty_curve, const MatWD &bpm, double feature_rate, int tempo_window,
                                int hop_length) {
         vec t;
@@ -35,7 +35,7 @@ namespace wrapper_libtempo {
                 (t, novelty_curve.data, bpm.data, feature_rate, tempo_window, hop_length);
         auto normalized_tempogram = mat_utils::colwise_normalize_p1(tempogram, 2, 0.0001);
 
-        return std::make_tuple(MatWCD(normalized_tempogram), MatWD(bpm), MatWD(t));
+        return std::make_tuple(MatWCD(normalized_tempogram), MatWD(t));
     }
 
     inline std::tuple<MatWD, MatWD>
