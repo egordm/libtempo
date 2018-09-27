@@ -14,7 +14,9 @@ using namespace libtempo;
 audio::AudioFile audio::AudioFile::open(const char *path) {
     std::string base = path;
     std::string ext = split_ext(base);
-    
+
+    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
     if(ext == ".mp3") {
         return audio::open_lossy(path);
     } else {
@@ -26,10 +28,15 @@ void audio::AudioFile::save(const char *path) const {
     SF_INFO sfinfo;
     sfinfo.channels = (int) data.n_rows;
     sfinfo.samplerate = sr;
-    sfinfo.format = format;
+    sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_24;
     sfinfo.frames = data.n_cols;
     sfinfo.sections = 1;
     sfinfo.seekable = 1;
+
+    std::string base(path);
+    std::string ext = split_ext(base);
+    base += ".wav";
+    path = base.c_str();
 
     SNDFILE *sndfile = sf_open(path, SFM_WRITE, &sfinfo);
 
@@ -110,6 +117,10 @@ audio::AudioFile audio::open_lossy(const char *path) {
         input_buf_size -= frame_info.frame_bytes;
         sample_count += samples;
     } while (frame_info.frame_bytes);
+
+    if(frame_info.channels > 2 || frame_info.channels <= 0) {
+        throw std::runtime_error("Mp3 File is corrupt");
+    }
 
     // Convert to matrix
     fmat audio_data(pcm.data(), frame_info.channels, sample_count);

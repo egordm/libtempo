@@ -38,8 +38,10 @@ vec tempogram_processing::audio_to_novelty_curve(int &feature_rate_ret, const fv
                  {7812.5, floor(sr / 2.)}};
     mat band_novelty_curves(bands.n_rows, spe.n_cols, fill::zeros);
 
-#pragma omp parallel for
+//#pragma omp parallel for
     for (int i = 0; i < bands.n_rows; ++i) { // TODO: Contents rly need to be split in separete funcs. But also not idk
+        if(bands(i, 1) - bands(i, 0) <= 0) continue;
+
         rowvec bins = round(bands(i, span::all) / (sr / (double) window_length));
         bins = clamp(bins, 0, window_length / 2.);
 
@@ -91,7 +93,7 @@ vec tempogram_processing::audio_to_novelty_curve(int &feature_rate_ret, const fv
 
     // resample curve
     if (resample_feature_rate > 0 && resample_feature_rate != feature_rate) {
-        const int p = (const int) round(1000 * resample_feature_rate / feature_rate);
+        const int p = (const int) roundf(1000 * resample_feature_rate / feature_rate);
         const int q = 1000;
 
         novelty_curve = libtempo::resample(novelty_curve, p, q);
