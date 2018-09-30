@@ -26,10 +26,14 @@ void present_utils::save_click_track(audio::AudioFile &audio, const std::vector<
     fvec click_track(audio.data.n_cols, fill::zeros);
     for (auto &section : sections) {
         auto len = (unsigned long) ((section.end - section.start) * audio.sr);
-        fvec clicks = signal_utils::generate_click_track(section.bpm, section.offset - section.start, fraction, len,
+        fvec clicks = audio::annotation::generate_click_track(section.bpm, section.offset - section.start, fraction, len,
                                                         audio.sr);
-
         auto start = (unsigned long) (section.start * audio.sr);
+
+        if(clicks.n_rows + start >= click_track.n_rows) {
+            clicks = clicks(span(0, click_track.n_rows - start - 1));
+        }
+
         click_track(span(start, start + clicks.n_rows - 1)) = clicks;
     }
 

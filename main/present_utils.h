@@ -7,6 +7,7 @@
 
 #include <curve_utils.h>
 #include <audio_processing.h>
+#include <audio_annotation.h>
 
 using namespace libtempo;
 

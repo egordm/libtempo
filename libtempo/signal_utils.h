@@ -21,11 +21,6 @@ namespace libtempo { namespace signal_utils {
      */
     std::tuple<vec, vec> generate_pulse(double bpm, int window_length, int feature_rate, int shift_by=0);
 
-    fvec generate_click(int sr = 22050, double duration = 0.1, double freq = 1000.0);
-
-    fvec generate_click_track(const std::vector<float> &positions, unsigned long length, int sr = 22050);
-
-    fvec generate_click_track(double bpm, double offset, int note_fraction, unsigned long length, int sr = 22050);
 }}
 
 
