@@ -86,6 +86,22 @@ struct MatrixWrapper {
     ArrayType to_array() {
         return arma_to_py(data);
     }
+
+    MatrixWrapper<T> operator+(const MatrixWrapper<T> &v) const {
+        return MatrixWrapper<T>(data + v.data);
+    }
+
+    MatrixWrapper<T> operator-(const MatrixWrapper<T> &v) const {
+        return MatrixWrapper<T>(data - v.data);
+    }
+
+    MatrixWrapper<T> operator*(const MatrixWrapper<T> &v) const {
+        return MatrixWrapper<T>(data % v.data);
+    }
+
+    MatrixWrapper<T> operator/(const MatrixWrapper<T> &v) const {
+        return MatrixWrapper<T>(data / v.data);
+    }
 };
 
 using MatWD = MatrixWrapper<double>;

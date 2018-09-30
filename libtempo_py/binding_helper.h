@@ -6,6 +6,7 @@
 #define PROJECT_BINDING_HELPER_H
 
 #include <pybind11/pybind11.h>
+#include <pybind11/operators.h>
 #include "pyarma.hpp"
 
 namespace binding_helper {
@@ -15,7 +16,11 @@ namespace binding_helper {
         py::class_<MatrixWrapper<T>, std::shared_ptr < MatrixWrapper<T>> >
         (m, pyclass_name.c_str())
                 .def("get_shape", &MatrixWrapper<T>::get_shape, R"pbdoc(Get data shape)pbdoc")
-                .def("to_array", &MatrixWrapper<T>::to_array, R"pbdoc(Get data as numpy array)pbdoc");
+                .def("to_array", &MatrixWrapper<T>::to_array, R"pbdoc(Get data as numpy array)pbdoc")
+                .def(py::self + py::self)
+                .def(py::self - py::self)
+                .def(py::self * py::self)
+                .def(py::self / py::self);
 
         std::string pyfunc_name = "wrap_array" + type_string;
         m.def(pyfunc_name.c_str(), &wrap_array<T>,
