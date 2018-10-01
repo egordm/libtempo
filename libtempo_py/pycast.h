@@ -130,16 +130,16 @@ namespace pybind11 {
                 switch (policy) {
                     case return_value_policy::take_ownership:
                     case return_value_policy::automatic:
-                        return arma_encapsulate<Type>(src);
+                        return arma_encapsulate<CT>(src);
                     case return_value_policy::move:
-                        return arma_encapsulate<Type>(new CT(std::move(*src)));
+                        return arma_encapsulate<CT>(new CT(std::move(*src)));
                     case return_value_policy::copy:
-                        return arma_array_cast<Type>(*src);
+                        return arma_array_cast<CT>(*src);
                     case return_value_policy::reference:
                     case return_value_policy::automatic_reference:
-                        return arma_ref_array<Type>(*src);
+                        return arma_ref_array<CT>(*src);
                     case return_value_policy::reference_internal:
-                        return arma_ref_array<Type>(*src, parent);
+                        return arma_ref_array<CT>(*src, parent);
                     default:
                         throw cast_error("unhandled return_value_policy: should not happen!");
                 };

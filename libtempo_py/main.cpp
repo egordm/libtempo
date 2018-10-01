@@ -1,7 +1,5 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include "wrapper_libtempo.hpp"
-#include "binding_helper.h"
 #include "module_libtempo.h"
 #include "module_audio_io.h"
 #include "module_signal_processing.h"
@@ -9,11 +7,6 @@
 #include "pycast.h"
 
 namespace py = pybind11;
-
-mat test_fn2(mat test) {
-    test *= 2;
-    return test;
-}
 
 PYBIND11_MODULE(libtempo_py, m) {
     m.doc() = R"pbdoc(
@@ -32,18 +25,11 @@ PYBIND11_MODULE(libtempo_py, m) {
             curve_to_sections
             sections_extract_offset
             Section
-            MatrixWrapperF
-            MatrixWrapperD
-            MatrixWrapperCD
-            audio.AudioWrapper
+            audio.AudiFile
             signal.stft
             signal.stft_noc
             signal.compute_fourier_coefficients
     )pbdoc";
-
-    binding_helper::define_matrix_wrapper<double>(m, "D");
-    binding_helper::define_matrix_wrapper<float>(m, "F");
-    binding_helper::define_matrix_wrapper<cx_double>(m, "CD");
 
     register_libtempo(m);
 
@@ -52,10 +38,4 @@ PYBIND11_MODULE(libtempo_py, m) {
 
     auto signal_module = m.def_submodule("signal");
     register_signal_processing(signal_module);
-
-    m.def("test_fn", []() -> arma::mat {
-        return arma::mat(10, 10, fill::ones);
-    });
-
-    m.def("test_fn2", &test_fn2);
 };

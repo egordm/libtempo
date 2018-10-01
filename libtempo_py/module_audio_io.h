@@ -6,27 +6,19 @@
 #define PROJECT_MODULE_AUDIO_IO_H
 
 #include <pybind11/pybind11.h>
-#include "wrapper_audio_io.hpp"
+#include <audio_processing.h>
 
+using namespace libtempo;
+namespace py = pybind11;
 
 void register_audio_io(pybind11::module &m) {
-    py::class_<wrapper_audio_io::AudioWrapper>(m, "AudioWrapper")
-            .def(py::init<const char *>(), py::arg("path"))
-            .def("get_path", &wrapper_audio_io::AudioWrapper::get_path,
-                 R"pbdoc(Gets path of the audio file)pbdoc")
-            .def("get_sr", &wrapper_audio_io::AudioWrapper::get_sr,
-                 R"pbdoc(Gets audio sample rate)pbdoc")
-            .def("get_format", &wrapper_audio_io::AudioWrapper::get_format,
-                 R"pbdoc(Gets audio format as a bitmask)pbdoc")
-            .def("get_data", &wrapper_audio_io::AudioWrapper::get_data,
-                 R"pbdoc(Gets audio data as a matrix wrapper)pbdoc")
-            .def("set_data", &wrapper_audio_io::AudioWrapper::set_data,
-                 R"pbdoc(Sets audio data with a matrix wrapper)pbdoc",
-                 py::arg("data"))
-            .def("save", &wrapper_audio_io::AudioWrapper::save,
-                 R"pbdoc(Saves audio to a given path)pbdoc",
-                 py::arg("path"));
-
+    py::class_<audio::AudioFile>(m, "AudioFile")
+            .def_readwrite("path", &audio::AudioFile::path, R"pbdoc(Audio file path)pbdoc")
+            .def_readwrite("data", &audio::AudioFile::data, R"pbdoc(Audio file data)pbdoc")
+            .def_readwrite("sr", &audio::AudioFile::sr, R"pbdoc(Audio file sample rate)pbdoc")
+            .def_readwrite("format", &audio::AudioFile::format, R"pbdoc(Audio file format mask)pbdoc")
+            .def_static("open", &audio::AudioFile::open, py::arg("path"), R"pbdoc(Opens audiofile from given path)pbdoc")
+            .def("save", &audio::AudioFile::save, py::arg("path"), R"pbdoc(Saves audio to a given path)pbdoc");
 }
 
 #endif //PROJECT_MODULE_AUDIO_IO_H

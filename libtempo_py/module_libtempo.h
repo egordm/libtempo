@@ -6,10 +6,26 @@
 #define PROJECT_MODULE_LIBTEMPO_H
 
 #include <pybind11/pybind11.h>
-#include "wrapper_libtempo.hpp"
+#include <armadillo>
+#include <tempogram_processing.h>
+#include <tempogram_utils.h>
+#include <curve_utils.h>
+#include <mat_utils.h>
+
+using namespace arma;
+using namespace libtempo;
+namespace py = pybind11;
 
 void register_libtempo(pybind11::module &m) {
-    m.def("audio_to_novelty_curve", &wrapper_libtempo::audio_to_novelty_curve,
+    m.def("audio_to_novelty_curve",
+          [](fmat s, int sr, int window_length, int hop_length, double compression_c, bool log_compression,
+             int resample_feature_rate) {
+              int feature_rate;
+              auto novelty_curve = tempogram_processing::audio_to_novelty_curve
+                      (feature_rate, s, sr, window_length, hop_length, compression_c, log_compression,
+                       resample_feature_rate);
+              return std::make_tuple(novelty_curve, feature_rate);
+          },
           R"pbdoc(
           Computes a complex valued fourier tempogram for a given novelty curve
 
@@ -36,7 +52,15 @@ void register_libtempo(pybind11::module &m) {
     );
 
 
-    m.def("novelty_curve_to_tempogram", &wrapper_libtempo::novelty_curve_to_tempogram,
+    m.def("novelty_curve_to_tempogram",
+          [](const mat &novelty_curve, const mat &bpm, double feature_rate, int tempo_window, int hop_length) {
+              vec t;
+              auto tempogram = tempogram_processing::novelty_curve_to_tempogram_dft
+                      (t, novelty_curve, bpm, feature_rate, tempo_window, hop_length);
+              auto normalized_tempogram = mat_utils::colwise_normalize_p1(tempogram, 2, 0.0001);
+
+              return std::make_tuple(normalized_tempogram, t);
+          },
           R"pbdoc(
           Computes a complex valued fourier tempogram for a given novelty curve
 
@@ -58,7 +82,14 @@ void register_libtempo(pybind11::module &m) {
           py::arg("hop_length") = -1
     );
 
-    m.def("tempogram_to_cyclic_tempogram", &wrapper_libtempo::tempogram_to_cyclic_tempogram,
+    m.def("tempogram_to_cyclic_tempogram",
+          [](const cx_mat &tempogram, const mat &bpm, int octave_divider, int ref_tempo) {
+              vec y_axis;
+              auto cyclic_tempogram = tempogram_processing::tempogram_to_cyclic_tempogram
+                      (y_axis, tempogram, bpm, octave_divider, ref_tempo);
+
+              return std::make_tuple(cyclic_tempogram, y_axis);
+          },
           R"pbdoc(
           Computes a cyclic tempogram representation of a tempogram by identifying octave equivalences, simnilar as for chroma features.
 
@@ -78,7 +109,14 @@ void register_libtempo(pybind11::module &m) {
           py::arg("ref_tempo") = 60
     );
 
-    m.def("smoothen_tempogram", &wrapper_libtempo::smoothen_tempogram,
+    m.def("smoothen_tempogram",
+          [](const mat &tempogram, const mat &y_axis, const mat &t, double temporal_unit_size, float triplet_weight) {
+              int smooth_length_samples = (int) (temporal_unit_size / (t.at(1) - t.at(0)));
+              auto smooth_tempogram = tempogram_utils::smoothen_tempogram
+                      (tempogram, y_axis, smooth_length_samples, triplet_weight);
+
+              return smooth_tempogram;
+          },
           R"pbdoc(
           Smoothens tempogram to prepare it for peak extraction.
           It adds triplets to the intensities, does temporal accumulation, denoising and normalization.
@@ -102,7 +140,7 @@ void register_libtempo(pybind11::module &m) {
           py::arg("triplet_weight") = 0.8f
     );
 
-    m.def("tempogram_to_tempo_curve", &wrapper_libtempo::tempogram_to_tempo_curve,
+    m.def("tempogram_to_tempo_curve", &tempogram_utils::extract_tempo_curve,
           R"pbdoc(
           Creates curve with values of the bins with max intensities from the tempogram.
 
@@ -118,7 +156,12 @@ void register_libtempo(pybind11::module &m) {
           py::arg("y_axis")
     );
 
-    m.def("correct_tempo_curve", &wrapper_libtempo::correct_tempo_curve,
+    m.def("correct_tempo_curve",
+          [](const mat &tempo_curve, const mat &t, double min_section_length = 10) {
+              int min_section_length_samples = (int) (min_section_length / (t.at(1) - t.at(0)));
+              auto corrected_curve = curve_utils::correct_curve_by_length(tempo_curve, min_section_length_samples);
+              return corrected_curve;
+          },
           R"pbdoc(
           Correct curve by removing short value changes and thus removing small sudden spikes.
 
@@ -144,7 +187,18 @@ void register_libtempo(pybind11::module &m) {
             .def_readwrite("bpm", &libtempo::curve_utils::Section::bpm)
             .def_readwrite("offset", &libtempo::curve_utils::Section::offset);
 
-    m.def("curve_to_sections", &wrapper_libtempo::curve_to_sections,
+    m.def("curve_to_sections", [](const mat &curve, const mat &t, double bpm_reference, double max_section_size,
+                                  float bpm_merge_threshold) {
+              auto segments = curve_utils::split_curve(curve);
+              auto sections_tmp = curve_utils::tempo_segments_to_sections(segments, curve, t, bpm_reference);
+              // Merge sections for consistency
+              sections_tmp = curve_utils::merge_sections(sections_tmp, bpm_merge_threshold);
+              // Split section for precision
+              std::vector<curve_utils::Section> sections;
+              for (const auto &section : sections_tmp) curve_utils::split_section(section, sections, max_section_size);
+
+              return sections;
+          },
           R"pbdoc(
           Converts given curve to sections. Inbetween it clens some inconsistencies to extract as much straight
           lines as possible.
@@ -167,7 +221,16 @@ void register_libtempo(pybind11::module &m) {
           py::arg("bpm_merge_threshold") = 0.5f
     );
 
-    m.def("sections_extract_offset", &wrapper_libtempo::sections_extract_offset,
+    m.def("sections_extract_offset",
+          [](const mat &novelty_curve, std::vector<curve_utils::Section> sections,
+             const std::vector<int> &tempo_multiples, int feature_rate, float bpm_doubt_window, double bpm_doubt_step) {
+              for (auto &section : sections) {
+                  curve_utils::extract_offset(novelty_curve, section, tempo_multiples, feature_rate, bpm_doubt_window,
+                                              bpm_doubt_step);
+              }
+
+              return sections;
+          },
           R"pbdoc(
           Finds the optimal offset for given section. Also tunes the bpm to a more fitting value
 
