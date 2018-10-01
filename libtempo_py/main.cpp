@@ -10,6 +10,11 @@
 
 namespace py = pybind11;
 
+mat test_fn2(mat test) {
+    test *= 2;
+    return test;
+}
+
 PYBIND11_MODULE(libtempo_py, m) {
     m.doc() = R"pbdoc(
         libtempo_py
@@ -49,6 +54,8 @@ PYBIND11_MODULE(libtempo_py, m) {
     register_signal_processing(signal_module);
 
     m.def("test_fn", []() -> arma::mat {
-        return arma::mat(10, 10, fill::zeros);
+        return arma::mat(10, 10, fill::ones);
     });
+
+    m.def("test_fn2", &test_fn2);
 };

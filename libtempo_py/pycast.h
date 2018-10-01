@@ -38,7 +38,8 @@ namespace pybind11 {
         handle arma_array_cast(const MT &src, handle base = handle(), bool writeable = true) {
             constexpr ssize_t elem_size = sizeof(typename ArmaProps<MT>::Scalar);
 
-            array a({(ssize_t)src.n_rows, (ssize_t)src.n_cols}, {(ssize_t)(elem_size * src.n_cols), (ssize_t)elem_size}, src.memptr(), base);
+            array a({(ssize_t) src.n_rows, (ssize_t) src.n_cols},
+                    {(ssize_t) (elem_size * src.n_cols), (ssize_t) elem_size}, src.memptr(), base);
 
             if (!writeable) array_proxy(a.ptr())->flags &= ~detail::npy_api::NPY_ARRAY_WRITEABLE_;
 
@@ -79,8 +80,41 @@ namespace pybind11 {
 
         template<typename T>
         struct type_caster<arma::Mat<T>> {
-            using Type = arma::Mat<T>;
+            using Type = MAT_T;
             using Props = ArmaProps<Type>;
+
+            PYBIND11_TYPE_CASTER(Type, Props::descriptor());
+
+            /**
+             * Converts python numpy array into an armadillo matrix
+             * @param src
+             * @param convert
+             * @return
+             */
+            bool load(handle src, bool convert) {
+                // If we're in no-convert mode, only load if given an array of the correct type
+                if (!convert && !isinstance<array_t<T>>(src)) return false;
+
+                // Coerce into an array, but don't do type conversion yet; the copy below handles it.
+                auto buf = array::ensure(src);
+                if (!buf) return false;
+
+                auto dims = buf.ndim();
+                if (dims < 1 || dims > 2) return false;
+
+                // Allocate the new type, then build a numpy reference into it
+                value = Type((const uword) buf.shape(0), (const uword) buf.shape(1));
+                auto ref = reinterpret_steal<array>(arma_ref_array<Type>(value));
+
+                int result = detail::npy_api::get().PyArray_CopyInto_(ref.ptr(), buf.ptr());
+
+                if (result < 0) { // Copy failed!
+                    PyErr_Clear();
+                    return false;
+                }
+
+                return true;
+            }
 
             template<typename CT>
             static handle cast_impl(CT *src, return_value_policy policy, handle parent) {
@@ -100,16 +134,6 @@ namespace pybind11 {
                     default:
                         throw cast_error("unhandled return_value_policy: should not happen!");
                 };
-            }
-
-            /**
-             * Converts python numpy array into an armadillo matrix
-             * @param src
-             * @param convert
-             * @return
-             */
-            bool load(handle src, bool convert) {
-                return false;
             }
 
             // Normal returned non-reference, non-const value:
@@ -145,8 +169,6 @@ namespace pybind11 {
             static handle cast(const Type *src, return_value_policy policy, handle parent) {
                 return cast_impl(src, policy, parent);
             }
-
-            static PYBIND11_DESCR name() { return Props::descriptor(); }
         };
     }
 }
