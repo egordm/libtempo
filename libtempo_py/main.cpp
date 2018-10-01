@@ -6,6 +6,7 @@
 #include "module_audio_io.h"
 #include "module_signal_processing.h"
 #include <curve_utils.h>
+#include "pycast.h"
 
 namespace py = pybind11;
 
@@ -46,4 +47,8 @@ PYBIND11_MODULE(libtempo_py, m) {
 
     auto signal_module = m.def_submodule("signal");
     register_signal_processing(signal_module);
+
+    m.def("test_fn", []() -> arma::mat {
+        return arma::mat(10, 10, fill::zeros);
+    });
 };
