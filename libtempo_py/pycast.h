@@ -38,8 +38,15 @@ namespace pybind11 {
         handle arma_array_cast(const MT &src, handle base = handle(), bool writeable = true) {
             constexpr ssize_t elem_size = sizeof(typename ArmaProps<MT>::Scalar);
 
-            array a({(ssize_t) src.n_rows, (ssize_t) src.n_cols},
-                    {(ssize_t) (elem_size * src.n_cols), (ssize_t) elem_size}, src.memptr(), base);
+            array a;
+            if (src.n_cols > 1) {
+                a = array({(ssize_t) src.n_rows, (ssize_t) src.n_cols},
+                          {(ssize_t) (elem_size), (ssize_t) (elem_size * src.n_rows)},
+                          src.memptr(),
+                          base);
+            } else {
+                a = array({(ssize_t) src.n_rows}, {elem_size}, src.memptr(), base);
+            }
 
             if (!writeable) array_proxy(a.ptr())->flags &= ~detail::npy_api::NPY_ARRAY_WRITEABLE_;
 
@@ -83,7 +90,7 @@ namespace pybind11 {
             using Type = MAT_T;
             using Props = ArmaProps<Type>;
 
-            PYBIND11_TYPE_CASTER(Type, Props::descriptor());
+        PYBIND11_TYPE_CASTER(Type, Props::descriptor());
 
             /**
              * Converts python numpy array into an armadillo matrix
@@ -103,7 +110,9 @@ namespace pybind11 {
                 if (dims < 1 || dims > 2) return false;
 
                 // Allocate the new type, then build a numpy reference into it
-                value = Type((const uword) buf.shape(0), (const uword) buf.shape(1));
+                if (dims == 1) value = Type((const uword) buf.shape(0), 1);
+                else value = Type((const uword) buf.shape(0), (const uword) buf.shape(1));
+
                 auto ref = reinterpret_steal<array>(arma_ref_array<Type>(value));
 
                 int result = detail::npy_api::get().PyArray_CopyInto_(ref.ptr(), buf.ptr());
