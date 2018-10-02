@@ -14,7 +14,7 @@ fvec annotation::generate_click(int sr, double duration, double freq) {
     return click;
 }
 
-fvec annotation::generate_click_track(const std::vector<float> &positions, unsigned long length, int sr) {
+fvec annotation::click_track_from_positions(const std::vector<float> &positions, unsigned long length, int sr) {
     fvec ret(static_cast<const uword>(length), fill::zeros);
     fvec click = generate_click(sr);
 
@@ -30,7 +30,7 @@ fvec annotation::generate_click_track(const std::vector<float> &positions, unsig
     return ret;
 }
 
-fvec annotation::generate_click_track(double bpm, double offset, unsigned long length, int note_fraction, int sr) {
+fvec annotation::click_track_from_tempo(double bpm, double offset, unsigned long length, int note_fraction, int sr) {
     std::vector<float> positions;
     float end = length / (float) sr;
     auto position = (float) offset;
@@ -43,5 +43,5 @@ fvec annotation::generate_click_track(double bpm, double offset, unsigned long l
         position += fraction_note_len;
     }
 
-    return generate_click_track(positions, length, sr);
+    return click_track_from_positions(positions, length, sr);
 }

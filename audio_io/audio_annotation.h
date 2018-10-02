@@ -27,13 +27,13 @@ namespace libtempo { namespace audio { namespace annotation {
     fvec generate_click(int sr = 22050, double duration = 0.1, double freq = 1000.0);
 
     /**
-     * Generates click track of given length for given click positions in secions
+     * Generates click track of given length for given click positions in seconds
      * @param positions: click positions in seconds
      * @param length: length of the track in seconds
      * @param sr
      * @return
      */
-    fvec generate_click_track(const std::vector<float> &positions, unsigned long length, int sr = 22050);
+    fvec click_track_from_positions(const std::vector<float> &positions, unsigned long length, int sr = 22050);
 
 
     /**
@@ -45,7 +45,7 @@ namespace libtempo { namespace audio { namespace annotation {
      * @param sr
      * @return
      */
-    fvec generate_click_track(double bpm, double offset, unsigned long length, int note_fraction = 4, int sr = 22050);
+    fvec click_track_from_tempo(double bpm, double offset, unsigned long length, int note_fraction = 4, int sr = 22050);
 }}}
 
 
