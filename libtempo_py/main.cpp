@@ -25,7 +25,10 @@ PYBIND11_MODULE(libtempo_py, m) {
             curve_to_sections
             sections_extract_offset
             Section
-            audio.AudiFile
+            audio.AudioFile
+            audio.annotation.generate_click
+            audio.annotation.click_track_from_positions
+            audio.annotation.click_track_from_tempo
             signal.stft
             signal.stft_noc
             signal.compute_fourier_coefficients

@@ -39,7 +39,6 @@ void register_libtempo(pybind11::module &m) {
               resample_feature_rate: feature rate of the resulting novelty curve (resampled, independent of stepsize)
 
           Returns:
-              Tuple[MatrixWrapperD, int]
               novelty_curve, feature_rate
           )pbdoc",
           py::arg("signal"),
@@ -72,7 +71,6 @@ void register_libtempo(pybind11::module &m) {
               hop_length: window hop length in frames (of novelty curve)
 
           Returns:
-              Tuple[MatrixWrapperCD, MatrixWrapperD, MatrixWrapperD]
               tempogram, time vector
           )pbdoc",
           py::arg("novelty_curve"),
@@ -100,7 +98,6 @@ void register_libtempo(pybind11::module &m) {
               ref_tempo: reference tempo defining the partition of BPM into tempo octaves
 
           Returns:
-              Tuple[MatrixWrapperD, MatrixWrapperD]
               cyclic_tempogram, cyclic_axis
           )pbdoc",
           py::arg("tempogram"),
@@ -129,7 +126,6 @@ void register_libtempo(pybind11::module &m) {
               triplet_weight: weight of the triplet intensity which will be adeed to its base intensity
 
           Returns:
-              MatrixWrapperD
               smoothed_tempogram
 
           )pbdoc",
@@ -149,7 +145,6 @@ void register_libtempo(pybind11::module &m) {
               y_axis: y axis values of the tempogram
     
           Returns:
-              MatrixWrapperD
               tempo_curve
           )pbdoc",
           py::arg("tempogram"),
@@ -171,7 +166,6 @@ void register_libtempo(pybind11::module &m) {
               min_length: maximum section length in seconds after which section is split in half
 
           Returns:
-              MatrixWrapperD
               tempo_curve
           )pbdoc",
           py::arg("tempo_curve"),
@@ -211,7 +205,6 @@ void register_libtempo(pybind11::module &m) {
               bpm_merge_threshold: Threshold within which similar bpm will be merged into the same section.
 
           Returns:
-              List[Section]
               sections
           )pbdoc",
           py::arg("curve"),
@@ -243,7 +236,6 @@ void register_libtempo(pybind11::module &m) {
               bpm_doubt_step: steps which to take inside the doubt window to fine tune the bpm
 
           Returns:
-              List[Section]
               sections
           )pbdoc",
           py::arg("novelty_curve"),

@@ -35,8 +35,6 @@ void register_signal_processing(pybind11::module &m) {
               hop_length: window hop length in frames
 
           Returns:
-              Tuple[MatrixWrapper, MatrixWrapper, MatrixWrapper]
-
               spectrogram, frequency vector, time vector
           )pbdoc",
           py::arg("signal"),
@@ -65,8 +63,6 @@ void register_signal_processing(pybind11::module &m) {
               hop_length: window hop length in frames
 
           Returns:
-              Tuple[MatrixWrapper, MatrixWrapper, MatrixWrapper]
-
               spectrogram, frequency vector, time vector
           )pbdoc",
           py::arg("signal"),
@@ -93,7 +89,6 @@ void register_signal_processing(pybind11::module &m) {
               sr: sample rate.
 
           Returns:
-              Tuple[MatrixWrapper, MatrixWrapper]
               complex fourier coefficients, time vector
           )pbdoc",
           py::arg("s"),
