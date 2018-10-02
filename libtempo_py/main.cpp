@@ -41,4 +41,14 @@ PYBIND11_MODULE(libtempo_py, m) {
 
     auto signal_module = m.def_submodule("signal");
     register_signal_processing(signal_module);
+
+    /*m.def("test_fn", []() {
+        auto test = Mat<double>(10, 1, fill::ones);
+        return test;
+    });
+
+    m.def("test_fn2", []() {
+        vec test = vec(10, fill::ones);
+        return std::make_tuple(test,  mat(10, 10, fill::ones));
+    });*/
 };

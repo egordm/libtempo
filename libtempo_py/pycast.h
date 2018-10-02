@@ -85,12 +85,14 @@ namespace pybind11 {
             return arma_ref_array<MT>(*src, base);
         }
 
-        template<typename T>
-        struct type_caster<arma::Mat<T>> {
-            using Type = MAT_T;
+        template<typename MT>
+        struct arma_caster {
+            using Type = MT;
             using Props = ArmaProps<Type>;
 
-        PYBIND11_TYPE_CASTER(Type, Props::descriptor());
+            PYBIND11_TYPE_CASTER(Type, ArmaProps<Type>::descriptor());
+
+            virtual Type construct_type(const ssize_t *shape, const ssize_t &n_dims) = 0;
 
             /**
              * Converts python numpy array into an armadillo matrix
@@ -100,7 +102,7 @@ namespace pybind11 {
              */
             bool load(handle src, bool convert) {
                 // If we're in no-convert mode, only load if given an array of the correct type
-                if (!convert && !isinstance<array_t<T>>(src)) return false;
+                if (!convert && !isinstance<array_t<Props::Scalar>>(src)) return false;
 
                 // Coerce into an array, but don't do type conversion yet; the copy below handles it.
                 auto buf = array::ensure(src);
@@ -110,8 +112,7 @@ namespace pybind11 {
                 if (dims < 1 || dims > 2) return false;
 
                 // Allocate the new type, then build a numpy reference into it
-                if (dims == 1) value = Type((const uword) buf.shape(0), 1);
-                else value = Type((const uword) buf.shape(0), (const uword) buf.shape(1));
+                value = construct_type(buf.shape(), dims);
 
                 auto ref = reinterpret_steal<array>(arma_ref_array<Type>(value));
 
@@ -177,6 +178,34 @@ namespace pybind11 {
             // const pointer return
             static handle cast(const Type *src, return_value_policy policy, handle parent) {
                 return cast_impl(src, policy, parent);
+            }
+        };
+
+        template<typename T>
+        struct type_caster<arma::Mat<T>> : public arma_caster<arma::Mat<T>> {
+            using Type = arma::Mat<T>;
+
+            virtual Type construct_type(const ssize_t *shape, const ssize_t &n_dims) {
+                if(n_dims == 1) return Type((const uword)shape[0], 1);
+                return Type((const uword)shape[0], (const uword)shape[1]);
+            }
+        };
+
+        template<typename T>
+        struct type_caster<arma::Col<T>> : public arma_caster<arma::Col<T>> {
+            using Type = arma::Col<T>;
+
+            virtual Type construct_type(const ssize_t *shape, const ssize_t &n_dims) {
+                return Type((const uword)shape[0]);
+            }
+        };
+
+        template<typename T>
+        struct type_caster<arma::Row<T>> : public arma_caster<arma::Row<T>> {
+            using Type = arma::Row<T>;
+
+            virtual Type construct_type(const ssize_t *shape, const ssize_t &n_dims) {
+                return Type((const uword)shape[0]);
             }
         };
     }
