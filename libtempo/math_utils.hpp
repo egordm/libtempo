@@ -36,19 +36,6 @@ namespace libtempo { namespace utils { namespace math {
         return h;
     }
 
-    inline mat pad_mat(const mat &data, int pad_size) {
-        mat band_krn(data.n_rows, data.n_cols + pad_size * 2);
-        for(int k = 0; k < pad_size; ++k) {
-            band_krn(span::all, (const uword)k) = data(span::all, 0);
-        }
-        band_krn(span::all, span((const uword)pad_size, band_krn.n_cols - 1 - pad_size)) = data;
-        for(int k = 0; k < pad_size; ++k) {
-            band_krn(span::all, band_krn.n_cols - 1 - k) = data(span::all, data.n_cols - 1);
-        }
-
-        return band_krn;
-    }
-
     inline int calc_gcd(int n1, int n2) {
         int tmp = 0;
         while (n1 > 0) {

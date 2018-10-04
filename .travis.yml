@@ -28,6 +28,14 @@ matrix:
 install:
   - $PIP install -r requirements.txt --upgrade
   - python --version
+  - cmake -H. -Bbuild-proj
+  - echo "Building tests"
+  - cd build-proj
+  - cmake --build . --target all
+  - echo "Performing tests"
+  - ./test/test_libtempo/test_libtempo
+  - ./test/test_main/test_main
+  - cd ..
 
 script:
   - pip install .
