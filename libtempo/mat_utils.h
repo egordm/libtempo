@@ -67,6 +67,11 @@ namespace libtempo { namespace mat_utils {
      */
     vec pad_vec(const vec &x, unsigned int n_before, unsigned int n_after);
 
+    /*
+     * Pads given mat by repeating its data before and after the pad
+     */
+    mat pad_mat(const mat &data, unsigned int n_before, unsigned int n_after, bool repeat = true);
+
     vec smooth_filter_subtract(const vec &novelty_curve, int sr, int hop_length);
 
     /**

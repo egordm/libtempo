@@ -60,7 +60,7 @@ vec tempogram_processing::audio_to_novelty_curve(int &feature_rate_ret, const fv
         mult_filt = join_cols(mult_filt, vec(half_diff_len, fill::ones));
         rowvec diff_filter = (utils::math::my_hanning((const uword) diff_len) % mult_filt).t();
 
-        mat band_krn = utils::math::pad_mat(band_data, (int) half_diff_len);
+        mat band_krn = mat_utils::pad_mat(band_data, (int) half_diff_len, (int) half_diff_len);
         mat band_diff = conv2(band_krn, flipud(fliplr(diff_filter)), "same");
         band_diff = band_diff % (band_diff > 0);
         band_diff = band_diff(span::all, span(half_diff_len - 1, band_diff.n_cols - half_diff_len - 2));

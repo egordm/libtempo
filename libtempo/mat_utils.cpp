@@ -41,6 +41,22 @@ vec mat_utils::pad_vec(const vec &x, unsigned int n_before, unsigned int n_after
     return ret;
 }
 
+mat mat_utils::pad_mat(const mat &data, unsigned int n_before, unsigned int n_after, bool repeat) {
+    mat band_krn(data.n_rows, data.n_cols + n_before + n_after);
+    if(repeat) {
+        for (int k = 0; k < n_before; ++k) {
+            band_krn(span::all, (const uword) k) = data(span::all, 0);
+        }
+
+        for(int k = 0; k < n_after; ++k) {
+            band_krn(span::all, band_krn.n_cols - 1 - k) = data(span::all, data.n_cols - 1);
+        }
+    }
+    band_krn(span::all, span((const uword)n_before, band_krn.n_cols - 1 - n_after)) = data;
+
+    return band_krn;
+}
+
 cx_mat mat_utils::colwise_normalize_p1(const cx_mat &feature, unsigned int p, double threshold) {
     cx_mat ret(feature.n_rows, feature.n_cols, fill::zeros);
 
