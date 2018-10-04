@@ -36,7 +36,7 @@ namespace libtempo { namespace fourier_utils {
     * @param signal: wavefrom of audio signal
     * @param sr: sample rate
     * @param window
-    * @param coefficient_range
+    * @param coefficient_range: any bound in range should not exceed samplerate/2
     * @param n_fft: window length
     * @param hop_length
     * @return spectrogram
@@ -61,7 +61,7 @@ namespace libtempo { namespace fourier_utils {
         mat s((const uword) num_coeffs, (const uword) num_frames);
 
         // first window's center is at 0 seconds
-        ivec frame = linspace<ivec>(0, window_length - 1, (const uword) window_length) - first_window;
+        ivec frame = regspace<ivec>(0, window_length - 1) - first_window;
 
         // Allocate window chunk
         vec x((uword) window_length);
@@ -71,7 +71,7 @@ namespace libtempo { namespace fourier_utils {
             x.zeros();
 
             // Zero pad data to place into the windows
-            uword pad_before_n = (uword) sum(frame <= 0);
+            uword pad_before_n = (uword) sum(frame < 0);
             uword pad_after_n = (uword) std::max(0, (int) (window_length - (signal.size() - frame(0))));
             x(span(pad_before_n, window_length - pad_after_n - frame_pad - 1)) =
                     conv_to<vec>::from(
@@ -93,8 +93,8 @@ namespace libtempo { namespace fourier_utils {
         // Calculate the axes
         auto half_window = (int) floor(fmax(n_fft, window_length) / 2.);
         t = regspace<vec>(0, s.n_cols - 1) * (hop_length / (double) sr);
-        f = linspace<vec>(0, half_window - 1, (const uword) half_window) / (double) half_window * (sr / 2.);
-        f = f(span((const uword) std::get<0>(coefficient_range), (const uword) std::get<1>(coefficient_range) - 2));
+        f = regspace<vec>(0, half_window) / (double) half_window * (sr / 2.);
+        f = f(span((const uword) std::get<0>(coefficient_range), (const uword) std::get<1>(coefficient_range) - 1));
 
         return s;
     }

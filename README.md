@@ -86,13 +86,9 @@ libtempo [audio] {OPTIONS}
 ### [Documentation](https://github.com/EgorDm/libtempo/wiki/Documentation)
 
 ## Flaws / TODO's
-* Find the right bpm multiple instead of taking a reference one and roudnign to it
-* ~~Support mp3 files~~
-* GUI
-* ~~Clean sections with small deviations and to only keep the essential ones~~
-* Chunks with small sections are inaccurately approximated. (Ex. increasing tempo)
-* Completely implement lib into python bindings
-* Sometimes offset might be shifted by a 1/8th or 1/16th note
+* BPM calculated is the percieved bpm. There is also real bpm which may be twice as high. (I would love to hear any suggestions how this could be helped)
+* Pars where bpm is constantly changed are rounded away when making secions.
+* Sometimes offset might be shifted by a 1/4th or 1/8th note.
 
 ## References
 * [Tempogram & novelty curve calculation](http://resources.mpi-inf.mpg.de/MIR/tempogramtoolbox/) [[1]](https://ieeexplore.ieee.org/document/5654580/) [[2]](http://resources.mpi-inf.mpg.de/MIR/tempogramtoolbox/2010_GroscheMuellerKurth_TempogramCyclic_ICASSP.pdf) [[3]](http://resources.mpi-inf.mpg.de/MIR/tempogramtoolbox/2009_GroscheMueller_PredominantLocalPeriodicy_WASPAA.pdf)
