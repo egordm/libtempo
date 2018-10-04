@@ -4,13 +4,22 @@
 
 #include "flag_logic.h"
 #include <signal_utils.h>
-#include <tempogram_utils.h>
-#include <filesystem>
 #include "present_utils.h"
+#include <tempogram_utils.h>
 
-namespace fs = std::filesystem;
+#if __cplusplus >= 201703L
+#include <filesystem>
+#else
+#include <experimental/filesystem>
+#endif
+
 using namespace present_utils;
 
+#if __cplusplus >= 201703L
+namespace fs = std::filesystem;
+#else
+namespace fs = std::experimental::filesystem;
+#endif
 
 void visualize(const std::string &filepath, Settings settings, const vec &novelty_curve, const mat &tempogram, const vec &t,
                const vec &bpm, const mat &cyclic_tempogram, const vec &tempo_curve, const vec &ct_y_axis,
