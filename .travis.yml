@@ -32,13 +32,17 @@ install:
   - echo "Building tests"
   - cd build-proj
   - cmake --build . --target all
-  - echo "Performing tests"
-  - ./test/test_libtempo/test_libtempo
-  - ./test/test_main/test_main
   - cd ..
 
 script:
   - pip install .
+  - echo "Performing python library tests"
+  - python ./test/test_libtempo_py/integration_test.py
+  - echo "Performing CPP tests"
+  - cd build-proj
+  - ./test/test_libtempo/test_libtempo
+  - ./test/test_main/test_main
+  - cd ..
 
 notifications:
   email: false
