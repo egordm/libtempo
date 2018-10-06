@@ -102,7 +102,7 @@ namespace pybind11 {
              */
             bool load(handle src, bool convert) {
                 // If we're in no-convert mode, only load if given an array of the correct type
-                if (!convert && !isinstance<array_t<Props::Scalar>>(src)) return false;
+                if (!convert && !isinstance<array_t<typename Props::Scalar>>(src)) return false;
 
                 // Coerce into an array, but don't do type conversion yet; the copy below handles it.
                 auto buf = array::ensure(src);
