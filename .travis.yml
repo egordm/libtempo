@@ -10,15 +10,16 @@ matrix:
     compiler: gcc
     addons:
       apt:
-        sources: ['ubuntu-toolchain-r-test']
+        sources:
+        - ubuntu-toolchain-r-test
         packages:
-          - gcc-6
-          - g++-6
-          - cmake
-          - gfortran
-          - liblapack-dev
-          - libfftw3-dev
-          - libsndfile1-dev
+        - gcc-6
+        - g++-6
+        - cmake
+        - gfortran
+        - liblapack-dev
+        - libfftw3-dev
+        - libsndfile1-dev
     env:
     - CXX=g++-6
     - CC=gcc-6
@@ -46,3 +47,13 @@ script:
 
 notifications:
   email: false
+
+deploy:
+  provider: pypi
+  user: egordm
+  password:
+    secure: KSkay34dKjw3cRLSTQF0J/iZD6H8cYZEha05wvFmzfZRUZfCSGs0K5ntHZuwNrf9MbcTWLk/TqiR80mPWklGVck1gho1sqhtfk+Xj0bJxmRMEFZ2B2345/rwdKAkoSnqgTKH4seqLwj7No63g3M9w78cOeLofy5lXdf1EFAEveHD/OGiqMAOqGnvg77qClv6EDNA7M+smXWLdmBW35czjkBsf2MovphAzkH7bzxm/jpi/n/fbPbZmmjbL29Ev6Y6PzW35cPclwqmjd72hl/7wyodGqY/+pv3GZEoVJGIozFA+61Oy0jI766ovYvml4QE0eTNKHfIXT7YCbzsEsjzA6dnxEgrVGEwRVHI2hXv5+Nahbcm+00+/Ruhb6NAQ2dlTpeiaiQNxV4J9uBxKkENw98GeqSBbv2N7EeuRc5kVYoSWS8zh+sBA6QzqMSK705ruPpL3DFbxF/4Fnxg57a4LSfOp7VL4ia8nfmZCQ8phr6gEKqeu336R92yD7fnqVpxjDyGuUrI8T0CdPmkIPFWVGFGlSlb90kNlOHaIsA690ebJjaMkVYrFftPkMfNrG4UOVm2r8sOHmeYgRKeHsE4XTJUBCMcW8gRQ6BirZfxZnNifSV+2nZxaTnfPM68mIIWx9quR7ZoEGxw5PYjd2nVT+6vOsbv/8HhdWbKKmjAU2w=
+  distributions: sdist bdist_wheel
+  true:
+    tags: true
+    branch: master

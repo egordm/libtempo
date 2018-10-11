@@ -107,5 +107,6 @@ setup(name=name,
       classifiers=(
           "Programming Language :: Python :: 3",
           "License :: OSI Approved :: MIT License",
+          "Topic :: Multimedia :: Sound/Audio :: Analysis"
       ),
       )
