@@ -1,7 +1,9 @@
 language: python
+
 branches:
   except:
   - dev
+
 matrix:
   include:
   - os: linux
@@ -23,6 +25,7 @@ matrix:
     - CC=gcc-6
     - PIP=pip
     python: 3.6.5
+
 install:
 - echo "TESTVAR -> $TEST"
 - "$PIP install -r requirements.txt --upgrade"
@@ -32,6 +35,7 @@ install:
 - cd build-proj
 - cmake --build . --target all
 - cd ..
+
 script:
 - pip install .
 - echo "Performing python library tests"
@@ -41,14 +45,9 @@ script:
 - "./test/test_libtempo/test_libtempo"
 - "./test/test_main/test_main"
 - cd ..
+- echo "Deploying python package"
+- python setup.py sdist bdist_wheel
+- if [ "$TRAVIS_BRANCH" = "master" ]; twine upload dist/* -u egordm --skip-existing; fi
+
 notifications:
   email: false
-deploy:
-  provider: pypi
-  user: egordm
-  password:
-    secure: ZPQnF+//2rtwo/PpcatEQNG4u/FezKO+29liwCAhsBsFrgC+NGmVxBJuAo7LMIuqoFIh2FDUqSYzE4zPgnPsJ9MfYvRSmy7fIwBOvdQEIHVuSm1irr3kC/G4nOsngyKQiKCJsXkhTx5O9Ktd7P66T/klPS0g1G5dHzUr4e/TOyeRSJwrTyHt8puuX4QhzL8Jk2O/4A8hZb3x3Z+YvU9eNVZyqla62cGKgoc6FCY+QtqYiOA8cYAJ+jW+4SNiWbYiXy+H784/8RJK5nvBHCsFlgSSdCy0vp9RrhkNcMnr/sj/1nHbs9luD5l+oqMiqEYf0D3+Ipm7TjDPshf1YBcTgYiiasFSiemLBUgMr9VLuPbnMAmtQkxCvM1XyuK2JBwFZ/EwRLoUB61uPpnNXwOb7XCrbr8el+lbkLIYLM5Fu5B28k2H32XLzInVvIafTpfA8MkbF/2q66cYu0K0IMEWGYrP6KTHS5g5TCLgGXJufCtbg/DuZ0vaCTNElSTHE/d5AR/+NCQCHLeOsrIvgamWe5+6qIdSGV3m9UX54wkFziaRc0xAkYSpTUgO0ZuuPiebegf/rUiVSV58TNOK/d39ulV0FForZr+z0j8jCKc4FHeGpBnMN/m4XWYu6wI7TEMU7E+PBnktQCyRIyYVmKEScvTgcDo7qrOF28r+O9FQ0uM=
-  distributions: sdist bdist_wheel
-env:
-  global:
-    secure: hOkPDdHqUx9gcXrUVIYDPVAdoECPMUqs/8vEqgVqP89HG2Tza1FpA9grToRiwK6Lta8K775LGPkC2aN/T7tAE28LYW7rOi27KgnAjmvfUk9gG0wErxncZg1QWaW3QJBGNHutE1mP/wljU2Ip1+sL8Oiy8BlZ7spdpRvysqsDFRVP0eh0rnarkbK0DbMe9nmIm3qkT6dAy9uB663W53rwJnsPI9hTfg7v6jbccYSYg40bVmJ13ZsTZR45z3t8WEfxzWWcLWkDNRi5kmBjNGWAYE2K/pQ2KUxpoq/PVDeiHJ7XoSm1HCQVAPKAGXEX4aGCCgxIN11PmLQ8sspBsUoI0iBJtdessox+Uu2/E9Qj+GeJuy/SYsMhRCQ4FSsdm4pKQSwqXszKu6sZ0MGU1wyPOP1DaWwZHwjh0en5XDN7jwX6qfjuCPhLFwwVEe7KJhB1zVgcafB32JSJqEi8EXalLNFH2TPAXVekmtZfc2iZco22RauP4WLPEY+5n46mUfcsWZE/86ccF3tSZNBsxjiWoweT8N+o/F+1LKt09BTSjJ1cu0W4iqFwsjAnXqc26xJAbs72pOlKtGrfRfPdQr7W253Amh3ckej/xdOPm/gcrU9DxY9Vxc+PKa/fFxBgpXWARluCMTetDovpTw/Am3ZAmoiA7cohiSsELeN97mMbOoA=
