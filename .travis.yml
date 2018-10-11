@@ -27,23 +27,23 @@ matrix:
     python: 3.6.5
 
 install:
-  - $PIP install -r requirements.txt --upgrade
-  - python --version
-  - cmake -H. -Bbuild-proj
-  - echo "Building tests"
-  - cd build-proj
-  - cmake --build . --target all
-  - cd ..
+- "$PIP install -r requirements.txt --upgrade"
+- python --version
+- cmake -H. -Bbuild-proj
+- echo "Building tests"
+- cd build-proj
+- cmake --build . --target all
+- cd ..
 
 script:
-  - pip install .
-  - echo "Performing python library tests"
-  - python ./test/test_libtempo_py/integration_test.py
-  - echo "Performing CPP tests"
-  - cd build-proj
-  - ./test/test_libtempo/test_libtempo
-  - ./test/test_main/test_main
-  - cd ..
+- pip install .
+- echo "Performing python library tests"
+- python ./test/test_libtempo_py/integration_test.py
+- echo "Performing CPP tests"
+- cd build-proj
+- "./test/test_libtempo/test_libtempo"
+- "./test/test_main/test_main"
+- cd ..
 
 notifications:
   email: false
@@ -52,7 +52,7 @@ deploy:
   provider: pypi
   user: egordm
   password:
-    secure: KSkay34dKjw3cRLSTQF0J/iZD6H8cYZEha05wvFmzfZRUZfCSGs0K5ntHZuwNrf9MbcTWLk/TqiR80mPWklGVck1gho1sqhtfk+Xj0bJxmRMEFZ2B2345/rwdKAkoSnqgTKH4seqLwj7No63g3M9w78cOeLofy5lXdf1EFAEveHD/OGiqMAOqGnvg77qClv6EDNA7M+smXWLdmBW35czjkBsf2MovphAzkH7bzxm/jpi/n/fbPbZmmjbL29Ev6Y6PzW35cPclwqmjd72hl/7wyodGqY/+pv3GZEoVJGIozFA+61Oy0jI766ovYvml4QE0eTNKHfIXT7YCbzsEsjzA6dnxEgrVGEwRVHI2hXv5+Nahbcm+00+/Ruhb6NAQ2dlTpeiaiQNxV4J9uBxKkENw98GeqSBbv2N7EeuRc5kVYoSWS8zh+sBA6QzqMSK705ruPpL3DFbxF/4Fnxg57a4LSfOp7VL4ia8nfmZCQ8phr6gEKqeu336R92yD7fnqVpxjDyGuUrI8T0CdPmkIPFWVGFGlSlb90kNlOHaIsA690ebJjaMkVYrFftPkMfNrG4UOVm2r8sOHmeYgRKeHsE4XTJUBCMcW8gRQ6BirZfxZnNifSV+2nZxaTnfPM68mIIWx9quR7ZoEGxw5PYjd2nVT+6vOsbv/8HhdWbKKmjAU2w=
+    secure: QGleaUuw3ZMw6SA1IUG6VJzFsk21UMHtPrWABx654hZuEECaul2X1StBZ7kMjAPk25CVKNRWu98KyWRiG+C7bKm1f5hSUKcwehE40QHecMUDC6tkWYPJcFkQs9fPe5UOSV/DFRAMjqjxveuBv7YBLFnL9LJWrQXbidhCEqTDXdvwds4r2hr4rJf9Xt7WlzuKjlyZD2Bwq+PDC0gIZewEoUlHI8+UAv1eU+4Zt4Humg0fOaD79ipaPVWXoS1jzR7WLjABASTQU38kySELlWvBCZ3dRo74txkoof4C96CJKdjkDNe/vSEAGjD26JGQw2UI3EyOlUW0uqlgcQp6KelCu4BxbD7uVWq/dgFqcJ18z+YdC8TKN7bQjSgfzmpqUVTGG5nyMv+BPj93BI+6M3pdJE2y4Yv177DFd8BHVSJzPsHfXCRBtVTf09C9sIb3dJLyV185QHGFSzaCkdhhzSJ+HXNW+5AcWrFXPON0IMO4U7ngrMWzPdLYEoifLKx+WTPj41OlxBNlfXYrkznwAjDSkMOmbfWTF4t3vShCeAE5GhaL+QB5xEnkKDum7C//+XeZBOK4KzcScwsIALWkTdZTD2SKQz05wqq99FNvdgEt6pOIsgF1rn+ebxy3TlBxOGRF6St8dHaPj9QxswFE3usW9B/MEajIcagd/Sg7Vo1ow64=
   distributions: sdist bdist_wheel
-  true:
+  on:
     tags: true
