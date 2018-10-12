@@ -16,10 +16,10 @@ matrix:
 
 env:
   global:
-  - CIBW_BEFORE_BUILD="yum install -y gcc-6 g++-6 cmake gfortran liblapack-dev libfftw3-dev libsndfile1-dev && export CXX=g++-6 && export CC=gcc-6 && pip install ."
+  - CIBW_BEFORE_BUILD="yum install -y gcc gcc-c++ cmake libgfortran lapack fftw libsndfile-devel && pip install ."
 
 script:
-- $PIP install -r requirements.txt --upgrade
+- $PIP install -r requirements.txt
 - $PIP install cibuildwheel==0.10.0
 - cibuildwheel --output-dir wheelhouse
 
