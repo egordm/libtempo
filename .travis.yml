@@ -16,7 +16,7 @@ matrix:
 
 env:
   global:
-  - CIBW_BEFORE_BUILD="yum install -y gcc gcc-c++ cmake libgfortran lapack fftw libsndfile-devel && pip install -r requirements.txt"
+  - CIBW_BEFORE_BUILD="yum install -y gcc gcc-c++ cmake3 libgfortran lapack fftw libsndfile-devel && pip install -r requirements.txt"
 
 script:
 - $PIP install -r requirements.txt
