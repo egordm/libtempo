@@ -27,6 +27,7 @@ if os.path.exists('.env'):
 
 print('CMake Properties:\n' + '\n'.join(cmake_extra_args))
 
+
 def readme():
     with open('README.md') as f:
         return f.read()
@@ -104,9 +105,8 @@ setup(name=name,
               'release': ('setup.py', release)
           }
       },
-      classifiers=(
+      classifiers=[
           "Programming Language :: Python :: 3",
-          "License :: OSI Approved :: MIT License",
-          "Topic :: Multimedia :: Sound/Audio :: Analysis"
-      ),
+          "License :: OSI Approved :: MIT License"
+      ],
       )
