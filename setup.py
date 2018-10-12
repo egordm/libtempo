@@ -105,8 +105,8 @@ setup(name=name,
               'release': ('setup.py', release)
           }
       },
-      classifiers=[
-          "Programming Language :: Python :: 3",
-          "License :: OSI Approved :: MIT License"
-      ],
+      # classifiers=[
+      #     "Programming Language :: Python :: 3",
+      #     "License :: OSI Approved :: MIT License"
+      # ],
       )
