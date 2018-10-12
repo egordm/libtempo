@@ -47,7 +47,7 @@ script:
 - cd ..
 - echo "Deploying python package"
 - python setup.py sdist bdist_wheel
-- if [ "$TRAVIS_BRANCH" = "master" ]; twine upload dist/* -u egordm --skip-existing; fi
+- if [ "$TRAVIS_BRANCH" = "master" ]; then twine upload dist/* -u egordm --skip-existing; fi
 
 notifications:
   email: false
