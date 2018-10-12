@@ -16,7 +16,7 @@ matrix:
 
 env:
   global:
-  - CIBW_BEFORE_BUILD="yum install -y gcc gcc-c++ libgfortran lapack fftw libsndfile-devel && wget https://cmake.org/files/v3.12/cmake-3.12.3.tar.gz && tar zxvf cmake-3.* && cd cmake-3.* && ./bootstrap --prefix=/usr/local && make -j$(nproc) && make install && cd .. && cmake --version && pip install -r requirements.txt"
+  - CIBW_BEFORE_BUILD="yum install -y wget gcc gcc-c++ libgfortran lapack fftw libsndfile-devel && wget https://cmake.org/files/v3.12/cmake-3.12.3.tar.gz && tar zxvf cmake-3.* && cd cmake-3.* && ./bootstrap --prefix=/usr/local && make -j$(nproc) && make install && cd .. && cmake --version && pip install -r requirements.txt"
 
 script:
 - $PIP install -r requirements.txt
