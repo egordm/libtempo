@@ -16,7 +16,7 @@ matrix:
 
 env:
   global:
-  - CIBW_BEFORE_BUILD="yum install -y make gcc gcc-c++ libgfortran lapack fftw libsndfile-devel && curl -LO http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/c/cmake3-3.12.1-1.el7.x86_64.rpm && yum localinstall cmake3-3.12.1-1.el7.x86_64.rpm && cmake --version && pip install -r requirements.txt"
+  - CIBW_BEFORE_BUILD="yum install -y make gcc gcc-c++ libgfortran lapack fftw libsndfile-devel && yum install -y cmake3 && cmake --version && pip install -r requirements.txt"
 
 script:
 - $PIP install -r requirements.txt
