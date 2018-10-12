@@ -6,48 +6,22 @@ branches:
 
 matrix:
   include:
-  - os: linux
-    compiler: gcc
-    addons:
-      apt:
-        sources:
-        - ubuntu-toolchain-r-test
-        packages:
-        - gcc-6
-        - g++-6
-        - cmake
-        - gfortran
-        - liblapack-dev
-        - libfftw3-dev
-        - libsndfile1-dev
-    env:
-    - CXX=g++-6
-    - CC=gcc-6
-    - PIP=pip
-    python: 3.6.5
+  - sudo: required
+    services:
+    - docker
+    env: PIP=pip
+  - os: osx
+    language: generic
+    env: PIP=pip2
 
-install:
-- echo "TESTVAR -> $TEST"
-- "$PIP install -r requirements.txt --upgrade"
-- python --version
-- cmake -H. -Bbuild-proj
-- echo "Building tests"
-- cd build-proj
-- cmake --build . --target all
-- cd ..
+env:
+  global:
+  - CIBW_BEFORE_BUILD="yum install -y gcc-6 g++-6 cmake gfortran liblapack-dev libfftw3-dev libsndfile1-dev && export CXX=g++-6 && export CC=gcc-6 && pip install ."
 
 script:
-- pip install .
-- echo "Performing python library tests"
-- python ./test/test_libtempo_py/integration_test.py
-- echo "Performing CPP tests"
-- cd build-proj
-- "./test/test_libtempo/test_libtempo"
-- "./test/test_main/test_main"
-- cd ..
-- echo "Deploying python package"
-- python setup.py sdist bdist_wheel
-- if [ "$TRAVIS_BRANCH" = "master" ]; then twine upload dist/* -u egordm --skip-existing; fi
+- $PIP install -r requirements.txt --upgrade
+- $PIP install cibuildwheel==0.10.0
+- cibuildwheel --output-dir wheelhouse
 
 notifications:
   email: false
